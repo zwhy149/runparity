@@ -1,6 +1,6 @@
 # RunParity handoff
 
-> Snapshot date: 2026-08-22 (Asia/Shanghai), third update  
+> Snapshot date: 2026-08-22 (Asia/Shanghai), fourth update  
 > Workspace: `C:\Users\wmy\Documents\Codex\2026-08-15\0-2`  
 > Current version: `0.0.0`, private source prototype, **S0 verified-count thresholds met (12/12), first full-corpus verification**  
 > This document is the single source of truth for a new conversation with no
@@ -18,8 +18,14 @@ mount.source / argv.token，双验证器重算）下，12 案全部持有三序�
 scaffold / 4 implemented / 12 verified**（4 个 implemented 是按设计只做 Host
 Observe 的 OOS×2 + NEG×2）。S0 的 verified 计数门槛（≥9/12、每类 ≥2/3）以
 12/12、每类 3/3 达成；剩余 S0 条目（Windows/macOS 实机挑战案例重复、聚合
-refusal/safety 率）与 S1 密封语料、S2 npm 发布见 docs/VALIDATION.md。git 提交
-至 018b67f。
+refusal/safety 率）与 S1 密封语料、S2 npm 发布见 docs/VALIDATION.md。此后第四轮：`doctor --attempt-proof` 拒绝流上线（win32/darwin→
+RP_UNSUPPORTED_PLATFORM_ISOLATION，linux→RP_SANDBOX_UNAVAILABLE，exit 78，观察内容零变化）；
+DEV-OOS-001 经 host_observation 账本在原生 Windows 上 3 次稳定拒绝后晋升 verified
+（0 scaffold / 3 implemented / 13 verified）；OOS-002 的 macOS 取证 workflow
+（.github/workflows/oos-002-macos.yml）推送 GitHub 即自动产出证据；S1 首批程序化
+密封语料（冻结种籽 20260822、24 例）在双平台完成首评：RUNTIME 4/4、
+challenge 零误报 16/16、PATH/NATIVE/CONFIG 的 finding 覆盖缺口被量化
+（4/16 in-scope，无 S1 达标声明）。git 提交至 5968af6。
 
 ## 1. What changed this round (本轮完成什么)
 
