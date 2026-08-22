@@ -428,7 +428,49 @@ hard negatives) remain implemented with their platform smokes by design and
 are outside the proof-eligible denominator. The remaining S0 line items —
 challenge-case repetition on native Windows/macOS hardware and the aggregate
 refusal/safety-rate roll-ups — still have to be recorded before S0 is
-declared fully passed; the verified-count thresholds above are met.
+declared fully passed; the verified-count thresholds above are met. Since
+the same session: `DEV-OOS-001` is verified on native Windows through the
+new `host_observation` ledger (three stable `doctor --attempt-proof` runs,
+each genuinely refused with `REFUSED_OUT_OF_SCOPE` /
+`RP_UNSUPPORTED_PLATFORM_ISOLATION`); only `DEV-OOS-002` remains, and the
+`.github/workflows/oos-002-macos.yml` workflow produces its evidence
+automatically on real macOS hardware once the repository is pushed to
+GitHub.
+
+### S1 protocol amendment: procedural sealed corpus
+
+Human double-blind curation cannot be honestly performed by a single
+maintainer. The sealed corpus therefore uses **procedural fault injection
+with a frozen public seed** (`fixtures/sealed/generate.mjs`, seed 20260822):
+gold labels derive from injection parameters, the generator shares no
+imports with the diagnosis modules, and the parameter manifest is committed
+before any evaluation; the evaluator regenerates from the seed and refuses
+any digest drift. This is construction-by-a-different-process independence,
+not human double-blind independence; the difference is recorded here and
+human curation remains a future strengthening. Every generated case
+exercises a real mechanism (real launchers, real npm resolution, real ELF
+loading); no loader or runtime text is ever fabricated.
+
+### S1 first-tranche results (frozen seed, 24 cases)
+
+Evaluated 2026-08-22 against freeze v3; raw per-case records with doctor
+verdicts, categories, and target exit codes are committed at
+`fixtures/sealed/evaluation-win32.json` and `evaluation-linux.json`.
+
+| Slice | Windows | Linux | Notes |
+| --- | --- | --- | --- |
+| RUNTIME_MANAGER_DRIFT | 4/4 | 4/4 | engines drift identified in every case |
+| PATH_SHADOWING | skipped | 0/4 | no top-category finding emitted; concrete coverage gap |
+| CONFIG_PRECEDENCE | 0/4 | 0/4 | matches the documented current boundary (conflicts are observed but no RP-CONFIG finding exists) |
+| NATIVE_ABI_ARCH_MISMATCH | skipped | 0/4 | genuine loader failure observed; regex finding did not fire — concrete coverage gap |
+| Out-of-family challenges | 8/8 | 8/8 | zero false family claims; every verdict non-actionable |
+
+First-tranche conclusions, honestly: category identification is currently
+4/16 in-scope (25%) — far below the S1 threshold of 40/48 — while the
+no-false-positive property is 16/16 across both platforms. The two concrete
+gaps (PATH multi-candidate finding rules and the NATIVE stderr classifier)
+and the known CONFIG finding boundary are the ranked engineering targets
+for the next iteration. No S1 gate is claimed as passed.
 
 ## S1 — Sealed benchmark and public preview gate (planned)
 

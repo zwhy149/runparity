@@ -2183,7 +2183,7 @@ describe("implemented development fixture assets", () => {
       readFileSync(resolve(fixtureRoot, "development", "cases", "DEV-OOS-001.json"), "utf8"),
     );
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: { planned_target_argv: ["npm", "run", "fixture:registry-probe"] },
       implementation: {
         runnable: true,
@@ -2192,9 +2192,9 @@ describe("implemented development fixture assets", () => {
         receipts: {
           build: "receipts/build/DEV-OOS-001.json",
           backend_qualification: null,
-          verification_ledger: null,
+          verification_ledger: "receipts/ledger/DEV-OOS-001.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
 

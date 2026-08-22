@@ -13,8 +13,8 @@
 // The results file records raw per-case observations, the platform, and the
 // exact doctor JSON digest so any number printed can be re-derived.
 
-import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -37,7 +37,9 @@ const { manifest, cases } = generateSealedCorpus(frozen.seed);
 const regeneratedDigest = sha256Json(manifest);
 const committedDigest = sha256Json(frozen);
 if (regeneratedDigest !== committedDigest) {
-  process.stderr.write("SEALED_CORPUS_DRIFT: regenerated manifest differs from the frozen manifest\n");
+  process.stderr.write(
+    "SEALED_CORPUS_DRIFT: regenerated manifest differs from the frozen manifest\n",
+  );
   process.exit(64);
 }
 
@@ -79,16 +81,7 @@ for (const caseDefinition of cases) {
     }
     const doctor = spawnSync(
       process.execPath,
-      [
-        tsxCli,
-        cliEntry,
-        "--json",
-        "doctor",
-        "--timeout",
-        "90s",
-        "--",
-        ...caseDefinition.command,
-      ],
+      [tsxCli, cliEntry, "--json", "doctor", "--timeout", "90s", "--", ...caseDefinition.command],
       { cwd: workDir, encoding: "utf8", maxBuffer: 16 * 1024 * 1024, timeout: 120_000, env },
     );
     if (doctor.status === null) {
