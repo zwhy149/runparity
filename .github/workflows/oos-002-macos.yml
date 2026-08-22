@@ -1,0 +1,50 @@
+name: OOS-002 native macOS evidence
+
+# Produces the DEV-OOS-002 host-observation ledger on real macOS hardware.
+# The workflow only generates evidence; a maintainer must review the
+# downloaded ledger, place it at fixtures/receipts/ledger/DEV-OOS-002.json,
+# regenerate the build receipt, and promote the manifest through a pull
+# request. Nothing here can modify the repository.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  oos-002-host-observation:
+    name: DEV-OOS-002 Host Observe + proof refusal x3
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Install pinned pnpm
+        run: npm install --global pnpm@11.19.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run three native macOS observations with proof refusal
+        run: |
+          node ./node_modules/tsx/dist/cli.mjs src/fixtures-cli.ts case run-host \
+            --case DEV-OOS-002 \
+            --out "$RUNNER_TEMP/DEV-OOS-002.json"
+
+      - name: Upload the evidence ledger
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: dev-oos-002-host-observation-ledger
+          path: ${{ runner.temp }}/DEV-OOS-002.json
+          if-no-files-found: error
