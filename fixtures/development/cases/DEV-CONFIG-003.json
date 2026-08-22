@@ -6,7 +6,7 @@
   "kind": "supported_positive",
   "title": "CLI config overrides environment config",
   "summary": "A single explicit npm CLI setting wins over the matching npm_config environment key while all other inputs remain fixed.",
-  "fixture_status": "implemented",
+  "fixture_status": "verified",
   "gold_category": "CONFIG_PRECEDENCE",
   "expected_terminal_verdict": "VERIFIED_INTERVENTION",
   "platform": {
@@ -67,9 +67,9 @@
     "missing_assets": [],
     "receipts": {
       "build": "receipts/build/DEV-CONFIG-003.json",
-      "backend_qualification": null,
-      "verification_ledger": null
+      "backend_qualification": "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+      "verification_ledger": "receipts/ledger/DEV-CONFIG-003.json"
     },
-    "verified_at": null
+    "verified_at": "2026-08-22T13:40:02Z"
   }
 }

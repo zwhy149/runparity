@@ -1,17 +1,20 @@
 import { canonicalJsonString, sha256Hex } from "../backend/digest.js";
+import type { CaseFamily, InterventionDescriptor } from "./case-plans.js";
+import { evaluateSingleTokenDelta } from "./delta-check.js";
 import { buildPathShadowingSignature, signatureSha256 } from "./failure-signature.js";
 import type { ArmRunRecord } from "./isolated-arm-runner.js";
 import { evaluateFrozenOracle, type FrozenOracleV1 } from "./oracle-evaluator.js";
+import type { ExternalArtifactEvidence } from "./run-case.js";
 
 /**
  * ProofLedger assembly and verification.
  *
  * The ledger embeds, for every arm, the bounded observation (exit code plus
  * classified stream lines), the recomputed failure signature, the frozen
- * oracle evaluation for B arms, and the normalized argv. The verifier below
- * is the only module in this repository allowed to derive the
- * VERIFIED_INTERVENTION verdict, and it re-derives every embedded claim from
- * the raw observations before doing so.
+ * oracle evaluation for B arms, and the normalized argv. The verifier in
+ * proof-ledger-verifier.ts is the only module in this repository allowed to
+ * derive the VERIFIED_INTERVENTION verdict, and it re-derives every embedded
+ * claim from the raw observations before doing so.
  */
 
 export type LedgerArmEvidence = Readonly<{
@@ -31,13 +34,14 @@ export type LedgerArmEvidence = Readonly<{
   oracle_evaluation: ReturnType<typeof evaluateFrozenOracle> | null;
   post_run_container_absent: boolean | null;
   home_dir_created_fresh: boolean;
+  home_prep: readonly (readonly string[])[];
 }>;
 
 export type VerificationLedgerV1 = Readonly<{
   schema_version: "runparity.fixture-verification-ledger/v1";
   ledger_kind: "a1_b_a2";
   case_id: string;
-  family: "PATH_SHADOWING";
+  family: string;
   repetitions: 3;
   manifest_sha256: string;
   build_receipt_sha256: string;
@@ -45,14 +49,18 @@ export type VerificationLedgerV1 = Readonly<{
   backend_image_digest: string;
   arm_isolation_policy_digest: string;
   oracle_frozen: FrozenOracleV1;
-  intervention: Readonly<{ type: "path.prepend"; directory: string }>;
+  intervention: InterventionDescriptor;
+  external_artifacts: readonly ExternalArtifactEvidence[];
   sequences: readonly Readonly<{
     index: number;
     arms: readonly LedgerArmEvidence[];
     delta_check: Readonly<{
       a1_a2_normalized_argv_equal: boolean;
+      single_token_delta: boolean;
+      delta_valid: boolean;
+      delta_reason: string;
       b_single_path_prepend: boolean;
-      prepended_directory: string;
+      prepended_directory: string | null;
     }>;
   }>[];
   safety: Readonly<{
@@ -112,37 +120,22 @@ export function armEvidenceFromRunRecord(
     oracle_evaluation: oracleEvaluation,
     post_run_container_absent: record.post_run_container_absent,
     home_dir_created_fresh: record.home_dir_created_fresh,
+    home_prep: record.home_prep,
   });
-}
-
-function findEnvPathTokenIndex(normalizedArgv: readonly string[]): number {
-  let expectingValue = false;
-  for (let index = 0; index < normalizedArgv.length; index += 1) {
-    const token = normalizedArgv[index] ?? "";
-    if (token === "-e") {
-      expectingValue = true;
-      continue;
-    }
-    if (expectingValue) {
-      if (token.startsWith("PATH=")) {
-        return index;
-      }
-      expectingValue = false;
-    }
-  }
-  return -1;
 }
 
 export function buildVerificationLedger(
   input: Readonly<{
     caseId: string;
+    family: CaseFamily;
     manifestSha256: string;
     buildReceiptSha256: string;
     backendQualificationSha256: string;
     backendImageDigest: string;
     armIsolationPolicyDigest: string;
     oracle: FrozenOracleV1;
-    intervention: Readonly<{ type: "path.prepend"; directory: string }>;
+    intervention: InterventionDescriptor;
+    externalArtifacts?: readonly ExternalArtifactEvidence[];
     records: readonly ArmRunRecord[];
     runnerVersion: string;
     verifiedAtIso: string;
@@ -170,42 +163,34 @@ export function buildVerificationLedger(
     const a1 = arms[0];
     const b = arms[1];
     const a2 = arms[2];
-    const a1PathIndex = findEnvPathTokenIndex(a1.normalized_argv);
-    const bPathIndex = findEnvPathTokenIndex(b.normalized_argv);
-    let singlePrepend = false;
-    if (a1PathIndex >= 0 && bPathIndex >= 0) {
-      const aPath = a1.normalized_argv[a1PathIndex] ?? "";
-      const bPath = b.normalized_argv[bPathIndex] ?? "";
-      const expectedB = `PATH=${input.intervention.directory}:${aPath.slice("PATH=".length)}`;
-      singlePrepend = bPath === expectedB;
-      const restEqual =
-        a1.normalized_argv.length === b.normalized_argv.length &&
-        a1.normalized_argv.every(
-          (token, tokenIndex) =>
-            tokenIndex === a1PathIndex || token === b.normalized_argv[tokenIndex],
-        );
-      singlePrepend = singlePrepend && restEqual;
-    }
     const a1a2Equal =
       a1.normalized_argv.length === a2.normalized_argv.length &&
       a1.normalized_argv.every((token, tokenIndex) => token === a2.normalized_argv[tokenIndex]);
+    const delta = evaluateSingleTokenDelta(
+      a1.normalized_argv,
+      b.normalized_argv,
+      input.intervention,
+    );
     return Object.freeze({
       index,
       arms: Object.freeze(arms),
       delta_check: Object.freeze({
         a1_a2_normalized_argv_equal: a1a2Equal,
-        b_single_path_prepend: singlePrepend,
-        prepended_directory: input.intervention.directory,
+        single_token_delta: delta.single_token_delta,
+        delta_valid: delta.delta_valid,
+        delta_reason: delta.reason,
+        b_single_path_prepend: delta.delta_valid,
+        prepended_directory: input.intervention.directory ?? null,
       }),
     });
   });
 
   const allArms = input.records;
-  const ledger: VerificationLedgerV1 = Object.freeze({
+  return Object.freeze({
     schema_version: "runparity.fixture-verification-ledger/v1",
     ledger_kind: "a1_b_a2",
     case_id: input.caseId,
-    family: "PATH_SHADOWING",
+    family: input.family,
     repetitions: 3,
     manifest_sha256: input.manifestSha256,
     build_receipt_sha256: input.buildReceiptSha256,
@@ -214,6 +199,7 @@ export function buildVerificationLedger(
     arm_isolation_policy_digest: input.armIsolationPolicyDigest,
     oracle_frozen: Object.freeze({ ...input.oracle }),
     intervention: Object.freeze({ ...input.intervention }),
+    external_artifacts: Object.freeze([...(input.externalArtifacts ?? [])]),
     sequences: Object.freeze(sequences),
     safety: Object.freeze({
       all_arms_completed: allArms.every((record) => record.outcome === "completed"),
@@ -224,7 +210,6 @@ export function buildVerificationLedger(
     verified_at: input.verifiedAtIso,
     status: "failed",
   });
-  return ledger;
 }
 
 export function verificationLedgerSha256(ledger: VerificationLedgerV1): string {

@@ -12,13 +12,13 @@ import {
 } from "./backend/qualification-receipt.js";
 import type { BackendTransport } from "./backend/ssh-backend-transport.js";
 import { createSshBackendTransport } from "./backend/ssh-backend-transport.js";
-import type { PathFamilyCasePlan } from "./experiment-runner/path-family.js";
-import { DEV_PATH_001_PLAN, runPathFamilyExperiment } from "./experiment-runner/path-family.js";
+import { CASE_PLANS } from "./experiment-runner/case-plans.js";
 import {
   buildVerificationLedger,
   verificationLedgerSha256,
 } from "./experiment-runner/proof-ledger.js";
 import { verifyVerificationLedger } from "./experiment-runner/proof-ledger-verifier.js";
+import { runCaseExperiment } from "./experiment-runner/run-case.js";
 import { currentProcessController } from "./supervised-process.js";
 
 /**
@@ -211,10 +211,7 @@ program
       const config = loadJson(options.config) as BackendConfigFile;
       const transport = buildTransport(config);
 
-      const plans: Readonly<Record<string, PathFamilyCasePlan>> = {
-        "DEV-PATH-001": DEV_PATH_001_PLAN,
-      };
-      const plan = plans[options.case];
+      const plan = CASE_PLANS[options.case];
       if (plan === undefined) {
         throw new Error(`RP_CASE_RUN_UNSUPPORTED_CASE:${options.case}`);
       }
@@ -232,11 +229,11 @@ program
         };
       });
 
-      const records = await runPathFamilyExperiment(
+      const outcome = await runCaseExperiment(
         transport,
         {
           imageDigestRef: config.backend.imageDigestRef,
-          assetsHostRoot: `${config.backend.assetsHostRoot.replace(/\/+$/u, "")}/${plan.assetSubdir}`,
+          assetsHostRoot: config.backend.assetsHostRoot,
           armsHostRoot: config.backend.armsHostRoot,
           perArmDeadlineNanoseconds: 180n * 1000n * 1000n * 1000n,
           nowNanoseconds: monotonicNowNanoseconds,
@@ -244,21 +241,19 @@ program
         plan,
         freshness,
       );
+      const records = outcome.records;
 
-      const oracle = {
-        type: "exit_code_and_stdout" as const,
-        exit_code: 0,
-        stdout_contains: "RUNPARITY_OK:dev-path-001",
-      };
       const ledger = buildVerificationLedger({
         caseId: plan.caseId,
+        family: plan.family,
         manifestSha256: manifestSha,
         buildReceiptSha256: buildReceiptSha,
         backendQualificationSha256: receiptFileSha,
         backendImageDigest: digestFromReceipt(receipt),
         armIsolationPolicyDigest: receipt.policy_digest ?? "",
-        oracle,
-        intervention: { type: "path.prepend", directory: plan.interventionDirectory },
+        oracle: plan.oracle,
+        intervention: plan.interventionDescriptor,
+        externalArtifacts: outcome.external_artifacts,
         records,
         runnerVersion: RUNNER_VERSION,
         verifiedAtIso:

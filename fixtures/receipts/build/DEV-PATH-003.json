@@ -1,7 +1,7 @@
 {
   "schema_version": "runparity.fixture-build-receipt/v1",
   "case_id": "DEV-PATH-003",
-  "manifest_sha256": "28115d74f2710279cb52414428982cd39e043590010df1bc445c8ae8d23581b9",
+  "manifest_sha256": "62a55cff4df54c4cf762a52d1b3acaf8d12cf3d082ca0dc7843bea163f23a6e2",
   "asset_root": "development/assets/DEV-PATH-003",
   "asset_inventory_schema_version": "runparity.asset-inventory/v1",
   "asset_inventory_sha256": "948583338ae9d9ef37f80a3de303c20c085625194705b4aa85d412a0bc63c910",
@@ -11,5 +11,5 @@
     "path": "fixture/assert-toolchain-marker.mjs"
   },
   "status": "passed",
-  "created_at": "2026-08-17T12:42:52.690Z"
+  "created_at": "2026-08-22T13:37:47.672Z"
 }

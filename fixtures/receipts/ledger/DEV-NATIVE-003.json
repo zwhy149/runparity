@@ -1,0 +1,821 @@
+{
+  "schema_version": "runparity.fixture-verification-ledger/v1",
+  "ledger_kind": "a1_b_a2",
+  "case_id": "DEV-NATIVE-003",
+  "family": "NATIVE_ABI_ARCH_MISMATCH",
+  "repetitions": 3,
+  "manifest_sha256": "3847c93bf197adb6bcdf6306ac869fc416bf90654867e044363cb1a16383365c",
+  "build_receipt_sha256": "804ad1bfa06b0a38d8ca4e14d356f862399826703bfc820c3e76910d2db9ea17",
+  "backend_qualification_sha256": "99b6bf972189160fe5a3a3b1efa2b9b286b355a75e3af41041a7db7be7ac8a8b",
+  "backend_image_digest": "sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+  "arm_isolation_policy_digest": "sha256:129bb017710d7a4d72ca2231ba8d7afe608973931de9c7e1dbda1ead1877e207",
+  "oracle_frozen": {
+    "type": "exit_code_and_stdout",
+    "exit_code": 0,
+    "stdout_contains": "RUNPARITY_OK:dev-native-003"
+  },
+  "intervention": {
+    "type": "nativeArtifact.select",
+    "kind": "mount.source",
+    "containerPath": "/arm/project"
+  },
+  "external_artifacts": [
+    {
+      "role": "pinned_runtime_node",
+      "host_path": "/home/rp/assets-external/node-22.22.1/bin/node",
+      "expected_sha256": "243fd8938011479f41b3de101842150fa990f33fbbb3f7aabd330857f2d79e1d",
+      "observed_sha256": "243fd8938011479f41b3de101842150fa990f33fbbb3f7aabd330857f2d79e1d",
+      "verified": true
+    }
+  ],
+  "sequences": [
+    {
+      "index": 1,
+      "arms": [
+        {
+          "identity": "A1",
+          "sequence_index": 1,
+          "freshness_id": "s1-a1-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s1-a1",
+          "outcome": "completed",
+          "exit_code": 64,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_NATIVE_LIBC_MISMATCH",
+            ""
+          ],
+          "duration_ms": 712.757,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "b470df490239f00332e28a85a8149802d07e81ef7ceb66846588c784550d3539",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 64,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_NATIVE_LIBC_MISMATCH"
+            ]
+          },
+          "signature_sha256": "624c56923c14b10c13e2e8ade8c7bc649c63f8078a7e8ef4e473842215080cbd",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": []
+        },
+        {
+          "identity": "B",
+          "sequence_index": 1,
+          "freshness_id": "s1-b-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s1-b",
+          "outcome": "completed",
+          "exit_code": 0,
+          "stdout_lines": [
+            "RUNPARITY_OK:dev-native-003",
+            ""
+          ],
+          "stderr_lines": [
+            ""
+          ],
+          "duration_ms": 773.866,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>/project:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "7d5fae1a457352970b077a1b3a0844ff631c24786d6825c9480b260783f5c60a",
+          "signature": null,
+          "signature_sha256": null,
+          "oracle_evaluation": {
+            "oracle_type": "exit_code_and_stdout",
+            "satisfied": true,
+            "checks": {
+              "exit_code_matches": true,
+              "stdout_contains_matches": true
+            },
+            "observed": {
+              "exit_code": 0,
+              "stdout_excerpt": [
+                "RUNPARITY_OK:dev-native-003",
+                ""
+              ]
+            }
+          },
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-NATIVE-003/.",
+              "/home/rp/arms/rp-dev-native-003-s1-b/project"
+            ],
+            [
+              "cp",
+              "-f",
+              "/home/rp/assets/DEV-NATIVE-003/fixture/environment-b.json",
+              "/home/rp/arms/rp-dev-native-003-s1-b/project/fixture/environment-a.json"
+            ]
+          ]
+        },
+        {
+          "identity": "A2",
+          "sequence_index": 1,
+          "freshness_id": "s1-a2-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s1-a2",
+          "outcome": "completed",
+          "exit_code": 64,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_NATIVE_LIBC_MISMATCH",
+            ""
+          ],
+          "duration_ms": 653.415,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "b470df490239f00332e28a85a8149802d07e81ef7ceb66846588c784550d3539",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 64,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_NATIVE_LIBC_MISMATCH"
+            ]
+          },
+          "signature_sha256": "624c56923c14b10c13e2e8ade8c7bc649c63f8078a7e8ef4e473842215080cbd",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": []
+        }
+      ],
+      "delta_check": {
+        "a1_a2_normalized_argv_equal": true,
+        "single_token_delta": true,
+        "delta_valid": true,
+        "delta_reason": "declared delta kind satisfied",
+        "b_single_path_prepend": true,
+        "prepended_directory": null
+      }
+    },
+    {
+      "index": 2,
+      "arms": [
+        {
+          "identity": "A1",
+          "sequence_index": 2,
+          "freshness_id": "s2-a1-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s2-a1",
+          "outcome": "completed",
+          "exit_code": 64,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_NATIVE_LIBC_MISMATCH",
+            ""
+          ],
+          "duration_ms": 614.743,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "b470df490239f00332e28a85a8149802d07e81ef7ceb66846588c784550d3539",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 64,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_NATIVE_LIBC_MISMATCH"
+            ]
+          },
+          "signature_sha256": "624c56923c14b10c13e2e8ade8c7bc649c63f8078a7e8ef4e473842215080cbd",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": []
+        },
+        {
+          "identity": "B",
+          "sequence_index": 2,
+          "freshness_id": "s2-b-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s2-b",
+          "outcome": "completed",
+          "exit_code": 0,
+          "stdout_lines": [
+            "RUNPARITY_OK:dev-native-003",
+            ""
+          ],
+          "stderr_lines": [
+            ""
+          ],
+          "duration_ms": 622.864,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>/project:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "7d5fae1a457352970b077a1b3a0844ff631c24786d6825c9480b260783f5c60a",
+          "signature": null,
+          "signature_sha256": null,
+          "oracle_evaluation": {
+            "oracle_type": "exit_code_and_stdout",
+            "satisfied": true,
+            "checks": {
+              "exit_code_matches": true,
+              "stdout_contains_matches": true
+            },
+            "observed": {
+              "exit_code": 0,
+              "stdout_excerpt": [
+                "RUNPARITY_OK:dev-native-003",
+                ""
+              ]
+            }
+          },
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-NATIVE-003/.",
+              "/home/rp/arms/rp-dev-native-003-s2-b/project"
+            ],
+            [
+              "cp",
+              "-f",
+              "/home/rp/assets/DEV-NATIVE-003/fixture/environment-b.json",
+              "/home/rp/arms/rp-dev-native-003-s2-b/project/fixture/environment-a.json"
+            ]
+          ]
+        },
+        {
+          "identity": "A2",
+          "sequence_index": 2,
+          "freshness_id": "s2-a2-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s2-a2",
+          "outcome": "completed",
+          "exit_code": 64,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_NATIVE_LIBC_MISMATCH",
+            ""
+          ],
+          "duration_ms": 638.593,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "b470df490239f00332e28a85a8149802d07e81ef7ceb66846588c784550d3539",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 64,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_NATIVE_LIBC_MISMATCH"
+            ]
+          },
+          "signature_sha256": "624c56923c14b10c13e2e8ade8c7bc649c63f8078a7e8ef4e473842215080cbd",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": []
+        }
+      ],
+      "delta_check": {
+        "a1_a2_normalized_argv_equal": true,
+        "single_token_delta": true,
+        "delta_valid": true,
+        "delta_reason": "declared delta kind satisfied",
+        "b_single_path_prepend": true,
+        "prepended_directory": null
+      }
+    },
+    {
+      "index": 3,
+      "arms": [
+        {
+          "identity": "A1",
+          "sequence_index": 3,
+          "freshness_id": "s3-a1-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s3-a1",
+          "outcome": "completed",
+          "exit_code": 64,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_NATIVE_LIBC_MISMATCH",
+            ""
+          ],
+          "duration_ms": 619.587,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "b470df490239f00332e28a85a8149802d07e81ef7ceb66846588c784550d3539",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 64,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_NATIVE_LIBC_MISMATCH"
+            ]
+          },
+          "signature_sha256": "624c56923c14b10c13e2e8ade8c7bc649c63f8078a7e8ef4e473842215080cbd",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": []
+        },
+        {
+          "identity": "B",
+          "sequence_index": 3,
+          "freshness_id": "s3-b-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s3-b",
+          "outcome": "completed",
+          "exit_code": 0,
+          "stdout_lines": [
+            "RUNPARITY_OK:dev-native-003",
+            ""
+          ],
+          "stderr_lines": [
+            ""
+          ],
+          "duration_ms": 628.852,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>/project:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "7d5fae1a457352970b077a1b3a0844ff631c24786d6825c9480b260783f5c60a",
+          "signature": null,
+          "signature_sha256": null,
+          "oracle_evaluation": {
+            "oracle_type": "exit_code_and_stdout",
+            "satisfied": true,
+            "checks": {
+              "exit_code_matches": true,
+              "stdout_contains_matches": true
+            },
+            "observed": {
+              "exit_code": 0,
+              "stdout_excerpt": [
+                "RUNPARITY_OK:dev-native-003",
+                ""
+              ]
+            }
+          },
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-NATIVE-003/.",
+              "/home/rp/arms/rp-dev-native-003-s3-b/project"
+            ],
+            [
+              "cp",
+              "-f",
+              "/home/rp/assets/DEV-NATIVE-003/fixture/environment-b.json",
+              "/home/rp/arms/rp-dev-native-003-s3-b/project/fixture/environment-a.json"
+            ]
+          ]
+        },
+        {
+          "identity": "A2",
+          "sequence_index": 3,
+          "freshness_id": "s3-a2-mt4ffccl",
+          "arm_name": "rp-dev-native-003-s3-a2",
+          "outcome": "completed",
+          "exit_code": 64,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_NATIVE_LIBC_MISMATCH",
+            ""
+          ],
+          "duration_ms": 604.272,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-v",
+            "/home/rp/assets-external/node-22.22.1:/arm/runtimeslot:ro",
+            "-v",
+            "/home/rp/assets/DEV-NATIVE-003:/arm/project:ro",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/runtimeslot/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "--workdir",
+            "/arm/project",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/load-native-addon.mjs"
+          ],
+          "argv_sha256": "b470df490239f00332e28a85a8149802d07e81ef7ceb66846588c784550d3539",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 64,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_NATIVE_LIBC_MISMATCH"
+            ]
+          },
+          "signature_sha256": "624c56923c14b10c13e2e8ade8c7bc649c63f8078a7e8ef4e473842215080cbd",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": []
+        }
+      ],
+      "delta_check": {
+        "a1_a2_normalized_argv_equal": true,
+        "single_token_delta": true,
+        "delta_valid": true,
+        "delta_reason": "declared delta kind satisfied",
+        "b_single_path_prepend": true,
+        "prepended_directory": null
+      }
+    }
+  ],
+  "safety": {
+    "all_arms_completed": true,
+    "all_containers_removed": true,
+    "all_home_dirs_fresh": true
+  },
+  "runner_version": "runparity-fixtures/0.1.0",
+  "verified_at": "2026-08-22T13:41:10Z",
+  "status": "passed"
+}

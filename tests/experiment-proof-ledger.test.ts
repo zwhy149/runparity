@@ -3,8 +3,8 @@ import type {
   BackendTransport,
   BackendTransportCompletion,
 } from "../src/backend/ssh-backend-transport.js";
+import { DEV_PATH_001_PLAN } from "../src/experiment-runner/case-plans.js";
 import { type ArmRunRecord, runIsolatedArm } from "../src/experiment-runner/isolated-arm-runner.js";
-import { DEV_PATH_001_PLAN } from "../src/experiment-runner/path-family.js";
 import { buildVerificationLedger } from "../src/experiment-runner/proof-ledger.js";
 import { verifyVerificationLedger } from "../src/experiment-runner/proof-ledger-verifier.js";
 
@@ -95,12 +95,6 @@ const BACKEND = {
   nowNanoseconds: () => process.hrtime.bigint(),
 };
 
-const ORACLE = {
-  type: "exit_code_and_stdout" as const,
-  exit_code: 0,
-  stdout_contains: "RUNPARITY_OK:dev-path-001",
-};
-
 async function runFullSequence(transport: BackendTransport): Promise<ArmRunRecord[]> {
   const records: ArmRunRecord[] = [];
   for (let sequence = 1; sequence <= 3; sequence += 1) {
@@ -113,13 +107,9 @@ async function runFullSequence(transport: BackendTransport): Promise<ArmRunRecor
           freshnessId: `s${sequence}-${identity.toLowerCase()}`,
           environment:
             identity === "B"
-              ? {
-                  PATH: `/arm/assets/intended-node/bin:${DEV_PATH_001_PLAN.baseEnvironment["PATH"]}`,
-                  HOME: "/home/arm",
-                  RUNPARITY_FIXTURE_REAL_NODE: "/usr/local/bin/node",
-                }
-              : DEV_PATH_001_PLAN.baseEnvironment,
-          targetArgv: DEV_PATH_001_PLAN.targetArgv,
+              ? DEV_PATH_001_PLAN.intervention.environment
+              : DEV_PATH_001_PLAN.baseline.environment,
+          targetArgv: DEV_PATH_001_PLAN.baseline.targetArgv,
           workingDirectory: DEV_PATH_001_PLAN.workingDirectory,
         }),
       );
@@ -131,13 +121,14 @@ async function runFullSequence(transport: BackendTransport): Promise<ArmRunRecor
 function buildLedger(records: ArmRunRecord[], status: "passed" | "failed" = "passed") {
   const ledger = buildVerificationLedger({
     caseId: "DEV-PATH-001",
+    family: DEV_PATH_001_PLAN.family,
     manifestSha256: "1".repeat(64),
     buildReceiptSha256: "2".repeat(64),
     backendQualificationSha256: "3".repeat(64),
     backendImageDigest: `sha256:${"b".repeat(64)}`,
     armIsolationPolicyDigest: "4".repeat(64),
-    oracle: ORACLE,
-    intervention: { type: "path.prepend", directory: DEV_PATH_001_PLAN.interventionDirectory },
+    oracle: DEV_PATH_001_PLAN.oracle,
+    intervention: DEV_PATH_001_PLAN.interventionDescriptor,
     records,
     runnerVersion: "runparity-fixtures/test",
     verifiedAtIso: "2026-08-22T12:00:00Z",

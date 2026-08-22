@@ -601,6 +601,16 @@ const program = new Command()
   .option("--json", "emit one stable JSON document to stdout")
   .option("--html", "render one completed observation as an offline HTML document");
 
+program.addHelpText(
+  "after",
+
+  "\nNew here? One command covers the common case:\n" +
+    "  runparity doctor -- npm run build\n" +
+    "RunParity records what actually ran (which binary, which runtime, which\n" +
+    "config won) and says how strong the evidence is. It never guesses a root\n" +
+    "cause and never repairs anything.\n",
+);
+
 const doctorCommand = program
   .command("doctor")
   .description("observe a command and report only what the available evidence supports")

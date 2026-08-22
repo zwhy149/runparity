@@ -19,10 +19,10 @@ RunParity does **not** call a correlation a root cause, silently repair the host
 or pretend that running a command on your machine is sandboxed.
 
 > **Project status:** `0.0.0` is a private, pre-S0 source prototype. Host
-> observation works today; the first isolated A1/B/A2 proof chain is real
-> (`DEV-PATH-001`, verified against a dedicated QEMU-KVM rootless-Podman
-> backend whose eleven isolation controls were demonstrably qualified), but
-> public npm install instructions do not exist yet. See
+> observation works today, and all twelve supported-positive fixtures hold
+> real isolated A1/B/A2 proof chains (verified against a dedicated QEMU-KVM
+> rootless-Podman backend whose eleven isolation controls were demonstrably
+> qualified); public npm install instructions do not exist yet. See
 > [Current vs planned](#current-vs-planned) and
 > [ADR-0005](./docs/adr/0005-qualified-linux-rootless-backend-and-proof-ledger.md).
 
@@ -80,6 +80,32 @@ it is still not guaranteed secret-free, so review it before sharing.
 
 Target arguments must follow `--`. RunParity preserves them as separate argv
 tokens and never sends the target through a shell by default.
+
+## New here? When to reach for RunParity
+
+You do not need to read any architecture document to get value. If one of these
+sounds like your day, run the one command:
+
+| Symptom | What doctor records |
+| --- | --- |
+| "Works in CI, fails on my laptop" | Which executable actually ran (lookup path vs canonical target), runtime identity vs `engines.node` |
+| "Broke after I switched nvm/pnpm/volta" | Runtime and package-manager drift plus PATH-order candidates |
+| "My teammate's install works, mine doesn't" | npm config source conflicts (`fund`, `strict-peer-deps`) with bounded excerpts |
+| `npm rebuild` did not fix a `.node` error | Genuine `NODE_MODULE_VERSION` / loader signals without rebuilding anything |
+
+Two words matter in every report:
+
+- **PARTIAL_EVIDENCE** — "we observed this correlation." Most reports stop
+  here, honestly.
+- **VERIFIED_INTERVENTION** — "an isolated A1/B/A2 experiment on a qualified
+  rootless backend reproduced the failure, flipped exactly one typed change,
+  and the failure returned when the change was removed." The fixture corpus
+  below holds twelve such proofs; the public CLI never prints this word from
+  host observation alone.
+
+RunParity never edits your PATH, lockfile, or global tools, and never calls a
+correlation a root cause. Use `npx runparity doctor -- <your-command>` after
+publication, or run the demo below from a checkout.
 
 ## What the prototype can inspect
 
@@ -169,12 +195,12 @@ bias analysis are in [Demand evidence](./docs/DEMAND-EVIDENCE.md).
 | --- | --- | --- |
 | Host command observation | Available | Hardened and release-qualified |
 | Human, stable JSON, and self-contained HTML reports | Available | Add Markdown, SARIF, saved-report import/export, and release qualification |
-| Node/manager/PATH/native bounded findings | Narrow current rules | Four planned families; all 16 static target assets are implemented and `DEV-PATH-001` is verified end to end |
+| Node/manager/PATH/native bounded findings | Narrow current rules | Four families, each with 3/3 fixtures verified in isolation |
 | Automatic host repair | Intentionally absent | Intentionally absent |
 | Host outcome policy | Internal runtime classifier → discriminated state → pure deterministic decision; contradictory states and `verified` Host cleanup fail closed | Public contract and release qualification remain required |
 | Experiment planning | Internal opaque, pure plan-only compiler for an exact A1/B/A2 `path.prepend` spec; it requires complete fixed-input/base/qualification/oracle digests, unique arm freshness, and an absolute directory matching the base PATH style | Preview one typed intervention |
 | Backend qualification | Available (maintainer side): a supervised SSH transport and an eleven-control probe battery demonstrably qualify a dedicated QEMU-KVM Ubuntu VM running rootless Podman under a non-root account | Same battery against additional native Linux backends |
-| Isolated A1/B/A2 proof | First case proven: `DEV-PATH-001` holds a three-sequence ledger whose signatures, oracle, single-intervention diff, and safety flags are re-derived independently by the validator before `verified` is accepted | All 12 supported positives; sealed S1 benchmark |
+| Isolated A1/B/A2 proof | All 12 supported positives verified: each holds a three-sequence ledger (single-token typed intervention across four delta kinds) whose signatures, oracle, and intervention diffs are re-derived independently by the validator before `verified` is accepted | Sealed S1 benchmark |
 | Windows/macOS | Host Observe only | Host Observe only for V1 |
 | Public `npx runparity` | Not published | Planned after release gates pass |
 

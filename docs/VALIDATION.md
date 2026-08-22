@@ -418,13 +418,17 @@ Required:
 
 S0 demonstrates architecture feasibility only.
 
-Current S0 evidence is `16/16` structurally valid manifests,
-`15/16` implemented fixtures, and `1/16` verified fixtures (`DEV-PATH-001`,
-whose full backend-qualification and A1/B/A2 evidence chain is described
-above and re-derived by the validator on every run). The aggregate S0
-thresholds above still have not been evaluated: one verified case of twelve
-supported positives establishes the pipeline end to end, not the S0
-category and safety rates.
+Current S0 evidence is `16/16` structurally valid manifests and `12/12`
+supported positives verified (every category at 3/3, above the 9/12 and 2/3
+per-category thresholds): all twelve hold full backend-qualification plus
+three-sequence A1/B/A2 evidence chains against the QEMU-KVM rootless-Podman
+backend, re-derived by the independent evidence verifier on every validator
+run. The four Host-Observe-only cases (two out-of-scope platform cases, two
+hard negatives) remain implemented with their platform smokes by design and
+are outside the proof-eligible denominator. The remaining S0 line items —
+challenge-case repetition on native Windows/macOS hardware and the aggregate
+refusal/safety-rate roll-ups — still have to be recorded before S0 is
+declared fully passed; the verified-count thresholds above are met.
 
 ## S1 — Sealed benchmark and public preview gate (planned)
 

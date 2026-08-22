@@ -1,0 +1,23 @@
+{
+  "schema": "runparity.fixture-native-layer/v1",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc"
+  },
+  "matching_node_module_version": "127",
+  "selected": {
+    "path": "layers/matching.node",
+    "sha256": "4a52a561cea0b380f84309879d8636d90d9286c2a55f9d21b207f4e8e00a16e7",
+    "node_version": "22.22.1",
+    "node_module_version": "127",
+    "cxx_standard": "c++20"
+  },
+  "matching": {
+    "path": "layers/matching.node",
+    "sha256": "4a52a561cea0b380f84309879d8636d90d9286c2a55f9d21b207f4e8e00a16e7",
+    "node_version": "22.22.1",
+    "node_module_version": "127",
+    "cxx_standard": "c++20"
+  }
+}

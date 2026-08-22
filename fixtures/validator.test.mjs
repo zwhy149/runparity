@@ -270,7 +270,7 @@ test("a recomputed non-empty Node asset can derive implemented without proof", (
   const result = runValidator(root);
 
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /0 scaffold, 15 implemented, 1 verified/i);
+  assert.match(result.stdout, /0 scaffold, 5 implemented, 11 verified/i);
 });
 
 test("the checked entrypoint must be the script declared by planned_target_argv", (t) => {
@@ -346,7 +346,7 @@ test("a launcher-mediated argv path token can bind the entrypoint", (t) => {
   const result = runValidator(root);
 
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /15 implemented, 1 verified/i);
+  assert.match(result.stdout, /5 implemented, 11 verified/i);
 });
 
 test("a launcher lifecycle script can bind the entrypoint through an asset-root package.json", (t) => {
@@ -362,7 +362,7 @@ test("a launcher lifecycle script can bind the entrypoint through an asset-root 
   const result = runValidator(root);
 
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /15 implemented, 1 verified/i);
+  assert.match(result.stdout, /5 implemented, 11 verified/i);
 });
 
 test("a lifecycle argv with npm config flags around the script name still binds", (t) => {
@@ -384,7 +384,7 @@ test("a lifecycle argv with npm config flags around the script name still binds"
     const result = runValidator(root);
 
     assert.equal(result.status, 0, result.stderr);
-    assert.match(result.stdout, /15 implemented, 1 verified/i);
+    assert.match(result.stdout, /5 implemented, 11 verified/i);
   }
 });
 
@@ -424,7 +424,7 @@ test("the node-prefixed lifecycle script value binds and richer values fail clos
   );
   const okResult = runValidator(okRoot);
   assert.equal(okResult.status, 0, okResult.stderr);
-  assert.match(okResult.stdout, /15 implemented, 1 verified/i);
+  assert.match(okResult.stdout, /5 implemented, 11 verified/i);
 
   for (const scriptValue of [
     "node fixture/load-native-addon.mjs --flag",

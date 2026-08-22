@@ -8,7 +8,7 @@
 //     demonstrated and must bind its facts sidecar by the canonical-JSON
 //     SHA-256 of the collected facts;
 //   * the verification ledger must satisfy the full A1/B/A2 proof rules —
-//     signatures, oracle, single-intervention diff, A1≡A2, safety —
+//     signatures, oracle, single-intervention delta, A1≡A2, safety —
 //     recomputed here from the embedded bounded observations, NOT trusted
 //     from the runner;
 //   * the ledger binds the manifest by its EVIDENCE PROJECTION digest: the
@@ -23,13 +23,6 @@
 // runner's verifier cannot silently mask itself here.
 
 import { createHash } from "node:crypto";
-
-const _PROMOTION_FIELDS = {
-  fixture_status: true,
-  "implementation.verified_at": true,
-  "implementation.receipts.backend_qualification": true,
-  "implementation.receipts.verification_ledger": true,
-};
 
 export function canonicalJson(value) {
   if (Array.isArray(value)) {
@@ -69,6 +62,33 @@ export function manifestEvidenceSha256(manifest) {
     .digest("hex");
 }
 
+const STDERR_ERROR_CLASSIFIERS = [
+  {
+    test: (line) => line.includes("ERR_MODULE_NOT_FOUND"),
+    render: (line) => `NODE_ERR_MODULE_NOT_FOUND:${line.slice(0, 96)}`,
+  },
+  {
+    test: (line) => line.startsWith("Error: Cannot find module '"),
+    render: (line) => `NODE_CANNOT_FIND_MODULE:${line.slice(0, 96)}`,
+  },
+  {
+    test: (line) => line.includes("NODE_MODULE_VERSION"),
+    render: (line) => `NODE_MODULE_VERSION_MISMATCH:${line.slice(0, 96)}`,
+  },
+  {
+    test: (line) => line.includes("ERR_DLOPEN_FAILED"),
+    render: (line) => `NODE_ERR_DLOPEN_FAILED:${line.slice(0, 96)}`,
+  },
+];
+
+function classifyStderrLine(line) {
+  const trimmed = line.trim();
+  for (const classifier of STDERR_ERROR_CLASSIFIERS) {
+    if (classifier.test(trimmed)) return classifier.render(trimmed);
+  }
+  return null;
+}
+
 function pathSignature(observation) {
   const lines = Array.isArray(observation.stdout_lines) ? observation.stdout_lines : [];
   const errLines = Array.isArray(observation.stderr_lines) ? observation.stderr_lines : [];
@@ -83,37 +103,79 @@ function pathSignature(observation) {
     }
     return sentinels.sort();
   };
+  const errorClasses = [];
+  for (const line of errLines) {
+    if (typeof line !== "string") continue;
+    const sentinel = classifyStderrLine(line);
+    if (sentinel !== null && !errorClasses.includes(sentinel)) errorClasses.push(sentinel);
+    if (errorClasses.length >= 16) break;
+  }
   return canonicalJson({
     schema_version: "runparity.failure-signature/path-shadowing/v1",
     family: "PATH_SHADOWING",
     exit_code: observation.exit_code,
     stdout_sentinels: classify(lines, "RUNPARITY_OK:"),
-    stderr_sentinels: classify(errLines, "RP_FIXTURE_"),
+    stderr_sentinels: [...classify(errLines, "RP_FIXTURE_"), ...errorClasses.sort()],
   });
 }
 
-function pathEnvToken(argv) {
-  let expectingValue = false;
-  for (const token of argv) {
-    if (token === "-e") {
-      expectingValue = true;
-      continue;
-    }
-    if (expectingValue) {
-      if (typeof token === "string" && token.startsWith("PATH=")) return token;
-      expectingValue = false;
-    }
-  }
-  return null;
+function normalizeDescriptor(descriptor) {
+  if (descriptor === null || typeof descriptor !== "object") return null;
+  const type = typeof descriptor.type === "string" ? descriptor.type : "";
+  const kind =
+    typeof descriptor.kind === "string"
+      ? descriptor.kind
+      : type === "path.prepend"
+        ? "path.prepend"
+        : null;
+  if (kind === null) return null;
+  return { ...descriptor, kind };
 }
 
-function argvDifferOnlyAtPath(a, b) {
-  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
-  let differences = 0;
-  for (let index = 0; index < a.length; index += 1) {
-    if (a[index] !== b[index]) differences += 1;
+function validateKindSemantics(aToken, bToken, descriptor) {
+  if (descriptor.kind === "path.prepend") {
+    const prefix = `PATH=${descriptor.directory ?? descriptor.value ?? ""}:`;
+    return aToken.startsWith("PATH=") && bToken === `${prefix}${aToken.slice("PATH=".length)}`;
   }
-  return differences === 1;
+  if (descriptor.kind === "env.value") {
+    const name = descriptor.envName ?? "";
+    return (
+      name !== "" &&
+      aToken.startsWith(`${name}=`) &&
+      bToken === `${name}=${descriptor.value ?? ""}` &&
+      aToken !== bToken
+    );
+  }
+  if (descriptor.kind === "mount.source") {
+    const aParts = String(aToken).split(":");
+    const bParts = String(bToken).split(":");
+    if (aParts.length !== 3 || bParts.length !== 3) return false;
+    return (
+      aParts[1] === descriptor.containerPath &&
+      bParts[1] === descriptor.containerPath &&
+      aParts[0] !== bParts[0]
+    );
+  }
+  if (descriptor.kind === "argv.token") {
+    return aToken === descriptor.argvFrom && bToken === descriptor.argvTo && aToken !== bToken;
+  }
+  return false;
+}
+
+function evaluateSingleTokenDelta(aArgv, bArgv, descriptor) {
+  if (!Array.isArray(aArgv) || !Array.isArray(bArgv) || aArgv.length !== bArgv.length) {
+    return { single: false, valid: false };
+  }
+  const differing = [];
+  for (let index = 0; index < aArgv.length; index += 1) {
+    if (aArgv[index] !== bArgv[index]) differing.push(index);
+  }
+  if (differing.length !== 1) return { single: false, valid: false };
+  const index = differing[0];
+  return {
+    single: true,
+    valid: validateKindSemantics(aArgv[index] ?? "", bArgv[index] ?? "", descriptor),
+  };
 }
 
 /**
@@ -186,7 +248,10 @@ export function verifyVerificationLedger({ ledger, links, item }) {
   if (ledger.case_id !== item.case_id) problems.push("case_id mismatch");
   if (ledger.repetitions !== 3) problems.push("repetitions is not 3");
   if (ledger.status !== "passed") problems.push("status is not passed");
-  if (ledger.intervention?.type !== item.allowed_typed_intervention?.type) {
+  const descriptor = normalizeDescriptor(ledger.intervention);
+  if (descriptor === null) {
+    problems.push("intervention descriptor unsupported");
+  } else if (descriptor.type !== item.allowed_typed_intervention?.type) {
     problems.push("intervention type does not match the manifest");
   }
   if (ledger.manifest_sha256 !== links.manifestEvidenceSha256) {
@@ -217,6 +282,11 @@ export function verifyVerificationLedger({ ledger, links, item }) {
   if (ledger.safety?.all_arms_completed !== true) problems.push("safety: arms incomplete");
   if (ledger.safety?.all_containers_removed !== true) problems.push("safety: containers left over");
   if (ledger.safety?.all_home_dirs_fresh !== true) problems.push("safety: stale arm homes");
+  for (const artifact of ledger.external_artifacts ?? []) {
+    if (artifact?.verified !== true || artifact.observed_sha256 !== artifact.expected_sha256) {
+      problems.push(`external artifact unverified: ${artifact?.role ?? "?"}`);
+    }
+  }
 
   const sequences = Array.isArray(ledger.sequences) ? ledger.sequences : [];
   if (sequences.length !== 3) {
@@ -287,22 +357,17 @@ export function verifyVerificationLedger({ ledger, links, item }) {
     if (!(bOracleChecks.exit && bOracleChecks.stdout) || b.oracle_evaluation?.satisfied !== true) {
       problems.push(`sequence ${index} B: frozen oracle not satisfied`);
     }
-    const a1Path = pathEnvToken(a1.normalized_argv ?? []);
-    const bPath = pathEnvToken(b.normalized_argv ?? []);
     const a2Argv = a2.normalized_argv ?? [];
     const a1Argv = a1.normalized_argv ?? [];
     const argvEqual =
       a1Argv.length === a2Argv.length && a1Argv.every((token, i) => token === a2Argv[i]);
     if (!argvEqual) problems.push(`sequence ${index}: A1/A2 normalized argv diverge`);
-    const expectedB =
-      a1Path !== null && bPath !== null
-        ? `PATH=${ledger.intervention?.directory}:${a1Path.slice("PATH=".length)}`
-        : null;
-    const singleDelta =
-      expectedB !== null &&
-      bPath === expectedB &&
-      argvDifferOnlyAtPath(a1Argv, b.normalized_argv ?? []);
-    if (!singleDelta) problems.push(`sequence ${index}: B is not exactly one path.prepend delta`);
+    if (descriptor !== null) {
+      const delta = evaluateSingleTokenDelta(a1Argv, b.normalized_argv ?? [], descriptor);
+      if (!delta.single || !delta.valid) {
+        problems.push(`sequence ${index}: B is not the declared single-token intervention delta`);
+      }
+    }
   }
   if (signatureSet.size !== 1) {
     problems.push(

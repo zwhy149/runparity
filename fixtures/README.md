@@ -40,9 +40,10 @@ the environment; their gated real-npm smokes exercise genuine precedence on
 hosts where npm exists. `DEV-OOS-001` performs a genuine read-only reg.exe
 query on Windows. `DEV-OOS-002` is a read-only macOS SDK preflight that
 fails closed on non-macOS hosts. Both OOS Host smokes record `PARTIAL_EVIDENCE`
-because the CLI has no proof-refusal flow yet. `DEV-PATH-001` is `verified`
-against the qualified QEMU-KVM rootless-Podman backend; the other fifteen
-cases are not.
+because the CLI has no proof-refusal flow yet. all twelve supported positives are `verified`
+against the qualified QEMU-KVM rootless-Podman backend; the two
+out-of-scope platform cases and two hard negatives remain implemented
+Host-Observe-only by design.
 
 Do not count a case toward S0 until its manifest reaches `verified`.
 
@@ -133,11 +134,10 @@ node --test fixtures/validator.test.mjs
   recomputes the failure signatures from the embedded bounded observations,
   re-evaluates the frozen oracle, re-derives the single `path.prepend`
   intervention diff from normalized argv, and re-checks A1≡A2, sequence
-  count, and safety flags. `DEV-PATH-001` is the first verified case; its
-  evidence chain targets the QEMU-KVM dedicated Ubuntu VM backend running
-  rootless Podman under a non-root account (receipt:
-  `receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json`, ledger:
-  `receipts/ledger/DEV-PATH-001.json`). Self-authored receipts still fail
+  count, and safety flags. all twelve supported positives hold such chains against the QEMU-KVM
+  dedicated Ubuntu VM backend running rootless Podman under a non-root
+  account (receipt: `receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json`,
+  ledgers: `receipts/ledger/<CASE>.json`). Self-authored receipts still fail
   with named, specific problems.
 
 `validate.mjs` derives `scaffold`, `implemented`, or `verified` and rejects

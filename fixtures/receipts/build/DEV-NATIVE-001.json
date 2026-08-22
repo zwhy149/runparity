@@ -1,15 +1,15 @@
 {
   "schema_version": "runparity.fixture-build-receipt/v1",
   "case_id": "DEV-NATIVE-001",
-  "manifest_sha256": "65062b0233ed044a93c2b4e66c5b63447516bc8ef1c8fac73954b5895b0fba93",
+  "manifest_sha256": "fd4cddad07982acbeaf4e652dcac55948982e41ee0c7748e5fd53dd763ac492e",
   "asset_root": "development/assets/DEV-NATIVE-001",
   "asset_inventory_schema_version": "runparity.asset-inventory/v1",
-  "asset_inventory_sha256": "d51926b669fb05746221d7d86d418682ae9414876c531b29fe61f0880af40db8",
+  "asset_inventory_sha256": "1fcd98aba6b3c4de8c579fbf22679a58d69d66114d01f33edfa85586697af78b",
   "asset_inventory_stability": "unqualified_live_tree",
   "entrypoint": {
     "kind": "node_script",
     "path": "fixture/load-native-addon.mjs"
   },
   "status": "passed",
-  "created_at": "2026-08-22T06:05:06.600Z"
+  "created_at": "2026-08-22T13:40:28.568Z"
 }

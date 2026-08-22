@@ -1,4 +1,6 @@
 import { canonicalJsonString, sha256Hex } from "../backend/digest.js";
+import type { InterventionDescriptor } from "./case-plans.js";
+import { evaluateSingleTokenDelta } from "./delta-check.js";
 import {
   buildPathShadowingSignature,
   signatureCanonicalJson,
@@ -15,11 +17,41 @@ import type { LedgerArmEvidence, VerificationLedgerV1 } from "./proof-ledger.js"
  * and the single-intervention diff are recomputed from the raw bounded
  * observations before any conclusion is drawn. Family adapters, manifests,
  * runner state, and documentation cannot produce this verdict.
+ *
+ * Legacy compatibility: ledgers produced before the four-delta-kind protocol
+ * (intervention without `kind`) are accepted when their type is
+ * `path.prepend` with a declared directory; the committed DEV-PATH-001
+ * ledger keeps validating unchanged.
  */
 
 export type ProofLedgerVerdict =
   | Readonly<{ verdict: "VERIFIED_INTERVENTION"; ledger_sha256: string }>
   | Readonly<{ verdict: "PARTIAL_EVIDENCE"; ledger_sha256: string; blocking: readonly string[] }>;
+
+type NormalizedDescriptor = Readonly<{
+  type: string;
+  kind: "path.prepend" | "env.value" | "mount.source" | "argv.token";
+  directory?: string;
+  envName?: string;
+  value?: string;
+  containerPath?: string;
+  argvFrom?: string;
+  argvTo?: string;
+}>;
+
+function normalizeDescriptor(
+  descriptor: InterventionDescriptor | null | undefined,
+): NormalizedDescriptor | null {
+  if (descriptor === null || typeof descriptor !== "object") {
+    return null;
+  }
+  const type = typeof descriptor.type === "string" ? descriptor.type : "";
+  const kind = descriptor.kind ?? (type === "path.prepend" ? ("path.prepend" as const) : undefined);
+  if (kind === undefined) {
+    return null;
+  }
+  return descriptor as NormalizedDescriptor;
+}
 
 function recomputeSignature(
   arm: LedgerArmEvidence,
@@ -29,36 +61,6 @@ function recomputeSignature(
     stdout_lines: arm.stdout_lines,
     stderr_lines: arm.stderr_lines,
   });
-}
-
-function pathEnvToken(argv: readonly string[]): string | null {
-  let expectingValue = false;
-  for (const token of argv) {
-    if (token === "-e") {
-      expectingValue = true;
-      continue;
-    }
-    if (expectingValue) {
-      if (token.startsWith("PATH=")) {
-        return token;
-      }
-      expectingValue = false;
-    }
-  }
-  return null;
-}
-
-function argvDifferOnlyAtPath(a: readonly string[], b: readonly string[]): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-  let differences = 0;
-  for (let index = 0; index < a.length; index += 1) {
-    if ((a[index] ?? "") !== (b[index] ?? "")) {
-      differences += 1;
-    }
-  }
-  return differences === 1;
 }
 
 export function verifyVerificationLedger(ledger: VerificationLedgerV1): ProofLedgerVerdict {
@@ -71,8 +73,14 @@ export function verifyVerificationLedger(ledger: VerificationLedgerV1): ProofLed
   if (ledger.ledger_kind !== "a1_b_a2" || ledger.repetitions !== 3) {
     blocking.push("repetitions");
   }
-  if (ledger.intervention.type !== "path.prepend") {
-    blocking.push("intervention_type");
+  const descriptor = normalizeDescriptor(ledger.intervention);
+  if (descriptor === null) {
+    blocking.push("intervention_unsupported");
+    return {
+      verdict: "PARTIAL_EVIDENCE",
+      ledger_sha256: ledgerSha,
+      blocking: Object.freeze(blocking),
+    };
   }
   if (ledger.status !== "passed") {
     blocking.push("ledger_status_not_passed");
@@ -83,6 +91,11 @@ export function verifyVerificationLedger(ledger: VerificationLedgerV1): ProofLed
     !ledger.safety.all_home_dirs_fresh
   ) {
     blocking.push("safety");
+  }
+  for (const artifact of ledger.external_artifacts ?? []) {
+    if (artifact.verified !== true || artifact.observed_sha256 !== artifact.expected_sha256) {
+      blocking.push(`external_artifact_unverified:${artifact.role ?? "?"}`);
+    }
   }
   if (ledger.sequences.length !== 3) {
     blocking.push("sequence_count");
@@ -101,10 +114,9 @@ export function verifyVerificationLedger(ledger: VerificationLedgerV1): ProofLed
       blocking.push(`sequence_${sequence.index}_arm_count`);
       continue;
     }
-    const [first, second, third] = sequence.arms;
-    const a1 = first as LedgerArmEvidence;
-    const b = second as LedgerArmEvidence;
-    const a2 = third as LedgerArmEvidence;
+    const a1 = arms[0] as LedgerArmEvidence;
+    const b = arms[1] as LedgerArmEvidence;
+    const a2 = arms[2] as LedgerArmEvidence;
     if (
       a1 === undefined ||
       b === undefined ||
@@ -161,20 +173,32 @@ export function verifyVerificationLedger(ledger: VerificationLedgerV1): ProofLed
       }
     }
 
-    if (!sequence.delta_check.a1_a2_normalized_argv_equal) {
+    const a1a2Equal =
+      a1.normalized_argv.length === a2.normalized_argv.length &&
+      a1.normalized_argv.every((token, tokenIndex) => token === a2.normalized_argv[tokenIndex]);
+    if (!a1a2Equal) {
       blocking.push(`sequence_${sequence.index}_a1_a2_argv_divergence`);
     }
-    const recomputedSingleDelta =
-      argvDifferOnlyAtPath(a1.normalized_argv, b.normalized_argv) &&
-      pathEnvToken(b.normalized_argv) !== null &&
-      (pathEnvToken(b.normalized_argv) ?? "").endsWith(
-        `:${(pathEnvToken(a1.normalized_argv) ?? "").slice("PATH=".length)}`,
-      ) &&
-      (pathEnvToken(b.normalized_argv) ?? "").startsWith(`PATH=${ledger.intervention.directory}:`);
-    if (!recomputedSingleDelta || !sequence.delta_check.b_single_path_prepend) {
+    if (sequence.delta_check.a1_a2_normalized_argv_equal === false) {
+      blocking.push(`sequence_${sequence.index}_a1_a2_flag_false`);
+    }
+    const recomputedDelta = evaluateSingleTokenDelta(
+      a1.normalized_argv,
+      b.normalized_argv,
+      descriptor,
+    );
+    if (!recomputedDelta.single_token_delta || !recomputedDelta.delta_valid) {
       blocking.push(`sequence_${sequence.index}_intervention_diff_invalid`);
     }
-    if (sequence.delta_check.prepended_directory !== ledger.intervention.directory) {
+    if (sequence.delta_check.b_single_path_prepend === false) {
+      blocking.push(`sequence_${sequence.index}_delta_flag_false`);
+    }
+    if (
+      descriptor.kind === "path.prepend" &&
+      typeof descriptor.directory === "string" &&
+      sequence.delta_check.prepended_directory !== undefined &&
+      sequence.delta_check.prepended_directory !== descriptor.directory
+    ) {
       blocking.push(`sequence_${sequence.index}_directory_mismatch`);
     }
   }

@@ -1,7 +1,7 @@
 {
   "schema_version": "runparity.fixture-build-receipt/v1",
   "case_id": "DEV-RUNTIME-002",
-  "manifest_sha256": "49fce284dfdbdc68c3e65af2e0bf66106f91a7fb0dcff313276c685ae94f675a",
+  "manifest_sha256": "fa0d908e759e496a11aecb16dfe658652bfa5bc9ba43a67835416b2367747fa5",
   "asset_root": "development/assets/DEV-RUNTIME-002",
   "asset_inventory_schema_version": "runparity.asset-inventory/v1",
   "asset_inventory_sha256": "ec35d861a8d7b95e8f37afa3a0b4aced71f6c9d76a1a3984967fcd73a802ce1b",
@@ -11,5 +11,5 @@
     "path": "fixture/assert-manager-version.mjs"
   },
   "status": "passed",
-  "created_at": "2026-08-17T12:42:52.889Z"
+  "created_at": "2026-08-22T13:38:39.900Z"
 }

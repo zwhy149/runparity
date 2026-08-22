@@ -1,15 +1,15 @@
 {
   "schema_version": "runparity.fixture-build-receipt/v1",
   "case_id": "DEV-CONFIG-002",
-  "manifest_sha256": "d1360680a93c3bd91c3d3f7b851cf5fce2373650d99815bded3f0c996bf52c1a",
+  "manifest_sha256": "9ee04a3f28908e05c25dd33f1cb23f3d937bbb42324bb1c4c2017cd2b128ee5e",
   "asset_root": "development/assets/DEV-CONFIG-002",
   "asset_inventory_schema_version": "runparity.asset-inventory/v1",
-  "asset_inventory_sha256": "58fe8654d32363b74e8450f8539a968d605290eb57180bf6d307523868d60e3c",
+  "asset_inventory_sha256": "ae1ae3726887720cd72a3733c3becd195dca3c89b1b4ceff8c92c612369ae05b",
   "asset_inventory_stability": "unqualified_live_tree",
   "entrypoint": {
     "kind": "node_script",
     "path": "fixture/assert-config.mjs"
   },
   "status": "passed",
-  "created_at": "2026-08-17T12:42:53.210Z"
+  "created_at": "2026-08-22T13:39:35.637Z"
 }

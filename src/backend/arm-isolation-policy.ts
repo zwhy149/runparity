@@ -40,6 +40,12 @@ export function armIsolationPolicyDigest(
   return sha256Hex(canonicalJsonString(policy));
 }
 
+export type ArmMount = Readonly<{
+  hostDir: string;
+  containerPath: string;
+  options: string;
+}>;
+
 export type ArmRunRequest = Readonly<{
   armName: string;
   imageDigestRef: string;
@@ -49,6 +55,12 @@ export type ArmRunRequest = Readonly<{
   workingDirectory: string;
   timeoutSeconds: number;
   targetArgv: readonly string[];
+  /**
+   * Additional case mounts appended after the asset mount. Every host path
+   * must be absolute; per-arm prepared directories are legitimate here
+   * because the arm home is created fresh for every arm.
+   */
+  extraMounts?: readonly ArmMount[];
   /**
    * "run" executes a foreground --rm arm. "bind" starts the same flag set
    * detached (no --rm) so qualification can read kernel-truth /proc facts for
@@ -130,6 +142,12 @@ export function buildArmRunArgv(request: ArmRunRequest): string[] {
     "-v",
     remoteArg(`${homeDir}:${p.arm_home_container_path}:rw`, "arm home mount"),
   );
+  for (const mount of request.extraMounts ?? []) {
+    const hostDir = posixAbsolutePath(mount.hostDir, "extra mount host dir");
+    const containerPath = posixAbsolutePath(mount.containerPath, "extra mount container path");
+    remoteArg(mount.options, "extra mount options");
+    argv.push("-v", remoteArg(`${hostDir}:${containerPath}:${mount.options}`, "extra mount"));
+  }
   for (const [name, value] of Object.entries(request.environment)) {
     remoteArg(name, "environment name");
     argv.push("-e", remoteArg(`${name}=${value}`, "environment assignment"));

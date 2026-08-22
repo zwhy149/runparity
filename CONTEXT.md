@@ -63,10 +63,12 @@
 > and systemd, non-root account, rootless Podman 4.9.3); a probe battery
 > demonstrates eleven isolation controls (including binding the nested
 > user-namespace parent claim with host-kernel /proc truth) before a
-> qualification receipt exists; and `DEV-PATH-001` holds a three-sequence
-> A1/B/A2 ledger whose failure signatures, frozen oracle, single
-> `path.prepend` intervention diff, and safety flags are independently
-> re-derived by the fixture validator before `verified` is accepted. The
+> qualification receipt exists; and all twelve supported-positive fixtures
+> hold three-sequence A1/B/A2 ledgers (single-token typed interventions
+> across four delta kinds: path.prepend, env.value, mount.source,
+> argv.token) whose failure signatures, frozen oracle results, intervention
+> diffs, and safety flags are independently re-derived by the fixture
+> validator before `verified` is accepted. The
 > public `runparity` CLI surface is unchanged: no command it exposes can
 > emit `VERIFIED_INTERVENTION`, and the maintainer-side fixture driver is
 > outside the published `bin` map.

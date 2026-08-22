@@ -6,7 +6,7 @@
   "kind": "supported_positive",
   "title": "Symlinked toolchain precedes repository bin",
   "summary": "A two-hop symlink chain resolves Node to an unintended pre-existing fixture toolchain before the repository-local fixture bin.",
-  "fixture_status": "implemented",
+  "fixture_status": "verified",
   "gold_category": "PATH_SHADOWING",
   "expected_terminal_verdict": "VERIFIED_INTERVENTION",
   "platform": {
@@ -65,9 +65,9 @@
     "missing_assets": [],
     "receipts": {
       "build": "receipts/build/DEV-PATH-003.json",
-      "backend_qualification": null,
-      "verification_ledger": null
+      "backend_qualification": "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+      "verification_ledger": "receipts/ledger/DEV-PATH-003.json"
     },
-    "verified_at": null
+    "verified_at": "2026-08-22T13:37:45Z"
   }
 }

@@ -6,7 +6,7 @@
   "kind": "supported_positive",
   "title": "Environment boolean config overrides project npmrc",
   "summary": "An npm_config boolean environment value wins over a contradictory project .npmrc value for one allowlisted non-secret key.",
-  "fixture_status": "implemented",
+  "fixture_status": "verified",
   "gold_category": "CONFIG_PRECEDENCE",
   "expected_terminal_verdict": "VERIFIED_INTERVENTION",
   "platform": {
@@ -67,9 +67,9 @@
     "missing_assets": [],
     "receipts": {
       "build": "receipts/build/DEV-CONFIG-001.json",
-      "backend_qualification": null,
-      "verification_ledger": null
+      "backend_qualification": "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+      "verification_ledger": "receipts/ledger/DEV-CONFIG-001.json"
     },
-    "verified_at": null
+    "verified_at": "2026-08-22T13:39:11Z"
   }
 }

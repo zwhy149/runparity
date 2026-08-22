@@ -1,0 +1,1027 @@
+{
+  "schema_version": "runparity.fixture-verification-ledger/v1",
+  "ledger_kind": "a1_b_a2",
+  "case_id": "DEV-PATH-003",
+  "family": "PATH_SHADOWING",
+  "repetitions": 3,
+  "manifest_sha256": "a6a8cf98c8a7633ad09d24774a85ec1fb39f883e1e45d87aba2c03848998857b",
+  "build_receipt_sha256": "85c6279ff4d2beee8cc17f2b1d65ee8df02bc1d8d9c1b658b09945aea11cc461",
+  "backend_qualification_sha256": "99b6bf972189160fe5a3a3b1efa2b9b286b355a75e3af41041a7db7be7ac8a8b",
+  "backend_image_digest": "sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+  "arm_isolation_policy_digest": "sha256:129bb017710d7a4d72ca2231ba8d7afe608973931de9c7e1dbda1ead1877e207",
+  "oracle_frozen": {
+    "type": "exit_code_and_stdout",
+    "exit_code": 0,
+    "stdout_contains": "RUNPARITY_OK:dev-path-003"
+  },
+  "intervention": {
+    "type": "path.prepend",
+    "kind": "path.prepend",
+    "envName": "PATH",
+    "directory": "/arm/assets/repository-fixture/bin"
+  },
+  "external_artifacts": [],
+  "sequences": [
+    {
+      "index": 1,
+      "arms": [
+        {
+          "identity": "A1",
+          "sequence_index": 1,
+          "freshness_id": "s1-a1-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s1-a1",
+          "outcome": "completed",
+          "exit_code": 23,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_SYMLINK_TOOLCHAIN",
+            ""
+          ],
+          "duration_ms": 582.462,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "c21e88afe01715a5cef9186eee573b282e0012675bd177b00df1677d053945ad",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 23,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_SYMLINK_TOOLCHAIN"
+            ]
+          },
+          "signature_sha256": "2745c492a05e8ae7437eafbd35917cea80e71f38831aec0f8e678578bd458d93",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s1-a1/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s1-a1/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s1-a1/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s1-a1/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s1-a1/work/link-hops/node-hop"
+            ]
+          ]
+        },
+        {
+          "identity": "B",
+          "sequence_index": 1,
+          "freshness_id": "s1-b-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s1-b",
+          "outcome": "completed",
+          "exit_code": 0,
+          "stdout_lines": [
+            "RUNPARITY_OK:dev-path-003",
+            ""
+          ],
+          "stderr_lines": [
+            ""
+          ],
+          "duration_ms": 620.256,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/assets/repository-fixture/bin:/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "d2f4c48f8d69d6c6c93ebeae018e0100ee517196298b6f19a10c8bab427618b7",
+          "signature": null,
+          "signature_sha256": null,
+          "oracle_evaluation": {
+            "oracle_type": "exit_code_and_stdout",
+            "satisfied": true,
+            "checks": {
+              "exit_code_matches": true,
+              "stdout_contains_matches": true
+            },
+            "observed": {
+              "exit_code": 0,
+              "stdout_excerpt": [
+                "RUNPARITY_OK:dev-path-003",
+                ""
+              ]
+            }
+          },
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s1-b/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s1-b/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s1-b/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s1-b/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s1-b/work/link-hops/node-hop"
+            ]
+          ]
+        },
+        {
+          "identity": "A2",
+          "sequence_index": 1,
+          "freshness_id": "s1-a2-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s1-a2",
+          "outcome": "completed",
+          "exit_code": 23,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_SYMLINK_TOOLCHAIN",
+            ""
+          ],
+          "duration_ms": 706.782,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "c21e88afe01715a5cef9186eee573b282e0012675bd177b00df1677d053945ad",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 23,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_SYMLINK_TOOLCHAIN"
+            ]
+          },
+          "signature_sha256": "2745c492a05e8ae7437eafbd35917cea80e71f38831aec0f8e678578bd458d93",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s1-a2/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s1-a2/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s1-a2/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s1-a2/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s1-a2/work/link-hops/node-hop"
+            ]
+          ]
+        }
+      ],
+      "delta_check": {
+        "a1_a2_normalized_argv_equal": true,
+        "single_token_delta": true,
+        "delta_valid": true,
+        "delta_reason": "declared delta kind satisfied",
+        "b_single_path_prepend": true,
+        "prepended_directory": "/arm/assets/repository-fixture/bin"
+      }
+    },
+    {
+      "index": 2,
+      "arms": [
+        {
+          "identity": "A1",
+          "sequence_index": 2,
+          "freshness_id": "s2-a1-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s2-a1",
+          "outcome": "completed",
+          "exit_code": 23,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_SYMLINK_TOOLCHAIN",
+            ""
+          ],
+          "duration_ms": 728.661,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "c21e88afe01715a5cef9186eee573b282e0012675bd177b00df1677d053945ad",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 23,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_SYMLINK_TOOLCHAIN"
+            ]
+          },
+          "signature_sha256": "2745c492a05e8ae7437eafbd35917cea80e71f38831aec0f8e678578bd458d93",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s2-a1/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s2-a1/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s2-a1/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s2-a1/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s2-a1/work/link-hops/node-hop"
+            ]
+          ]
+        },
+        {
+          "identity": "B",
+          "sequence_index": 2,
+          "freshness_id": "s2-b-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s2-b",
+          "outcome": "completed",
+          "exit_code": 0,
+          "stdout_lines": [
+            "RUNPARITY_OK:dev-path-003",
+            ""
+          ],
+          "stderr_lines": [
+            ""
+          ],
+          "duration_ms": 643.869,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/assets/repository-fixture/bin:/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "d2f4c48f8d69d6c6c93ebeae018e0100ee517196298b6f19a10c8bab427618b7",
+          "signature": null,
+          "signature_sha256": null,
+          "oracle_evaluation": {
+            "oracle_type": "exit_code_and_stdout",
+            "satisfied": true,
+            "checks": {
+              "exit_code_matches": true,
+              "stdout_contains_matches": true
+            },
+            "observed": {
+              "exit_code": 0,
+              "stdout_excerpt": [
+                "RUNPARITY_OK:dev-path-003",
+                ""
+              ]
+            }
+          },
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s2-b/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s2-b/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s2-b/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s2-b/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s2-b/work/link-hops/node-hop"
+            ]
+          ]
+        },
+        {
+          "identity": "A2",
+          "sequence_index": 2,
+          "freshness_id": "s2-a2-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s2-a2",
+          "outcome": "completed",
+          "exit_code": 23,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_SYMLINK_TOOLCHAIN",
+            ""
+          ],
+          "duration_ms": 799.844,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "c21e88afe01715a5cef9186eee573b282e0012675bd177b00df1677d053945ad",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 23,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_SYMLINK_TOOLCHAIN"
+            ]
+          },
+          "signature_sha256": "2745c492a05e8ae7437eafbd35917cea80e71f38831aec0f8e678578bd458d93",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s2-a2/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s2-a2/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s2-a2/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s2-a2/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s2-a2/work/link-hops/node-hop"
+            ]
+          ]
+        }
+      ],
+      "delta_check": {
+        "a1_a2_normalized_argv_equal": true,
+        "single_token_delta": true,
+        "delta_valid": true,
+        "delta_reason": "declared delta kind satisfied",
+        "b_single_path_prepend": true,
+        "prepended_directory": "/arm/assets/repository-fixture/bin"
+      }
+    },
+    {
+      "index": 3,
+      "arms": [
+        {
+          "identity": "A1",
+          "sequence_index": 3,
+          "freshness_id": "s3-a1-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s3-a1",
+          "outcome": "completed",
+          "exit_code": 23,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_SYMLINK_TOOLCHAIN",
+            ""
+          ],
+          "duration_ms": 790.162,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "c21e88afe01715a5cef9186eee573b282e0012675bd177b00df1677d053945ad",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 23,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_SYMLINK_TOOLCHAIN"
+            ]
+          },
+          "signature_sha256": "2745c492a05e8ae7437eafbd35917cea80e71f38831aec0f8e678578bd458d93",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s3-a1/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s3-a1/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s3-a1/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s3-a1/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s3-a1/work/link-hops/node-hop"
+            ]
+          ]
+        },
+        {
+          "identity": "B",
+          "sequence_index": 3,
+          "freshness_id": "s3-b-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s3-b",
+          "outcome": "completed",
+          "exit_code": 0,
+          "stdout_lines": [
+            "RUNPARITY_OK:dev-path-003",
+            ""
+          ],
+          "stderr_lines": [
+            ""
+          ],
+          "duration_ms": 597.876,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/arm/assets/repository-fixture/bin:/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "d2f4c48f8d69d6c6c93ebeae018e0100ee517196298b6f19a10c8bab427618b7",
+          "signature": null,
+          "signature_sha256": null,
+          "oracle_evaluation": {
+            "oracle_type": "exit_code_and_stdout",
+            "satisfied": true,
+            "checks": {
+              "exit_code_matches": true,
+              "stdout_contains_matches": true
+            },
+            "observed": {
+              "exit_code": 0,
+              "stdout_excerpt": [
+                "RUNPARITY_OK:dev-path-003",
+                ""
+              ]
+            }
+          },
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s3-b/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s3-b/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s3-b/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s3-b/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s3-b/work/link-hops/node-hop"
+            ]
+          ]
+        },
+        {
+          "identity": "A2",
+          "sequence_index": 3,
+          "freshness_id": "s3-a2-mt4fayhi",
+          "arm_name": "rp-dev-path-003-s3-a2",
+          "outcome": "completed",
+          "exit_code": 23,
+          "stdout_lines": [
+            ""
+          ],
+          "stderr_lines": [
+            "RP_FIXTURE_SYMLINK_TOOLCHAIN",
+            ""
+          ],
+          "duration_ms": 621.542,
+          "normalized_argv": [
+            "podman",
+            "run",
+            "--rm",
+            "--name",
+            "<ARM_NAME>",
+            "--network",
+            "none",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--read-only",
+            "--userns",
+            "keep-id:uid=10001,gid=10001",
+            "--user",
+            "10001:10001",
+            "--pids-limit",
+            "64",
+            "--memory",
+            "536870912",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=16m,mode=1777",
+            "-v",
+            "/home/rp/assets/DEV-PATH-003:/arm/assets:ro",
+            "-v",
+            "/home/rp/arms/<ARM_NAME>:/home/arm:rw",
+            "-e",
+            "HOME=/home/arm",
+            "-e",
+            "PATH=/home/arm/work/preexisting/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "-e",
+            "RUNPARITY_FIXTURE_REAL_NODE=/usr/local/bin/node",
+            "--workdir",
+            "/home/arm/work",
+            "--timeout",
+            "120",
+            "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+            "node",
+            "fixture/assert-toolchain-marker.mjs",
+            "--assert-compatible"
+          ],
+          "argv_sha256": "c21e88afe01715a5cef9186eee573b282e0012675bd177b00df1677d053945ad",
+          "signature": {
+            "schema_version": "runparity.failure-signature/path-shadowing/v1",
+            "family": "PATH_SHADOWING",
+            "exit_code": 23,
+            "stdout_sentinels": [],
+            "stderr_sentinels": [
+              "RP_FIXTURE_SYMLINK_TOOLCHAIN"
+            ]
+          },
+          "signature_sha256": "2745c492a05e8ae7437eafbd35917cea80e71f38831aec0f8e678578bd458d93",
+          "oracle_evaluation": null,
+          "post_run_container_absent": true,
+          "home_dir_created_fresh": true,
+          "home_prep": [
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s3-a2/work/preexisting/bin"
+            ],
+            [
+              "mkdir",
+              "-p",
+              "/home/rp/arms/rp-dev-path-003-s3-a2/work/link-hops"
+            ],
+            [
+              "cp",
+              "-r",
+              "/home/rp/assets/DEV-PATH-003/.",
+              "/home/rp/arms/rp-dev-path-003-s3-a2/work"
+            ],
+            [
+              "ln",
+              "-s",
+              "../../link-hops/node-hop",
+              "/home/rp/arms/rp-dev-path-003-s3-a2/work/preexisting/bin/node"
+            ],
+            [
+              "ln",
+              "-s",
+              "../unintended-toolchain/bin/node-target",
+              "/home/rp/arms/rp-dev-path-003-s3-a2/work/link-hops/node-hop"
+            ]
+          ]
+        }
+      ],
+      "delta_check": {
+        "a1_a2_normalized_argv_equal": true,
+        "single_token_delta": true,
+        "delta_valid": true,
+        "delta_reason": "declared delta kind satisfied",
+        "b_single_path_prepend": true,
+        "prepended_directory": "/arm/assets/repository-fixture/bin"
+      }
+    }
+  ],
+  "safety": {
+    "all_arms_completed": true,
+    "all_containers_removed": true,
+    "all_home_dirs_fresh": true
+  },
+  "runner_version": "runparity-fixtures/0.1.0",
+  "verified_at": "2026-08-22T13:37:45Z",
+  "status": "passed"
+}

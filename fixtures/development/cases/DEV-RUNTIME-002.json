@@ -6,7 +6,7 @@
   "kind": "supported_positive",
   "title": "Package manager violates packageManager pin",
   "summary": "The invoked pre-installed pnpm version differs from the exact packageManager declaration without changing Node or the lockfile.",
-  "fixture_status": "implemented",
+  "fixture_status": "verified",
   "gold_category": "RUNTIME_MANAGER_DRIFT",
   "expected_terminal_verdict": "VERIFIED_INTERVENTION",
   "platform": {
@@ -66,9 +66,9 @@
     "missing_assets": [],
     "receipts": {
       "build": "receipts/build/DEV-RUNTIME-002.json",
-      "backend_qualification": null,
-      "verification_ledger": null
+      "backend_qualification": "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+      "verification_ledger": "receipts/ledger/DEV-RUNTIME-002.json"
     },
-    "verified_at": null
+    "verified_at": "2026-08-22T13:38:37Z"
   }
 }

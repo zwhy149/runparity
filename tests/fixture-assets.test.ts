@@ -203,17 +203,17 @@ describe("implemented development fixture assets", () => {
     const packageManifest = JSON.parse(readFileSync(resolve(assetRoot, "package.json"), "utf8"));
 
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       implementation: {
         runnable: true,
         asset_root: "development/assets/DEV-RUNTIME-001",
         missing_assets: [],
         receipts: {
           build: "receipts/build/DEV-RUNTIME-001.json",
-          backend_qualification: null,
-          verification_ledger: null,
+          backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+          verification_ledger: "receipts/ledger/DEV-RUNTIME-001.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
     expect(packageManifest).toMatchObject({
@@ -575,7 +575,7 @@ describe("implemented development fixture assets", () => {
     );
 
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: {
         planned_target_argv: ["node", "fixture/assert-toolchain-marker.mjs", "--assert-compatible"],
       },
@@ -585,10 +585,10 @@ describe("implemented development fixture assets", () => {
         missing_assets: [],
         receipts: {
           build: "receipts/build/DEV-PATH-003.json",
-          backend_qualification: null,
-          verification_ledger: null,
+          backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+          verification_ledger: "receipts/ledger/DEV-PATH-003.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
     expect(layout).toEqual({
@@ -1247,7 +1247,7 @@ describe("implemented development fixture assets", () => {
     );
 
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: { planned_target_argv: ["npm", "run", "fixture:assert-config"] },
       implementation: {
         runnable: true,
@@ -1255,10 +1255,10 @@ describe("implemented development fixture assets", () => {
         missing_assets: [],
         receipts: {
           build: "receipts/build/DEV-CONFIG-001.json",
-          backend_qualification: null,
-          verification_ledger: null,
+          backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+          verification_ledger: "receipts/ledger/DEV-CONFIG-001.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
 
@@ -1367,7 +1367,7 @@ describe("implemented development fixture assets", () => {
       readFileSync(resolve(fixtureRoot, "development", "cases", "DEV-CONFIG-002.json"), "utf8"),
     );
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: { planned_target_argv: ["npm", "run", "fixture:assert-config"] },
       implementation: {
         runnable: true,
@@ -1375,10 +1375,10 @@ describe("implemented development fixture assets", () => {
         missing_assets: [],
         receipts: {
           build: "receipts/build/DEV-CONFIG-002.json",
-          backend_qualification: null,
-          verification_ledger: null,
+          backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+          verification_ledger: "receipts/ledger/DEV-CONFIG-002.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
 
@@ -1459,7 +1459,7 @@ describe("implemented development fixture assets", () => {
       readFileSync(resolve(fixtureRoot, "development", "cases", "DEV-CONFIG-003.json"), "utf8"),
     );
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: {
         planned_target_argv: ["npm", "run", "fixture:assert-config", "--", "--fund=false"],
       },
@@ -1469,10 +1469,10 @@ describe("implemented development fixture assets", () => {
         missing_assets: [],
         receipts: {
           build: "receipts/build/DEV-CONFIG-003.json",
-          backend_qualification: null,
-          verification_ledger: null,
+          backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+          verification_ledger: "receipts/ledger/DEV-CONFIG-003.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
 
@@ -1631,7 +1631,7 @@ describe("implemented development fixture assets", () => {
     );
 
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: {
         planned_target_argv: ["pnpm", "exec", "node", "fixture/assert-pnpm-marker.mjs"],
         expected_a_failure_signature: "ERR_MODULE_NOT_FOUND",
@@ -1642,10 +1642,10 @@ describe("implemented development fixture assets", () => {
         missing_assets: [],
         receipts: {
           build: "receipts/build/DEV-PATH-002.json",
-          backend_qualification: null,
-          verification_ledger: null,
+          backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+          verification_ledger: "receipts/ledger/DEV-PATH-002.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
 
@@ -1819,7 +1819,7 @@ describe("implemented development fixture assets", () => {
       readFileSync(resolve(fixtureRoot, "development", "cases", "DEV-RUNTIME-002.json"), "utf8"),
     );
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: {
         planned_target_argv: ["pnpm", "exec", "node", "fixture/assert-manager-version.mjs"],
       },
@@ -1829,10 +1829,10 @@ describe("implemented development fixture assets", () => {
         missing_assets: [],
         receipts: {
           build: "receipts/build/DEV-RUNTIME-002.json",
-          backend_qualification: null,
-          verification_ledger: null,
+          backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+          verification_ledger: "receipts/ledger/DEV-RUNTIME-002.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
 
@@ -1971,7 +1971,7 @@ describe("implemented development fixture assets", () => {
       readFileSync(resolve(fixtureRoot, "development", "cases", "DEV-RUNTIME-003.json"), "utf8"),
     );
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: { planned_target_argv: ["pnpm", "run", "assert-runtime-provenance"] },
       implementation: {
         runnable: true,
@@ -1979,10 +1979,10 @@ describe("implemented development fixture assets", () => {
         missing_assets: [],
         receipts: {
           build: "receipts/build/DEV-RUNTIME-003.json",
-          backend_qualification: null,
-          verification_ledger: null,
+          backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+          verification_ledger: "receipts/ledger/DEV-RUNTIME-003.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
 
@@ -2329,7 +2329,7 @@ describe("implemented development fixture assets", () => {
         readFileSync(resolve(assetRoot, "fixture", "environment-a.json"), "utf8"),
       );
       expect(manifest).toMatchObject({
-        fixture_status: "implemented",
+        fixture_status: "verified",
         scenario: {
           expected_a_failure_signature: "NODE_MODULE_VERSION",
         },
@@ -2339,10 +2339,10 @@ describe("implemented development fixture assets", () => {
           missing_assets: [],
           receipts: {
             build: "receipts/build/DEV-NATIVE-001.json",
-            backend_qualification: null,
-            verification_ledger: null,
+            backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+            verification_ledger: "receipts/ledger/DEV-NATIVE-001.json",
           },
-          verified_at: null,
+          verified_at: expect.any(String),
         },
       });
       expect(environmentA).toMatchObject({
@@ -2541,7 +2541,7 @@ describe("implemented development fixture assets", () => {
         readFileSync(resolve(assetRoot, "fixture", "environment-a.json"), "utf8"),
       );
       expect(manifest).toMatchObject({
-        fixture_status: "implemented",
+        fixture_status: "verified",
         scenario: { expected_a_failure_signature: "RP_FIXTURE_NATIVE_ARCH_MISMATCH" },
         implementation: {
           runnable: true,
@@ -2549,10 +2549,10 @@ describe("implemented development fixture assets", () => {
           missing_assets: [],
           receipts: {
             build: "receipts/build/DEV-NATIVE-002.json",
-            backend_qualification: null,
-            verification_ledger: null,
+            backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+            verification_ledger: "receipts/ledger/DEV-NATIVE-002.json",
           },
-          verified_at: null,
+          verified_at: expect.any(String),
         },
       });
       expect(environment).toMatchObject({
@@ -2735,7 +2735,7 @@ describe("implemented development fixture assets", () => {
         return;
       }
       expect(manifest).toMatchObject({
-        fixture_status: "implemented",
+        fixture_status: "verified",
         scenario: { expected_a_failure_signature: "RP_FIXTURE_NATIVE_LIBC_MISMATCH" },
         implementation: {
           runnable: true,
@@ -2743,10 +2743,10 @@ describe("implemented development fixture assets", () => {
           missing_assets: [],
           receipts: {
             build: "receipts/build/DEV-NATIVE-003.json",
-            backend_qualification: null,
-            verification_ledger: null,
+            backend_qualification: "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+            verification_ledger: "receipts/ledger/DEV-NATIVE-003.json",
           },
-          verified_at: null,
+          verified_at: expect.any(String),
         },
       });
       expect(environment).toMatchObject({
