@@ -1,0 +1,9 @@
+{
+  "schema_version": "runparity.fixture-environment/v1",
+  "case_id": "DEV-PATH-002",
+  "arm_role": "a",
+  "variables": {
+    "RUNPARITY_FIXTURE_REAL_NODE": "<external-node-entry>"
+  },
+  "note": "A arms put stale-pnpm/bin first in PATH. Its launcher forwards to an absolute pnpm-entry target that no longer exists, so Node fails with a genuine ERR_MODULE_NOT_FOUND before any fixture assertion runs. The approved launcher chain carries the same declared manager identity and reaches the frozen assertion. The planned path.prepend(approved_pnpm_bin) intervention changes only the PATH order in B."
+}

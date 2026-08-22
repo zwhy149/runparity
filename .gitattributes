@@ -1,0 +1,2 @@
+# Raw fixture and manifest digests must be stable across checkout platforms.
+* text=auto eol=lf

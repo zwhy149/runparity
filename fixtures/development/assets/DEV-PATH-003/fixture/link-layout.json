@@ -1,0 +1,16 @@
+{
+  "schema": "runparity.fixture-link-layout/v1",
+  "command": "node",
+  "links": [
+    {
+      "path": "preexisting/bin/node",
+      "target": "../../link-hops/node-hop"
+    },
+    {
+      "path": "link-hops/node-hop",
+      "target": "../unintended-toolchain/bin/node-target"
+    }
+  ],
+  "incompatible_target": "unintended-toolchain/bin/node-target",
+  "repository_entry": "repository-fixture/bin/node"
+}

@@ -1,0 +1,10 @@
+#!/bin/sh
+case "${RUNPARITY_FIXTURE_REAL_NODE-}" in
+  /*) ;;
+  *)
+    printf '%s\n' 'RP_FIXTURE_INVALID_REAL_NODE' >&2
+    exit 64
+    ;;
+esac
+export RUNPARITY_FIXTURE_TOOLCHAIN_MARKER=compatible
+exec "$RUNPARITY_FIXTURE_REAL_NODE" "$@"

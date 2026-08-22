@@ -1,0 +1,75 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-CONFIG-001",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Environment boolean config overrides project npmrc",
+  "summary": "An npm_config boolean environment value wins over a contradictory project .npmrc value for one allowlisted non-secret key.",
+  "fixture_status": "implemented",
+  "gold_category": "CONFIG_PRECEDENCE",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-CONFIG-001 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-config-001",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "config.set",
+    "target": "npm.fund",
+    "parameters": {
+      "source": "environment",
+      "key": "npm_config_fund",
+      "value_role": "expected_fixture_value"
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-NPM-CONFIG-PRECEDENCE", "SRC-NPM-NPMRC"],
+  "scenario": {
+    "failure_mode": "npm resolves fund=false from the higher-priority environment source while the lifecycle assertion expects the project value true.",
+    "planned_setup": [
+      "Create a project .npmrc with fund=true as the expected fixture value.",
+      "Set npm_config_fund=false in the isolated environment.",
+      "Run an npm lifecycle assertion that checks the effective boolean without package installation or network access."
+    ],
+    "planned_target_argv": ["npm", "run", "fixture:assert-config"],
+    "expected_a_failure_signature": "RP_FIXTURE_ENV_OVERRIDES_PROJECT_NPMRC"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-CONFIG-001",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-CONFIG-001.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

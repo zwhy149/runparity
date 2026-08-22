@@ -1,0 +1,9 @@
+{
+  "schema_version": "runparity.fixture-environment/v1",
+  "case_id": "DEV-RUNTIME-003",
+  "arm_role": "a",
+  "variables": {
+    "RUNPARITY_FIXTURE_EXPECTED_RUNTIME_ROLE": "approved"
+  },
+  "note": "A arms keep PATH so the direct node resolves to runtime-manager/approved/bin/node while the package-manager launcher binds to runtime-manager/unintended/bin/node. The planned runtime.select(node) intervention rebinds only the package-manager Node slot to the approved role in B; PATH stays byte-for-byte identical."
+}

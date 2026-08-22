@@ -1,0 +1,15 @@
+{
+  "schema_version": "runparity.fixture-build-receipt/v1",
+  "case_id": "DEV-OOS-001",
+  "manifest_sha256": "8dc55d52cc7faeaac85aba3e37f9fbdfc940f84e3aa13e4883fc1813d78b7b6c",
+  "asset_root": "development/assets/DEV-OOS-001",
+  "asset_inventory_schema_version": "runparity.asset-inventory/v1",
+  "asset_inventory_sha256": "a222d9f98e88aa75a887f58b25519b45feff76a3cccbf9b6056b9fa156223396",
+  "asset_inventory_stability": "unqualified_live_tree",
+  "entrypoint": {
+    "kind": "node_script",
+    "path": "fixture/registry-probe.mjs"
+  },
+  "status": "passed",
+  "created_at": "2026-08-17T12:42:53.425Z"
+}

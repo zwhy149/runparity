@@ -1,0 +1,74 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-PATH-002",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Stale pnpm shim wins PATH order",
+  "summary": "A stale pnpm forwarding shim shadows the repository-approved pnpm launcher while both are already present in the isolated fixture.",
+  "fixture_status": "implemented",
+  "gold_category": "PATH_SHADOWING",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-PATH-002 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-path-002",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "path.prepend",
+    "target": "PATH",
+    "parameters": {
+      "directory_role": "approved_pnpm_bin"
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-PNPM-INSTALL-PATH", "SRC-GH-PNPM-10608"],
+  "scenario": {
+    "failure_mode": "The stale pnpm launcher's Node entry target no longer exists, so the resolved command fails with a genuine missing-module error before any fixture assertion can run.",
+    "planned_setup": [
+      "Create stale and approved pnpm-compatible forwarding launchers with the same declared manager identity.",
+      "Remove the stale launcher's absolute Node entry target from its tree.",
+      "Place the stale launcher first in PATH.",
+      "Do not execute a shell profile."
+    ],
+    "planned_target_argv": ["pnpm", "exec", "node", "fixture/assert-pnpm-marker.mjs"],
+    "expected_a_failure_signature": "ERR_MODULE_NOT_FOUND"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-PATH-002",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-PATH-002.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "runparity.fixture-build-receipt/v1",
+  "case_id": "DEV-NEG-001",
+  "manifest_sha256": "6edf45ccdf2460bad077ebfc3cb25759759eb65a205e688c81e0266018ddec08",
+  "asset_root": "development/assets/DEV-NEG-001",
+  "asset_inventory_schema_version": "runparity.asset-inventory/v1",
+  "asset_inventory_sha256": "6953d289d02341c4a46986d31f15aebebe0107e3aa159c87a56c615cd47cb7c0",
+  "asset_inventory_stability": "unqualified_live_tree",
+  "entrypoint": {
+    "kind": "node_script",
+    "path": "fixture.mjs"
+  },
+  "status": "passed",
+  "created_at": "2026-08-17T12:42:53.665Z"
+}

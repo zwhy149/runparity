@@ -1,0 +1,8 @@
+{
+  "name": "runparity-fixture-dev-runtime-003",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "assert-runtime-provenance": "node fixture/assert-runtime-provenance.mjs"
+  }
+}

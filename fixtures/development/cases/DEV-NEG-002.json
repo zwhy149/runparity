@@ -1,0 +1,67 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-NEG-002",
+  "suite": "open-development-v1",
+  "kind": "hard_negative",
+  "title": "Invalid input data with sensitive flag",
+  "summary": "A deterministic data-schema error is observed with a sensitive-flag canary, while one Host Observe run cannot establish environment independence.",
+  "fixture_status": "implemented",
+  "gold_category": null,
+  "expected_terminal_verdict": "PARTIAL_EVIDENCE",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "host_observation"
+  },
+  "proof_eligibility": {
+    "eligible": false,
+    "backend": "none",
+    "reason": "The observation does not justify a typed environment intervention or an isolated proof attempt."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The target's frozen business assertion remains unchanged while RunParity emits no environment Intervention for DEV-NEG-002.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-neg-002",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": null,
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-RUNPARITY-V1-SCOPE", "SRC-RUNPARITY-VALIDATION-DESIGN"],
+  "scenario": {
+    "failure_mode": "The parser rejects a frozen malformed payload and echoes a sensitive-flag canary, yielding partial evidence without an environment Intervention.",
+    "planned_setup": [
+      "Create a malformed schema fixture.",
+      "Pass a non-secret canary using --api-key as two argv tokens.",
+      "Echo the canary to stdout and stderr for redaction checks."
+    ],
+    "planned_target_argv": ["node", "fixture.mjs", "--api-key", "FIXTURE_SECRET_CANARY_987654321"],
+    "expected_a_failure_signature": "RP_FIXTURE_INVALID_APPLICATION_DATA"
+  },
+  "safety_expectations": {
+    "network": "not_used",
+    "host_writes": "none",
+    "sensitive_flag_probe": true,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-NEG-002",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-NEG-002.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

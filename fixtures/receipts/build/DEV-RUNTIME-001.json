@@ -1,0 +1,15 @@
+{
+  "schema_version": "runparity.fixture-build-receipt/v1",
+  "case_id": "DEV-RUNTIME-001",
+  "manifest_sha256": "49d5d63666a35e93d7140353a60156aade50feb373011602fa272683229ec1ab",
+  "asset_root": "development/assets/DEV-RUNTIME-001",
+  "asset_inventory_schema_version": "runparity.asset-inventory/v1",
+  "asset_inventory_sha256": "5b2cd550fdd22862ec7440e61780b63ed726480e9593abb6b0e02733d9813779",
+  "asset_inventory_stability": "unqualified_live_tree",
+  "entrypoint": {
+    "kind": "node_script",
+    "path": "fixture/assert-engines-range.mjs"
+  },
+  "status": "passed",
+  "created_at": "2026-08-17T12:42:52.788Z"
+}

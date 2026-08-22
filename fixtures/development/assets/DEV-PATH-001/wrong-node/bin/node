@@ -1,0 +1,11 @@
+#!/bin/sh
+case "${RUNPARITY_FIXTURE_REAL_NODE-}" in
+  /*) ;;
+  *)
+    printf '%s\n' 'RP_FIXTURE_REAL_NODE_REQUIRED' >&2
+    exit 64
+    ;;
+esac
+RUNPARITY_FIXTURE_NODE_MARKER=wrong
+export RUNPARITY_FIXTURE_NODE_MARKER
+exec "$RUNPARITY_FIXTURE_REAL_NODE" "$@"

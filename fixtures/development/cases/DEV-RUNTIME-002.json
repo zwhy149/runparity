@@ -1,0 +1,74 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-RUNTIME-002",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Package manager violates packageManager pin",
+  "summary": "The invoked pre-installed pnpm version differs from the exact packageManager declaration without changing Node or the lockfile.",
+  "fixture_status": "implemented",
+  "gold_category": "RUNTIME_MANAGER_DRIFT",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-RUNTIME-002 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-runtime-002",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "runtime.select",
+    "target": "package_manager",
+    "parameters": {
+      "selector_ref": "package.json#/packageManager",
+      "preinstalled_only": true
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-GH-PNPM-10608", "SRC-NPM-PACKAGE-JSON"],
+  "scenario": {
+    "failure_mode": "The fixture command observes a pnpm version different from the exact packageManager constraint.",
+    "planned_setup": [
+      "Provide two pnpm launchers under one Node runtime with distinct adjacent version markers.",
+      "Pin one pnpm version in package.json.",
+      "Select the wrong-version pnpm launcher in A arms."
+    ],
+    "planned_target_argv": ["pnpm", "exec", "node", "fixture/assert-manager-version.mjs"],
+    "expected_a_failure_signature": "RP_FIXTURE_PACKAGE_MANAGER_VERSION"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-RUNTIME-002",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-RUNTIME-002.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

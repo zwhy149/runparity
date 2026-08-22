@@ -1,0 +1,9 @@
+{
+  "schema_version": "runparity.fixture-environment/v1",
+  "case_id": "DEV-CONFIG-003",
+  "arm_role": "a",
+  "variables": {
+    "npm_config_fund": "true"
+  },
+  "note": "A arms set npm_config_fund=true in the environment while the fixed target argv carries the contradictory CLI flag --fund=false; the highest-priority CLI source wins, so the lifecycle assertion expecting the environment value fails. The planned config.set(cli, fund, expected) intervention replaces exactly one normalized CLI flag value in B; the ledger treats that replacement as the sole typed delta."
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-OOS-001",
+  "suite": "open-development-v1",
+  "kind": "out_of_scope_environment",
+  "title": "Windows privileged registry repair",
+  "summary": "A recognized npm forwarding shim reaches a setup command whose success requires administrator-only registry and system-wide PATH mutation.",
+  "fixture_status": "implemented",
+  "gold_category": null,
+  "expected_terminal_verdict": "REFUSED_OUT_OF_SCOPE",
+  "platform": {
+    "os": "windows",
+    "arch": "x64",
+    "libc": "none",
+    "execution_context": "host_observation"
+  },
+  "proof_eligibility": {
+    "eligible": false,
+    "backend": "none",
+    "reason": "V1 has no qualified native Windows intervention backend, and the requested repair would mutate privileged host state."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The target's business assertion remains fixed even though RunParity must refuse an environment intervention for DEV-OOS-001.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-oos-001",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": null,
+  "expected_refusal": {
+    "terminal_verdict": "REFUSED_OUT_OF_SCOPE",
+    "reason_code": "RP_UNSUPPORTED_PLATFORM_ISOLATION",
+    "explanation": "V1 has no qualified native Windows intervention backend, and the requested repair would mutate privileged host state."
+  },
+  "source_evidence_ids": ["SRC-RUNPARITY-V1-SCOPE", "SRC-PNPM-INSTALL-PATH"],
+  "scenario": {
+    "failure_mode": "The host command reports a registry-dependent toolchain lookup failure after safe shim recognition.",
+    "planned_setup": [
+      "Create an exact allowlisted Node forwarding shim.",
+      "Use a fixture probe that reports the missing privileged registry key.",
+      "Do not attempt the registry write."
+    ],
+    "planned_target_argv": ["npm", "run", "fixture:registry-probe"],
+    "expected_a_failure_signature": "RP_FIXTURE_WINDOWS_PRIVILEGED_REGISTRY"
+  },
+  "safety_expectations": {
+    "network": "not_used",
+    "host_writes": "none",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": true
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-OOS-001",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-OOS-001.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

@@ -1,0 +1,698 @@
+{
+  "schema_version": "runparity.backend-qualification-facts/v1",
+  "collector_version": 1,
+  "arm_isolation_policy_digest": "129bb017710d7a4d72ca2231ba8d7afe608973931de9c7e1dbda1ead1877e207",
+  "image_digest_ref": "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+  "image_acquisition_mirror": "docker.1ms.run mirror of docker.io (content-addressed digests identical; direct docker.io egress unavailable at this site)",
+  "vm_identity": {
+    "user_uid": "1000",
+    "user_gid": "1000",
+    "kernel": "6.8.0-137-generic",
+    "os_release_pretty": "Ubuntu 24.04.4 LTS"
+  },
+  "engine": {
+    "version": "4.9.3",
+    "api_version": "4.9.3",
+    "rootless": true,
+    "cgroup_version": "v2",
+    "cgroup_controllers": ["cpu", "memory", "pids"],
+    "id_mappings_uid": ["0:1000:1", "1:100000:65536"],
+    "id_mappings_gid": ["0:1000:1", "1:100000:65536"],
+    "conmon_path": null
+  },
+  "image": {
+    "image_id": "fc8cd9deea7389d01d9a70cc83a5d09465c2050f2ae322d67300a9794433edad",
+    "os": "linux",
+    "architecture": "amd64",
+    "repo_digests": [
+      "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+      "docker.1ms.run/library/node@sha256:d649c27dae7ba0137b3cef5dd75baa422c08dc3d9e3fc0c23dfb172dc3cc6436"
+    ]
+  },
+  "privilege_probe": {
+    "probe": {
+      "state": "collected",
+      "exit_code": 0,
+      "stdout_sha256": "b63442d7f49a5f956e9a4ea225714f2ed10ab9cebcc33257e2c175412bf21317",
+      "parsed": {
+        "schema": "runparity.linux_rootless_privilege_probe_bundle/v1",
+        "captureView": "guest_probe_process_self",
+        "platform": {
+          "state": "observed",
+          "text": "os=linux\narchitecture=amd64\n"
+        },
+        "procSelfStatus": {
+          "state": "observed",
+          "text": "Name:\tnode\nUmask:\t0022\nState:\tR (running)\nTgid:\t1\nNgid:\t0\nPid:\t1\nPPid:\t0\nTracerPid:\t0\nUid:\t10001\t10001\t10001\t10001\nGid:\t10001\t10001\t10001\t10001\nFDSize:\t64\nGroups:\t10001 \nNStgid:\t1\nNSpid:\t1\nNSpgid:\t1\nNSsid:\t1\nKthread:\t0\nVmPeak:\t  749392 kB\nVmSize:\t  749140 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   46648 kB\nVmRSS:\t   46648 kB\nRssAnon:\t    7196 kB\nRssFile:\t   39452 kB\nRssShmem:\t       0 kB\nVmData:\t   49212 kB\nVmStk:\t     132 kB\nVmExe:\t   38696 kB\nVmLib:\t    1984 kB\nVmPTE:\t     468 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffffff\nThreads:\t7\nSigQ:\t0/14340\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000100004602\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t0000000000000000\nCapAmb:\t0000000000000000\nNoNewPrivs:\t1\nSeccomp:\t2\nSeccomp_filters:\t1\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tf\nCpus_allowed_list:\t0-3\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t10\nnonvoluntary_ctxt_switches:\t1\nx86_Thread_features:\t\nx86_Thread_features_locked:\t\n"
+        },
+        "procSelfUidMap": {
+          "state": "observed",
+          "text": "         0          1      10001\n     10001          0          1\n     10002      10002      55535\n"
+        },
+        "procSelfGidMap": {
+          "state": "observed",
+          "text": "         0          1      10001\n     10001          0          1\n     10002      10002      55535\n"
+        },
+        "overflowUid": {
+          "state": "observed",
+          "text": "65534\n"
+        },
+        "overflowGid": {
+          "state": "observed",
+          "text": "65534\n"
+        }
+      },
+      "note": null
+    },
+    "bundle_decoded": true,
+    "facts": {
+      "schema": "runparity.linux_rootless_privilege_facts/v1",
+      "guestPlatform": {
+        "state": "observed",
+        "value": {
+          "os": "linux",
+          "architecture": "amd64"
+        }
+      },
+      "processIdentity": {
+        "state": "observed",
+        "value": {
+          "uids": {
+            "real": 10001,
+            "effective": 10001,
+            "saved": 10001,
+            "filesystem": 10001
+          },
+          "gids": {
+            "real": 10001,
+            "effective": 10001,
+            "saved": 10001,
+            "filesystem": 10001
+          },
+          "supplementaryGids": [10001]
+        }
+      },
+      "overflowIds": {
+        "state": "observed",
+        "value": {
+          "uid": 65534,
+          "gid": 65534
+        }
+      },
+      "userNamespaceMaps": {
+        "state": "observed",
+        "value": {
+          "view": "target_self_parent",
+          "uid": [
+            {
+              "insideStart": 0,
+              "outsideStart": 1,
+              "length": 10001
+            },
+            {
+              "insideStart": 10001,
+              "outsideStart": 0,
+              "length": 1
+            },
+            {
+              "insideStart": 10002,
+              "outsideStart": 10002,
+              "length": 55535
+            }
+          ],
+          "gid": [
+            {
+              "insideStart": 0,
+              "outsideStart": 1,
+              "length": 10001
+            },
+            {
+              "insideStart": 10001,
+              "outsideStart": 0,
+              "length": 1
+            },
+            {
+              "insideStart": 10002,
+              "outsideStart": 10002,
+              "length": 55535
+            }
+          ]
+        }
+      },
+      "capabilitySets": {
+        "state": "observed",
+        "value": {
+          "effective": "0",
+          "permitted": "0",
+          "inheritable": "0",
+          "ambient": "0",
+          "bounding": "0"
+        }
+      },
+      "noNewPrivileges": {
+        "state": "observed",
+        "value": 1
+      }
+    },
+    "classification": {
+      "kind": "contradictory",
+      "contradictions": ["parent_root_uid_mapped", "parent_root_gid_mapped"],
+      "missing": []
+    }
+  },
+  "parent_binding": {
+    "container_pid": "18130",
+    "ran_detached": true,
+    "host_status_text": "Name:\tsleep\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t18130\nNgid:\t0\nPid:\t18130\nPPid:\t18127\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t64\nGroups:\t1000 \nNStgid:\t18130\t1\nNSpid:\t18130\t1\nNSpgid:\t18130\t1\nNSsid:\t18130\t1\nKthread:\t0\nVmPeak:\t    2492 kB\nVmSize:\t    2492 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t    1488 kB\nVmRSS:\t    1488 kB\nRssAnon:\t      92 kB\nRssFile:\t    1396 kB\nRssShmem:\t       0 kB\nVmData:\t     224 kB\nVmStk:\t     132 kB\nVmExe:\t      20 kB\nVmLib:\t    1528 kB\nVmPTE:\t      44 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffffff\nThreads:\t1\nSigQ:\t0/14340\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000000000\nSigCgt:\t0000000000000000\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t0000000000000000\nCapAmb:\t0000000000000000\nNoNewPrivs:\t1\nSeccomp:\t2\nSeccomp_filters:\t1\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tf\nCpus_allowed_list:\t0-3\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t6\nnonvoluntary_ctxt_switches:\t1\nx86_Thread_features:\t\nx86_Thread_features_locked:\t\n",
+    "host_uid_map_text": "         0     100000      10001\n     10001       1000          1\n     10002     110001      55535\n",
+    "post_destroy_sleep_count": "0"
+  },
+  "readonly_write": {
+    "state": "collected",
+    "exit_code": 0,
+    "stdout_sha256": "7bbd759c75568ac4222b5ebf3ebbc52ef992117eb09c489b861d060d52ea7eac",
+    "parsed": {
+      "schema_version": "runparity.backend-probe/readonly-write/v1",
+      "arm_user": "10001:10001",
+      "attempts": [
+        {
+          "target": "root_filesystem",
+          "path": "/probe-write-canary",
+          "outcome": "refused",
+          "error_code": "EROFS"
+        },
+        {
+          "target": "read_only_mount",
+          "path": "/probe/runparity-write-canary",
+          "outcome": "refused",
+          "error_code": "ENOENT"
+        },
+        {
+          "target": "writable_arm_home",
+          "path": "/home/arm/runparity-write-canary",
+          "outcome": "wrote",
+          "error_code": null
+        },
+        {
+          "target": "writable_tmpfs",
+          "path": "/tmp/runparity-write-canary",
+          "outcome": "wrote",
+          "error_code": null
+        }
+      ],
+      "home_accessible_writable": true
+    },
+    "note": null
+  },
+  "network_denial": {
+    "state": "collected",
+    "exit_code": 0,
+    "stdout_sha256": "f1a0b30732d6b7be5c0eee9b8c2317e9db3b0345b811a2d3146fc98a5044d8f0",
+    "parsed": {
+      "schema_version": "runparity.backend-probe/network/v1",
+      "results": [
+        {
+          "target": "fixed_ipv4_http",
+          "outcome": "refused",
+          "error_code": "ENETUNREACH",
+          "elapsed_ms": 3.284165
+        },
+        {
+          "target": "fixed_ipv4_alt",
+          "outcome": "refused",
+          "error_code": "ENETUNREACH",
+          "elapsed_ms": 1.705525
+        }
+      ]
+    },
+    "note": null
+  },
+  "credentials_absent": {
+    "state": "collected",
+    "exit_code": 0,
+    "stdout_sha256": "2d160614e0588c63d4c3516837d706659977de8a103fac2b77a922a423bfbfe8",
+    "parsed": {
+      "schema_version": "runparity.backend-probe/credentials/v1",
+      "environment": [
+        {
+          "name": "DOCKER_HOST",
+          "present": false
+        },
+        {
+          "name": "DOCKER_CONTEXT",
+          "present": false
+        },
+        {
+          "name": "SSH_AUTH_SOCK",
+          "present": false
+        },
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "present": false
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "present": false
+        },
+        {
+          "name": "GITHUB_TOKEN",
+          "present": false
+        },
+        {
+          "name": "GH_TOKEN",
+          "present": false
+        },
+        {
+          "name": "NPM_TOKEN",
+          "present": false
+        },
+        {
+          "name": "CI_TOKEN",
+          "present": false
+        }
+      ],
+      "paths": [
+        {
+          "name": "docker_engine_socket",
+          "path": "/var/run/docker.sock",
+          "present": false
+        },
+        {
+          "name": "docker_socket_alt",
+          "path": "/run/docker.sock",
+          "present": false
+        },
+        {
+          "name": "ssh_directory",
+          "path": "/home/arm/.ssh",
+          "present": false
+        },
+        {
+          "name": "gpg_directory",
+          "path": "/home/arm/.gnupg",
+          "present": false
+        },
+        {
+          "name": "aws_directory",
+          "path": "/home/arm/.aws",
+          "present": false
+        },
+        {
+          "name": "kube_directory",
+          "path": "/home/arm/.kube",
+          "present": false
+        }
+      ]
+    },
+    "note": null
+  },
+  "resource_limits": {
+    "state": "collected",
+    "exit_code": 0,
+    "stdout_sha256": "b73ddadd92ba39dc99872782cf7b464b64c917ae5c99f37f4b56eb484d3242d6",
+    "parsed": {
+      "schema_version": "runparity.backend-probe/limits/v1",
+      "cgroup": {
+        "memory_max": {
+          "state": "observed",
+          "text": "536870912\n"
+        },
+        "memory_swap_max": {
+          "state": "observed",
+          "text": "536870912\n"
+        },
+        "pids_max": {
+          "state": "observed",
+          "text": "64\n"
+        },
+        "cpu_max": {
+          "state": "observed",
+          "text": "100000 100000\n"
+        },
+        "cgroup_controllers": {
+          "state": "observed",
+          "text": "cpu memory pids\n"
+        }
+      },
+      "rlimits": {
+        "Max cpu time": {
+          "soft": "unlimited",
+          "hard": "unlimited"
+        },
+        "Max file size": {
+          "soft": "unlimited",
+          "hard": "unlimited"
+        },
+        "Max processes": {
+          "soft": "14340",
+          "hard": "14340"
+        },
+        "Max open files": {
+          "soft": "1048576",
+          "hard": "1048576"
+        },
+        "Max address space": {
+          "soft": "unlimited",
+          "hard": "unlimited"
+        }
+      }
+    },
+    "note": null
+  },
+  "detached_destroy": {
+    "spawner": {
+      "state": "collected",
+      "exit_code": 0,
+      "stdout_sha256": "c8706da96529ec10401d8b091d25d56f01212e379cc101c16fe624eb8eca6749",
+      "parsed": {
+        "schema_version": "runparity.backend-probe/detached-spawner/v1",
+        "spawned": true,
+        "child_pid": 9
+      },
+      "note": null
+    },
+    "post_destroy_sleep_process_count": "0",
+    "container_leftover_json": "[]"
+  },
+  "cross_arm_freshness": {
+    "writer": {
+      "state": "collected",
+      "exit_code": 0,
+      "stdout_sha256": "d55ca5886501d2985533727db5f483fcdbdf9dc2c7e4a7277eaf579a2694fe40",
+      "parsed": {
+        "schema_version": "runparity.backend-probe/residue/v1",
+        "mode": "write",
+        "planted": true
+      },
+      "note": null
+    },
+    "checker": {
+      "state": "collected",
+      "exit_code": 0,
+      "stdout_sha256": "08fb24007dd3a9499d520fc1bd1d9561f8ea177479e3415b1999f5b4d08a2194",
+      "parsed": {
+        "schema_version": "runparity.backend-probe/residue/v1",
+        "mode": "check",
+        "entries": [],
+        "entry_count": 0
+      },
+      "note": null
+    }
+  },
+  "command_audit": [
+    {
+      "purpose": "vm_uid",
+      "args_digest": "ee52e4c22d25047a6b16a3f22ad1fa0e4f17dbcd6e24224e54e4cda12fb7dc29",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 319.423
+    },
+    {
+      "purpose": "vm_gid",
+      "args_digest": "64e549b29a30b22e90c9bcf369ca0032e29a9edf2076d30e56d2442b6c6a4963",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 286.041
+    },
+    {
+      "purpose": "vm_kernel",
+      "args_digest": "586d81c5c9565dba209005b98313a8cd308fe78614688bf1a9a75fd30fdaeed5",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 324.098
+    },
+    {
+      "purpose": "vm_os_release",
+      "args_digest": "41b156aef719f9ea6e41c9e4565ddfc2f79fe00de03d768901a3432f4c9ca6c4",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 267
+    },
+    {
+      "purpose": "podman_version",
+      "args_digest": "eef52bc2f800e8b73f7163b8725ac1ce8a38eccf031953964d4232efa437555f",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 305.919
+    },
+    {
+      "purpose": "podman_info",
+      "args_digest": "69d050f8f4999cffa3b9c073588b5e7dbf883dbc1d50efbe2250d417d9d9ecf8",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 662.563
+    },
+    {
+      "purpose": "podman_image_inspect",
+      "args_digest": "cb7a1af9de54e7dcadd8e625d3790dddea3d8a9364fd50103fd4bcd656653b82",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 311.665
+    },
+    {
+      "purpose": "fresh_home:rp-qual-pv",
+      "args_digest": "6fbcbdd488817e58b79817bea5ff0651ce480f40a0aa06e5b3bfd2646f59292f",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 279.287
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-pv",
+      "args_digest": "2b010367b5b7b3d2a3f0a69419fc060578a15af28d19d7ba39997c73fa7901d8",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 257.517
+    },
+    {
+      "purpose": "probe:rp-qual-pv",
+      "args_digest": "fbd8fc0bfc1997a323bfbe77484ecc302cd9178da10d4020db16e4bf74a373ed",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 562.434
+    },
+    {
+      "purpose": "fresh_home:rp-qual-ro",
+      "args_digest": "cf02c9a69b06b1f8e8d6c7150c501ddf9d1a8a755b89dacffe1d43fe8401ed96",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 265.277
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-ro",
+      "args_digest": "1274451f3c9f74606faefe7c437a0da2edd14856773ffe4d9641a161c4bac30f",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 256.704
+    },
+    {
+      "purpose": "probe:rp-qual-ro",
+      "args_digest": "444d95a3251abb133ffc560e947cce03211aefeb8f63e4c6341cf2bcab7058f6",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 576.795
+    },
+    {
+      "purpose": "fresh_home:rp-qual-net",
+      "args_digest": "85d210fddf89d18f5d22ef215cb041c84cc05a14cac30337802f7e0bb7d5ab27",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 258.175
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-net",
+      "args_digest": "ccad2e0fce56525bc366f8ebb21bf7c67a3a9309f9ce486b1698bae9877a02c3",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 262.356
+    },
+    {
+      "purpose": "probe:rp-qual-net",
+      "args_digest": "7be562203cfc696b3ad12082c1d49b99207121a575d5710ad3ff1f933d244311",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 616.689
+    },
+    {
+      "purpose": "fresh_home:rp-qual-cred",
+      "args_digest": "5473defcb33bdab80f128c789da5768ecd7b35c0fada533d738dc7ff8e6eabb7",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 268.578
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-cred",
+      "args_digest": "4db3243eda371bf5868f78b6c60e5c3f5327f89d79c96ff0b12ffaad5b4a8b69",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 257.534
+    },
+    {
+      "purpose": "probe:rp-qual-cred",
+      "args_digest": "3c469b7674df4b5ccc71ca0f54da9ac9bfd2a7588af44a600d62279cb19583f2",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 560.274
+    },
+    {
+      "purpose": "fresh_home:rp-qual-lim",
+      "args_digest": "f17fa23bda480638bd90b40e105d3915bd1862eec3009bcd5c0c86bf6cca4a08",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 260.69
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-lim",
+      "args_digest": "965acffeada6fd067c9e532cda55e995ef39aeadfceb6089e37ce037e8696c55",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 252.661
+    },
+    {
+      "purpose": "probe:rp-qual-lim",
+      "args_digest": "9fbc8b49506d12c212c77cafab2f7a368acf2248ea8086d343ffccd71155d6bf",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 556.966
+    },
+    {
+      "purpose": "fresh_home:rp-qual-det",
+      "args_digest": "e77c9ef36e959d304227b0272e5c5c35541f00bfe52e992df9e1199b8309b836",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 546.31
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-det",
+      "args_digest": "ea8bcf3958d2a7c71aa670e147e9a3ad343442d786c4c1a6e1e729fa861a6abb",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 272.826
+    },
+    {
+      "purpose": "probe:rp-qual-det",
+      "args_digest": "044381a375f7762e7507fa5647a2a04bd47a594958c672d6a6302d881278ff24",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 560.989
+    },
+    {
+      "purpose": "post_destroy_sleep_count",
+      "args_digest": "a084748b6064003f246f4dc3f58fde5e1e459661b7d5e7d76933622f92edbd99",
+      "outcome": "completed",
+      "exit_code": 1,
+      "duration_ms": 273.493
+    },
+    {
+      "purpose": "container_leftover",
+      "args_digest": "35499a160a48137885ec6760271c4edfac913a6ed3d0c30b90383274b204aa48",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 317.814
+    },
+    {
+      "purpose": "fresh_home:rp-qual-res-w",
+      "args_digest": "1512f2a34ec690a5d1d834d56a6bf758ba5a75ce217ed2530e06f7e08bf97e19",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 276.001
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-res-w",
+      "args_digest": "b2d0fee9073980854dae22e0c88e568664b8d822dedc5b3f9dac36dc7f39f6c8",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 272.362
+    },
+    {
+      "purpose": "probe:rp-qual-res-w",
+      "args_digest": "0a66b674788f7ec79c5111cf93a8aaf520a4619dff8326fd45512f395ce0c67f",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 665.76
+    },
+    {
+      "purpose": "fresh_home:rp-qual-res-c",
+      "args_digest": "93d1e23b1272dec41858d397739504ed954bc944f2bdef33ffbe3df1ac6bacac",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 297.863
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-res-c",
+      "args_digest": "27488e06b9c7aec1d033070aeed49de756ed06e23415e5c8a804d28809452170",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 341.898
+    },
+    {
+      "purpose": "probe:rp-qual-res-c",
+      "args_digest": "57f4834dd687b964e66244e519f7756e2b49af6464ccafa89a5518156eb63ec4",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 594.408
+    },
+    {
+      "purpose": "bind_cleanup_before",
+      "args_digest": "5719762fa00219f647a24122ee5f76188999cf5b7e5bb9ed6d86100e28fad343",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 339.783
+    },
+    {
+      "purpose": "fresh_home:rp-qual-bind",
+      "args_digest": "3243630b7b192e41b810f28e1dba1d084118e5c8cdb84e8935a9f301b28890a5",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 262.598
+    },
+    {
+      "purpose": "mkdir_home:rp-qual-bind",
+      "args_digest": "48d80d1ca0ef55cb4bcd3930ab92ec522a5eddb52586604de23845dfe031bc02",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 258.718
+    },
+    {
+      "purpose": "bind_run",
+      "args_digest": "53c12a54e4357fb39107b922ca2cad0c53dd314f04dffc4b4b5086d3882f367b",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 449.42
+    },
+    {
+      "purpose": "bind_inspect",
+      "args_digest": "326e129fe630fba1515db62b32ce04bf64e7fac4c164a473bab42e049a37d439",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 320.452
+    },
+    {
+      "purpose": "bind_status",
+      "args_digest": "425579435649dca7a3ac86736a2f2f629caccfe513bdd7e11d9510961d34dea5",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 287.578
+    },
+    {
+      "purpose": "bind_uid_map",
+      "args_digest": "4bb50007ff9b7461c3c8370748cdbd19f14123fc1a60418e1669acd69973245a",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 284.407
+    },
+    {
+      "purpose": "bind_cleanup_after",
+      "args_digest": "5719762fa00219f647a24122ee5f76188999cf5b7e5bb9ed6d86100e28fad343",
+      "outcome": "completed",
+      "exit_code": 0,
+      "duration_ms": 1595.501
+    },
+    {
+      "purpose": "bind_post_destroy_sleep_count",
+      "args_digest": "a084748b6064003f246f4dc3f58fde5e1e459661b7d5e7d76933622f92edbd99",
+      "outcome": "completed",
+      "exit_code": 1,
+      "duration_ms": 267.021
+    }
+  ]
+}

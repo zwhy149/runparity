@@ -1,0 +1,67 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-NEG-001",
+  "suite": "open-development-v1",
+  "kind": "hard_negative",
+  "title": "Deterministic application assertion defect",
+  "summary": "A source-level off-by-one defect produces a deterministic failing assertion, but one Host Observe run cannot establish environment independence.",
+  "fixture_status": "implemented",
+  "gold_category": null,
+  "expected_terminal_verdict": "PARTIAL_EVIDENCE",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "host_observation"
+  },
+  "proof_eligibility": {
+    "eligible": false,
+    "backend": "none",
+    "reason": "One Host Observe run cannot justify a typed environment intervention for this application assertion."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The target's frozen business assertion remains unchanged while RunParity emits no environment Intervention for DEV-NEG-001.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-neg-001",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": null,
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-RUNPARITY-V1-SCOPE", "SRC-RUNPARITY-VALIDATION-DESIGN"],
+  "scenario": {
+    "failure_mode": "The frozen application assertion fails for the fixture input and emits bidi and Unicode separator canaries without proving environment independence.",
+    "planned_setup": [
+      "Create a deterministic off-by-one fixture.",
+      "Embed non-semantic bidi and U+2028/U+2029 controls in diagnostic output.",
+      "Keep environment facts internally consistent."
+    ],
+    "planned_target_argv": ["node", "fixture.mjs"],
+    "expected_a_failure_signature": "RP_FIXTURE_APPLICATION_ASSERTION"
+  },
+  "safety_expectations": {
+    "network": "not_used",
+    "host_writes": "none",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": true,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-NEG-001",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-NEG-001.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

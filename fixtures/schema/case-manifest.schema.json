@@ -1,0 +1,828 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://runparity.dev/schemas/fixture-case/v1.json",
+  "title": "RunParity fixture case manifest",
+  "description": "Machine-readable gold metadata for one RunParity validation fixture. A scaffold manifest is a design commitment, not evidence that the fixture runs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "case_id",
+    "suite",
+    "kind",
+    "title",
+    "summary",
+    "fixture_status",
+    "gold_category",
+    "expected_terminal_verdict",
+    "platform",
+    "proof_eligibility",
+    "oracle",
+    "allowed_typed_intervention",
+    "expected_refusal",
+    "source_evidence_ids",
+    "scenario",
+    "safety_expectations",
+    "implementation"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema_version": {
+      "const": "runparity.fixture-case/v1"
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^DEV-(PATH|RUNTIME|CONFIG|NATIVE|OOS|NEG)-[0-9]{3}$"
+    },
+    "suite": {
+      "const": "open-development-v1"
+    },
+    "kind": {
+      "enum": ["supported_positive", "out_of_scope_environment", "hard_negative"]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 8
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 20
+    },
+    "fixture_status": {
+      "enum": ["scaffold", "implemented", "verified"]
+    },
+    "gold_category": {
+      "enum": [
+        "PATH_SHADOWING",
+        "RUNTIME_MANAGER_DRIFT",
+        "CONFIG_PRECEDENCE",
+        "NATIVE_ABI_ARCH_MISMATCH",
+        null
+      ]
+    },
+    "expected_terminal_verdict": {
+      "enum": [
+        "VERIFIED_INTERVENTION",
+        "PARTIAL_EVIDENCE",
+        "INCONCLUSIVE",
+        "REFUSED_OUT_OF_SCOPE",
+        "ABORTED_SAFETY"
+      ]
+    },
+    "platform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["os", "arch", "libc", "execution_context"],
+      "properties": {
+        "os": {
+          "enum": ["linux", "windows", "macos"]
+        },
+        "arch": {
+          "enum": ["x64", "arm64"]
+        },
+        "libc": {
+          "enum": ["glibc", "musl", "none"]
+        },
+        "execution_context": {
+          "enum": ["linux_isolated_experiment", "host_observation"]
+        }
+      }
+    },
+    "proof_eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "backend", "reason"],
+      "properties": {
+        "eligible": {
+          "type": "boolean"
+        },
+        "backend": {
+          "enum": ["linux_rootless_oci", "none"]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 12
+        }
+      }
+    },
+    "oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "description", "frozen_across_arms", "success"],
+      "properties": {
+        "type": {
+          "enum": ["exit_code", "exit_code_and_stdout", "command_assertion", "artifact"]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 12
+        },
+        "frozen_across_arms": {
+          "const": true
+        },
+        "success": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["exit_code", "stdout_contains", "stderr_contains", "artifact_path"],
+          "properties": {
+            "exit_code": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "stdout_contains": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "stderr_contains": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "artifact_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "allowed_typed_intervention": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/intervention"
+        }
+      ]
+    },
+    "expected_refusal": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/refusal"
+        }
+      ]
+    },
+    "source_evidence_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^SRC-[A-Z0-9-]+$"
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "failure_mode",
+        "planned_setup",
+        "planned_target_argv",
+        "expected_a_failure_signature"
+      ],
+      "properties": {
+        "failure_mode": {
+          "type": "string",
+          "minLength": 12
+        },
+        "planned_setup": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 4
+          }
+        },
+        "planned_target_argv": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "expected_a_failure_signature": {
+          "type": "string",
+          "minLength": 8
+        }
+      }
+    },
+    "safety_expectations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "network",
+        "host_writes",
+        "sensitive_flag_probe",
+        "unicode_control_probe",
+        "timeout_cleanup_probe",
+        "hmac_digest_probe",
+        "recognized_shim_probe"
+      ],
+      "properties": {
+        "network": {
+          "enum": ["disabled", "not_used"]
+        },
+        "host_writes": {
+          "enum": ["none", "fixture_workspace_only"]
+        },
+        "sensitive_flag_probe": {
+          "type": "boolean"
+        },
+        "unicode_control_probe": {
+          "type": "boolean"
+        },
+        "timeout_cleanup_probe": {
+          "type": "boolean"
+        },
+        "hmac_digest_probe": {
+          "type": "boolean"
+        },
+        "recognized_shim_probe": {
+          "type": "boolean"
+        }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runnable", "asset_root", "missing_assets", "receipts", "verified_at"],
+      "properties": {
+        "runnable": {
+          "type": "boolean"
+        },
+        "asset_root": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missing_assets": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "receipts": {
+          "type": "object",
+          "description": "Receipt references drive status derivation. A timestamp without the required valid receipts cannot promote a case.",
+          "additionalProperties": false,
+          "required": ["build", "backend_qualification", "verification_ledger"],
+          "properties": {
+            "build": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^receipts/build/[A-Za-z0-9._/-]+\\.json$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "backend_qualification": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^receipts/backend/[A-Za-z0-9._/-]+\\.json$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "verification_ledger": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^receipts/ledger/[A-Za-z0-9._/-]+\\.json$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "intervention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "target", "parameters"],
+      "properties": {
+        "type": {
+          "enum": ["path.prepend", "runtime.select", "config.set", "nativeArtifact.select"]
+        },
+        "target": {
+          "type": "string",
+          "minLength": 2
+        },
+        "parameters": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "refusal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["terminal_verdict", "reason_code", "explanation"],
+      "properties": {
+        "terminal_verdict": {
+          "const": "REFUSED_OUT_OF_SCOPE"
+        },
+        "reason_code": {
+          "type": "string",
+          "pattern": "^RP_[A-Z0-9_]+$"
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 16
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "supported_positive"
+          }
+        },
+        "required": ["kind"]
+      },
+      "then": {
+        "properties": {
+          "gold_category": {
+            "enum": [
+              "PATH_SHADOWING",
+              "RUNTIME_MANAGER_DRIFT",
+              "CONFIG_PRECEDENCE",
+              "NATIVE_ABI_ARCH_MISMATCH"
+            ]
+          },
+          "allowed_typed_intervention": {
+            "$ref": "#/$defs/intervention"
+          },
+          "expected_refusal": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "case_id": {
+            "const": "DEV-CONFIG-001"
+          }
+        },
+        "required": ["case_id"]
+      },
+      "then": {
+        "properties": {
+          "allowed_typed_intervention": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "config.set"
+              },
+              "target": {
+                "const": "npm.fund"
+              },
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "const": "environment"
+                  },
+                  "key": {
+                    "const": "npm_config_fund"
+                  }
+                }
+              }
+            }
+          },
+          "scenario": {
+            "type": "object",
+            "properties": {
+              "planned_target_argv": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "const": "npm"
+                  },
+                  {
+                    "const": "run"
+                  },
+                  {
+                    "const": "fixture:assert-config"
+                  }
+                ],
+                "minItems": 3,
+                "maxItems": 3
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": ["out_of_scope_environment", "hard_negative"]
+          }
+        },
+        "required": ["kind"]
+      },
+      "then": {
+        "properties": {
+          "gold_category": {
+            "type": "null"
+          },
+          "proof_eligibility": {
+            "type": "object",
+            "properties": {
+              "eligible": {
+                "const": false
+              },
+              "backend": {
+                "const": "none"
+              }
+            }
+          },
+          "allowed_typed_intervention": {
+            "type": "null"
+          },
+          "expected_refusal": {},
+          "expected_terminal_verdict": {}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "out_of_scope_environment"
+          }
+        },
+        "required": ["kind"]
+      },
+      "then": {
+        "properties": {
+          "expected_refusal": {
+            "$ref": "#/$defs/refusal"
+          },
+          "expected_terminal_verdict": {
+            "const": "REFUSED_OUT_OF_SCOPE"
+          },
+          "safety_expectations": {
+            "type": "object",
+            "properties": {
+              "timeout_cleanup_probe": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "hard_negative"
+          }
+        },
+        "required": ["kind"]
+      },
+      "then": {
+        "properties": {
+          "expected_refusal": {
+            "type": "null"
+          },
+          "expected_terminal_verdict": {
+            "enum": ["INCONCLUSIVE", "PARTIAL_EVIDENCE"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "proof_eligibility": {
+            "type": "object",
+            "properties": {
+              "eligible": {
+                "const": true
+              }
+            },
+            "required": ["eligible"]
+          }
+        },
+        "required": ["proof_eligibility"]
+      },
+      "then": {
+        "properties": {
+          "platform": {
+            "type": "object",
+            "properties": {
+              "os": {
+                "const": "linux"
+              },
+              "execution_context": {
+                "const": "linux_isolated_experiment"
+              }
+            }
+          },
+          "proof_eligibility": {
+            "type": "object",
+            "properties": {
+              "backend": {
+                "const": "linux_rootless_oci"
+              }
+            }
+          },
+          "expected_terminal_verdict": {
+            "const": "VERIFIED_INTERVENTION"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "fixture_status": {
+            "const": "scaffold"
+          }
+        },
+        "required": ["fixture_status"]
+      },
+      "then": {
+        "properties": {
+          "implementation": {
+            "type": "object",
+            "properties": {
+              "runnable": {
+                "const": false
+              },
+              "asset_root": {
+                "type": "null"
+              },
+              "missing_assets": {
+                "type": "array",
+                "minItems": 1
+              },
+              "receipts": {
+                "type": "object",
+                "properties": {
+                  "build": {
+                    "type": "null"
+                  },
+                  "backend_qualification": {
+                    "type": "null"
+                  },
+                  "verification_ledger": {
+                    "type": "null"
+                  }
+                }
+              },
+              "verified_at": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "fixture_status": {
+            "const": "implemented"
+          }
+        },
+        "required": ["fixture_status"]
+      },
+      "then": {
+        "properties": {
+          "implementation": {
+            "type": "object",
+            "properties": {
+              "runnable": {
+                "const": true
+              },
+              "asset_root": {
+                "type": "string",
+                "minLength": 1
+              },
+              "missing_assets": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "receipts": {
+                "type": "object",
+                "properties": {
+                  "build": {
+                    "type": "string"
+                  },
+                  "backend_qualification": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "verification_ledger": {
+                    "type": "null"
+                  }
+                }
+              },
+              "verified_at": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "fixture_status": {
+            "const": "verified"
+          }
+        },
+        "required": ["fixture_status"]
+      },
+      "then": {
+        "properties": {
+          "implementation": {
+            "type": "object",
+            "properties": {
+              "runnable": {
+                "const": true
+              },
+              "asset_root": {
+                "type": "string",
+                "minLength": 1
+              },
+              "missing_assets": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "receipts": {
+                "type": "object",
+                "properties": {
+                  "build": {
+                    "type": "string"
+                  },
+                  "verification_ledger": {
+                    "type": "string"
+                  }
+                }
+              },
+              "verified_at": {
+                "type": "string",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "fixture_status": {
+            "const": "verified"
+          },
+          "proof_eligibility": {
+            "type": "object",
+            "properties": {
+              "eligible": {
+                "const": true
+              }
+            },
+            "required": ["eligible"]
+          }
+        },
+        "required": ["fixture_status", "proof_eligibility"]
+      },
+      "then": {
+        "properties": {
+          "implementation": {
+            "type": "object",
+            "properties": {
+              "receipts": {
+                "type": "object",
+                "properties": {
+                  "backend_qualification": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "proof_eligibility": {
+            "type": "object",
+            "properties": {
+              "eligible": {
+                "const": false
+              }
+            },
+            "required": ["eligible"]
+          }
+        },
+        "required": ["proof_eligibility"]
+      },
+      "then": {
+        "properties": {
+          "implementation": {
+            "type": "object",
+            "properties": {
+              "receipts": {
+                "type": "object",
+                "properties": {
+                  "backend_qualification": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

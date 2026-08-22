@@ -1,0 +1,8 @@
+{
+  "name": "runparity-fixture-dev-config-002",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "fixture:assert-config": "node fixture/assert-config.mjs"
+  }
+}

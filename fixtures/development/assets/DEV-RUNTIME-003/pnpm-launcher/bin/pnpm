@@ -1,0 +1,2 @@
+#!/bin/sh
+RUNPARITY_FIXTURE_RUNTIME_ROLE=unintended exec "$RUNPARITY_FIXTURE_REAL_NODE" "${0%/*}/pnpm-entry.mjs" "$@"

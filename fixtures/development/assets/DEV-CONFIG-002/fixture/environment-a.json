@@ -1,0 +1,9 @@
+{
+  "schema_version": "runparity.fixture-environment/v1",
+  "case_id": "DEV-CONFIG-002",
+  "arm_role": "a",
+  "variables": {
+    "HOME": "<isolated-arm-home>"
+  },
+  "note": "A arms give each fresh arm an isolated HOME populated from the inventoried home/.npmrc template (strict-peer-deps=false). The project .npmrc (strict-peer-deps=true) wins under real npm precedence, so the lifecycle assertion expecting the user value fails. The planned config.set(project_npmrc, strict-peer-deps, expected) intervention overlays one read-only project value in B; no source checkout is edited."
+}

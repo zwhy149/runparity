@@ -1,0 +1,84 @@
+{
+  "schema_version": "runparity.fixture-suite/v1",
+  "suite": "open-development-v1",
+  "status": "in_progress",
+  "truthful_status_note": "DEV-PATH-001 is the first verified case: its evidence chain is a backend qualification receipt (QEMU-KVM dedicated Ubuntu 24.04.4 VM, rootless Podman 4.9.3, non-root VM account uid 1000, all 11 isolation controls demonstrated including host-kernel-truth binding of the nested user namespace) plus an A1/B/A2 ledger with three fresh sequences whose A arms reproduce one stable failure signature and whose B arms pass the unchanged frozen oracle under exactly one path.prepend intervention; the validator re-derives signatures, oracle results, and the single-delta diff independently in fixtures/lib/evidence-verifier.mjs. Backend receipt sha256:a313ed540120b9b7e35ac30edd7fb4f10699daf1b2407ac6f4345f21693d4674; ledger sha256 (canonical):2026-08-22T09:28:41Z recorded 2026-08-22T09:28:41Z. The other 15 cases derive implemented from recomputed static asset inventories and syntax-checked entrypoints bound to planned target argv, with the Linux/Windows Host smokes described in their manifests; none of those claims isolation or proof. No S0 aggregate result may be claimed from 1 of 12 supported positives.",
+  "expected_counts": {
+    "total": 16,
+    "supported_positive": 12,
+    "out_of_scope_environment": 2,
+    "hard_negative": 2,
+    "per_gold_category": {
+      "PATH_SHADOWING": 3,
+      "RUNTIME_MANAGER_DRIFT": 3,
+      "CONFIG_PRECEDENCE": 3,
+      "NATIVE_ABI_ARCH_MISMATCH": 3
+    }
+  },
+  "cases": [
+    {
+      "case_id": "DEV-PATH-001",
+      "manifest": "cases/DEV-PATH-001.json"
+    },
+    {
+      "case_id": "DEV-PATH-002",
+      "manifest": "cases/DEV-PATH-002.json"
+    },
+    {
+      "case_id": "DEV-PATH-003",
+      "manifest": "cases/DEV-PATH-003.json"
+    },
+    {
+      "case_id": "DEV-RUNTIME-001",
+      "manifest": "cases/DEV-RUNTIME-001.json"
+    },
+    {
+      "case_id": "DEV-RUNTIME-002",
+      "manifest": "cases/DEV-RUNTIME-002.json"
+    },
+    {
+      "case_id": "DEV-RUNTIME-003",
+      "manifest": "cases/DEV-RUNTIME-003.json"
+    },
+    {
+      "case_id": "DEV-CONFIG-001",
+      "manifest": "cases/DEV-CONFIG-001.json"
+    },
+    {
+      "case_id": "DEV-CONFIG-002",
+      "manifest": "cases/DEV-CONFIG-002.json"
+    },
+    {
+      "case_id": "DEV-CONFIG-003",
+      "manifest": "cases/DEV-CONFIG-003.json"
+    },
+    {
+      "case_id": "DEV-NATIVE-001",
+      "manifest": "cases/DEV-NATIVE-001.json"
+    },
+    {
+      "case_id": "DEV-NATIVE-002",
+      "manifest": "cases/DEV-NATIVE-002.json"
+    },
+    {
+      "case_id": "DEV-NATIVE-003",
+      "manifest": "cases/DEV-NATIVE-003.json"
+    },
+    {
+      "case_id": "DEV-OOS-001",
+      "manifest": "cases/DEV-OOS-001.json"
+    },
+    {
+      "case_id": "DEV-OOS-002",
+      "manifest": "cases/DEV-OOS-002.json"
+    },
+    {
+      "case_id": "DEV-NEG-001",
+      "manifest": "cases/DEV-NEG-001.json"
+    },
+    {
+      "case_id": "DEV-NEG-002",
+      "manifest": "cases/DEV-NEG-002.json"
+    }
+  ]
+}

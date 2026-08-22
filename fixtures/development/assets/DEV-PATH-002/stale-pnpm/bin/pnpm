@@ -1,0 +1,2 @@
+#!/bin/sh
+exec "$RUNPARITY_FIXTURE_REAL_NODE" "${0%/*}/pnpm-entry.mjs" "$@"

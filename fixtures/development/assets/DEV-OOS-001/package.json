@@ -1,0 +1,8 @@
+{
+  "name": "runparity-fixture-dev-oos-001",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "fixture:registry-probe": "node fixture/registry-probe.mjs"
+  }
+}

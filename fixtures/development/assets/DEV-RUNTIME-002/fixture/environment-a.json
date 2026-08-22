@@ -1,0 +1,9 @@
+{
+  "schema_version": "runparity.fixture-environment/v1",
+  "case_id": "DEV-RUNTIME-002",
+  "arm_role": "a",
+  "variables": {
+    "RUNPARITY_FIXTURE_REAL_NODE": "<external-node-entry>"
+  },
+  "note": "A arms resolve pnpm from the wrong-version launcher, which records RUNPARITY_FIXTURE_MANAGER_VERSION=9.14.2 and forwards to the same real Node; the packageManager pin is pnpm@9.15.0. The planned runtime.select(package_manager) intervention swaps only the launcher behind the stable pnpm slot in B."
+}

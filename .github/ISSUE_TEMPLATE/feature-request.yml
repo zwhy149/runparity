@@ -1,0 +1,69 @@
+name: Feature request
+description: Propose a bounded diagnostic, report, fixture, or integration improvement.
+title: "[feature]: "
+labels:
+  - needs-triage
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Describe the recurring task or failure before proposing an implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Demand evidence
+      description: Link public issues, discussions, or reproducible examples from distinct repositories when possible.
+      placeholder: URLs plus one sentence explaining the shared problem shape.
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired observable outcome
+      description: What should a beginner see, and what structured evidence should an expert receive?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: family
+    attributes:
+      label: Closest product area
+      options:
+        - PATH shadowing
+        - Runtime or package-manager drift
+        - Configuration precedence
+        - Native ABI / OS / architecture mismatch
+        - Reporting or integration
+        - Safety, privacy, or isolation
+        - Outside current V1 / unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Safety and scope boundary
+      description: State whether this requires credentials, network access, privileged operations, host mutation, or multiple simultaneous changes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Current workaround
+      description: Explain its cost, risk, or why it does not provide enough evidence.
+
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Product principles
+      options:
+        - label: The request can preserve the distinction between observation and causal proof.
+          required: true
+        - label: The request does not require automatic host repair.
+          required: true

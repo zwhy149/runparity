@@ -1,0 +1,91 @@
+name: RunParity bug
+description: Report incorrect, unsafe, or surprising behavior in RunParity itself.
+title: "[bug]: "
+labels:
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is for RunParity defects. For a target command that differs by environment, use the environment-dependent failure form. Never paste secrets or an unreviewed report.
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I reviewed every pasted command, log, path, and report for sensitive data.
+          required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: RunParity version or commit
+      placeholder: 0.0.0 / commit SHA
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Operating system and Node.js version
+      placeholder: Windows 11 24H2, Node 24.15.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include exact sanitized steps, mandatory -- placement, and whether human or JSON mode was used.
+      placeholder: |
+        1. Create ...
+        2. Run: runparity --json doctor -- node fixture.mjs
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected RunParity behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual RunParity behavior
+      description: Paste only the smallest sanitized excerpt needed to demonstrate the defect.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Highest impact
+      options:
+        - Possible secret or private-data exposure
+        - Possible wrong process execution or host side effect
+        - Incorrect verdict or evidence claim
+        - Hang, crash, or cleanup failure
+        - Resolver or platform incompatibility
+        - Output, documentation, or usability defect
+    validations:
+      required: true
+
+  - type: textarea
+    id: comparison
+    attributes:
+      label: Native comparison
+      description: If relevant, show how direct Node child_process or native command execution differs from RunParity.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I reproduced this against the current main branch or explained why I could not.
+          required: true
+        - label: I did not use an untrusted command merely to generate this report.
+          required: true

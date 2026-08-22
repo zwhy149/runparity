@@ -1,0 +1,9 @@
+{
+  "schema_version": "runparity.fixture-environment/v1",
+  "case_id": "DEV-CONFIG-001",
+  "arm_role": "a",
+  "variables": {
+    "npm_config_fund": "false"
+  },
+  "note": "A arms set npm_config_fund=false so the higher-priority environment source overrides the project .npmrc value fund=true. The planned config.set(environment, npm_config_fund, expected) intervention restores the expected fixture value in B without touching target argv or files."
+}

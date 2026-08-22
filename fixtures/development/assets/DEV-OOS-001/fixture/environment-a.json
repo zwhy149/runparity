@@ -1,0 +1,7 @@
+{
+  "schema_version": "runparity.fixture-environment/v1",
+  "case_id": "DEV-OOS-001",
+  "arm_role": "host_observation",
+  "variables": {},
+  "note": "Native Windows Host Observe only. The probe queries the absent HKLM value HKLM\\SOFTWARE\\RunParity\\Fixture\\MissingValue with a read-only reg.exe invocation; the key is never created or deleted. The declared REFUSED_OUT_OF_SCOPE proof request is not implemented by the CLI today, so Host runs honestly record PARTIAL_EVIDENCE instead."
+}

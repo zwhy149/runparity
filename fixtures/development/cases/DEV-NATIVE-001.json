@@ -1,0 +1,74 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-NATIVE-001",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Native addon uses the wrong Node module ABI",
+  "summary": "A pre-existing native addon layer was compiled for a different NODE_MODULE_VERSION than the active Node runtime.",
+  "fixture_status": "implemented",
+  "gold_category": "NATIVE_ABI_ARCH_MISMATCH",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-NATIVE-001 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-native-001",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "nativeArtifact.select",
+    "target": "fixture_native_addon",
+    "parameters": {
+      "artifact_role": "matching_node_abi",
+      "content_addressed_only": true
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-NODE-PROCESS-ABI", "SRC-GH-OPENCLAW-71986"],
+  "scenario": {
+    "failure_mode": "The default content-addressed addon was compiled against Node 24 module ABI 137, so Node 22 module ABI 127 rejects it with Node's NODE_MODULE_VERSION mismatch diagnostic.",
+    "planned_setup": [
+      "Provide two content-addressed Linux x64 glibc addon layers compiled from the same source.",
+      "Keep the fixed Node 22 runtime, loader assertion, source, compiler flags, and dependencies identical.",
+      "Select the ABI-137 layer in A1 and A2; select the ABI-127 layer only in B."
+    ],
+    "planned_target_argv": ["node", "fixture/load-native-addon.mjs"],
+    "expected_a_failure_signature": "NODE_MODULE_VERSION"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-NATIVE-001",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-NATIVE-001.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

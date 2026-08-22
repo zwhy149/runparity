@@ -1,0 +1,107 @@
+name: Environment-dependent failure
+description: Report a command that behaves differently across machines, shells, CI, or tools.
+title: "[environment]: "
+labels:
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for providing evidence. Do not paste credentials, tokens, private URLs, or an unreviewed full environment dump. RunParity reports are defense-in-depth redacted, not guaranteed secret-free.
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I reviewed every pasted log and report for secrets and private data.
+          required: true
+
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: Closest symptom
+      description: This helps route the report; it is not a root-cause claim.
+      options:
+        - I installed or selected a version, but another version runs
+        - It works in one shell, IDE, CI job, container, or child process but not another
+        - A config value is ignored or overwritten
+        - A native binary exists but will not load or has the wrong platform/architecture
+        - None of these / unsure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Failing platform
+      options:
+        - Linux
+        - Windows
+        - macOS
+        - WSL
+        - Multiple / other
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What observable result should the command produce?
+      placeholder: The command should create output.json and exit 0.
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: Include the exit code and the smallest sanitized error excerpt.
+    validations:
+      required: true
+
+  - type: input
+    id: command
+    attributes:
+      label: Sanitized command
+      description: Preserve argument order, but replace every sensitive value with [REDACTED].
+      placeholder: pnpm test --filter example
+    validations:
+      required: true
+
+  - type: textarea
+    id: contrast
+    attributes:
+      label: Where it works and where it fails
+      description: Name the machine, shell, IDE, CI image, parent process, or runtime boundary that differs.
+      placeholder: Works in PowerShell with Node 24; fails in the IDE task with Node 22.
+    validations:
+      required: true
+
+  - type: input
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: A public repository URL is ideal. Leave blank if the failure cannot be shared safely.
+
+  - type: textarea
+    id: runparity_report
+    attributes:
+      label: Sanitized RunParity report or equivalent evidence
+      description: Review it before pasting. If RunParity could not run, include requested and resolved executable paths plus version sources.
+      render: json
+
+  - type: textarea
+    id: declarations
+    attributes:
+      label: Relevant declarations
+      description: List version files, packageManager/engines fields, lockfile tool, or non-secret config sources. Do not paste registry/auth values.
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Reproduction constraints
+      options:
+        - label: The failure can be investigated without live credentials or a private service.
+        - label: A minimal reproduction can run without modifying global tools or shell profiles.

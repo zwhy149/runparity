@@ -1,0 +1,101 @@
+{
+  "schema_version": "runparity.backend-qualification-receipt/v1",
+  "receipt_version": 1,
+  "backend": "linux_rootless_oci",
+  "status": "qualified",
+  "platform": {
+    "os": "linux",
+    "arch": "amd64",
+    "libc": "glibc"
+  },
+  "engine": {
+    "name": "podman",
+    "version": "4.9.3",
+    "api_version": "4.9.3",
+    "rootless": true,
+    "cgroup_version": "v2",
+    "cgroup_controllers": ["cpu", "memory", "pids"]
+  },
+  "host_vm": {
+    "declared": {
+      "class": "qemu-kvm-dedicated-vm",
+      "boot_image": "ubuntu-noble-server-cloudimg-amd64 (24.04.4 LTS)",
+      "hypervisor_chain": "Windows host -> WSL2 KVM (/dev/kvm) -> QEMU 10.2.1 full VM with its own Ubuntu kernel and systemd",
+      "note": "Declaration only: the hypervisor chain is recorded, not proven; every isolation control is demonstrated inside the VM by the probe battery."
+    },
+    "declaration_only": true,
+    "observed": {
+      "kernel": "6.8.0-137-generic",
+      "os_release_pretty": "Ubuntu 24.04.4 LTS",
+      "user_uid": "1000",
+      "user_gid": "1000"
+    }
+  },
+  "image_digest": "sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+  "image_digest_ref": "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+  "image_acquisition_mirror": "docker.1ms.run mirror of docker.io (content-addressed digests identical; direct docker.io egress unavailable at this site)",
+  "image_id": "fc8cd9deea7389d01d9a70cc83a5d09465c2050f2ae322d67300a9794433edad",
+  "policy_digest": "sha256:129bb017710d7a4d72ca2231ba8d7afe608973931de9c7e1dbda1ead1877e207",
+  "arm_isolation_policy_digest": "129bb017710d7a4d72ca2231ba8d7afe608973931de9c7e1dbda1ead1877e207",
+  "controls": [
+    {
+      "id": "vm_user_non_root",
+      "status": "demonstrated",
+      "reason": "backend account uid=1000"
+    },
+    {
+      "id": "engine_rootless",
+      "status": "demonstrated",
+      "reason": "podman rootless with uid mapping entries=2"
+    },
+    {
+      "id": "image_identity",
+      "status": "demonstrated",
+      "reason": "image pinned to docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066"
+    },
+    {
+      "id": "arm_privilege_floor",
+      "status": "demonstrated",
+      "reason": "nested-userns parent claim bound by host kernel truth: arm uid 10001 maps to VM uid 1000; caps 0; NoNewPrivs 1"
+    },
+    {
+      "id": "rootfs_read_only",
+      "status": "demonstrated",
+      "reason": "root and read-only mount writes refused (EROFS/ENOENT)"
+    },
+    {
+      "id": "write_containment",
+      "status": "demonstrated",
+      "reason": "only arm HOME and tmpfs accepted writes; root and read-only mounts refused"
+    },
+    {
+      "id": "network_denial",
+      "status": "demonstrated",
+      "reason": "every egress attempt failed immediately at the network layer"
+    },
+    {
+      "id": "credentials_absent",
+      "status": "demonstrated",
+      "reason": "no credential environment names or paths present"
+    },
+    {
+      "id": "resource_limits",
+      "status": "demonstrated",
+      "reason": "memory.max=536870912, pids.max=64, cpu.max=100000/100000"
+    },
+    {
+      "id": "detached_destroy",
+      "status": "demonstrated",
+      "reason": "arm container removed; no detached descendant survived"
+    },
+    {
+      "id": "cross_arm_freshness",
+      "status": "demonstrated",
+      "reason": "marker planted in one arm was invisible to the next fresh arm"
+    }
+  ],
+  "facts_sha256": "b2c17636c3934062684504a42e6cc69a8c652f959a25617b07d5837bc1533f5e",
+  "judgment_sha256": "c6203cf2dcdabeceb22be459a85b7ee5883debe106e9b39a68310144956f2a69",
+  "qualified_at": "2026-08-22T09:25:39Z",
+  "collector_version": 1
+}

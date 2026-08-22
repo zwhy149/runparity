@@ -1,0 +1,94 @@
+{
+  "schema_version": "runparity.fixture-evidence/v1",
+  "updated_at": "2026-08-15",
+  "sources": [
+    {
+      "id": "SRC-GH-PNPM-10608",
+      "kind": "real_incident",
+      "title": "pnpm uses a different Node version than the shell-visible node",
+      "locator": "https://github.com/pnpm/pnpm/issues/10608",
+      "supports": ["PATH_SHADOWING", "RUNTIME_MANAGER_DRIFT"],
+      "notes": "User report shows node --version and the Node version observed by pnpm disagreeing."
+    },
+    {
+      "id": "SRC-GH-SUPABASE-36530",
+      "kind": "real_incident",
+      "title": "Repository Node declarations and package-manager engine checks disagree",
+      "locator": "https://github.com/orgs/supabase/discussions/36530",
+      "supports": ["RUNTIME_MANAGER_DRIFT"],
+      "notes": "Real onboarding failure involving conflicting Node expectations and an engine rejection."
+    },
+    {
+      "id": "SRC-GH-NVM-651",
+      "kind": "real_incident",
+      "title": "Long-running nvm discussion about deriving runtime selection from package metadata",
+      "locator": "https://github.com/nvm-sh/nvm/issues/651",
+      "supports": ["RUNTIME_MANAGER_DRIFT"],
+      "notes": "Demonstrates recurring demand and ambiguity around engines.node and runtime selection."
+    },
+    {
+      "id": "SRC-PNPM-INSTALL-PATH",
+      "kind": "upstream_documentation",
+      "title": "pnpm installation and PATH troubleshooting",
+      "locator": "https://github.com/pnpm/pnpm.io/blob/main/docs/installation.md",
+      "supports": ["PATH_SHADOWING", "RUNTIME_MANAGER_DRIFT"],
+      "notes": "Primary project documentation includes PATH lookup and stale pnpm shim troubleshooting."
+    },
+    {
+      "id": "SRC-NPM-PACKAGE-JSON",
+      "kind": "upstream_documentation",
+      "title": "npm package.json engines and packageManager declarations",
+      "locator": "https://docs.npmjs.com/cli/v11/configuring-npm/package-json",
+      "supports": ["RUNTIME_MANAGER_DRIFT"],
+      "notes": "Primary documentation for package metadata used by the Contract."
+    },
+    {
+      "id": "SRC-NPM-CONFIG-PRECEDENCE",
+      "kind": "upstream_documentation",
+      "title": "npm configuration sources and precedence",
+      "locator": "https://docs.npmjs.com/cli/using-npm/config/",
+      "supports": ["CONFIG_PRECEDENCE"],
+      "notes": "Primary documentation states CLI, environment, project, user, and global precedence."
+    },
+    {
+      "id": "SRC-NPM-NPMRC",
+      "kind": "upstream_documentation",
+      "title": "npmrc file locations and priority",
+      "locator": "https://docs.npmjs.com/cli/v12/configuring-npm/npmrc/",
+      "supports": ["CONFIG_PRECEDENCE"],
+      "notes": "Primary documentation for project, user, global, and builtin npmrc sources."
+    },
+    {
+      "id": "SRC-NODE-PROCESS-ABI",
+      "kind": "upstream_documentation",
+      "title": "Node process.versions modules ABI documentation",
+      "locator": "https://nodejs.org/api/process.html#processversions",
+      "supports": ["NATIVE_ABI_ARCH_MISMATCH"],
+      "notes": "Node documents process.versions.modules and rejection of addons compiled for another module ABI."
+    },
+    {
+      "id": "SRC-GH-OPENCLAW-71986",
+      "kind": "real_incident",
+      "title": "Native better-sqlite3 NODE_MODULE_VERSION mismatch",
+      "locator": "https://github.com/openclaw/openclaw/issues/71986",
+      "supports": ["NATIVE_ABI_ARCH_MISMATCH"],
+      "notes": "Real incident report includes a native addon compiled for a different Node module ABI."
+    },
+    {
+      "id": "SRC-RUNPARITY-V1-SCOPE",
+      "kind": "project_specification",
+      "title": "RunParity V1 scope and refusal boundary",
+      "locator": "CONTEXT.md",
+      "supports": ["OUT_OF_SCOPE", "HARD_NEGATIVE"],
+      "notes": "Authoritative local product boundary for unsupported platforms, privileges, multi-variable changes, and non-environment failures."
+    },
+    {
+      "id": "SRC-RUNPARITY-VALIDATION-DESIGN",
+      "kind": "project_specification",
+      "title": "RunParity validation protocol",
+      "locator": "docs/VALIDATION.md",
+      "supports": ["OUT_OF_SCOPE", "HARD_NEGATIVE"],
+      "notes": "Defines challenge cases, proof eligibility, refusal behavior, and zero-tolerance safety metrics."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+.pack/
+.runparity/
+*.log
+.DS_Store
+Thumbs.db
+work/pack-output/

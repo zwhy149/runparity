@@ -1,0 +1,72 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-OOS-002",
+  "suite": "open-development-v1",
+  "kind": "out_of_scope_environment",
+  "title": "macOS SDK proof needs unsupported native isolation",
+  "summary": "A read-only native SDK preflight can be observed on macOS, but V1 has no qualified native macOS backend for an isolated intervention experiment.",
+  "fixture_status": "implemented",
+  "gold_category": null,
+  "expected_terminal_verdict": "REFUSED_OUT_OF_SCOPE",
+  "platform": {
+    "os": "macos",
+    "arch": "arm64",
+    "libc": "none",
+    "execution_context": "host_observation"
+  },
+  "proof_eligibility": {
+    "eligible": false,
+    "backend": "none",
+    "reason": "V1 has no qualified native macOS intervention backend for an SDK-dependent isolated experiment."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The target's business assertion remains fixed even though RunParity must refuse an environment intervention for DEV-OOS-002.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-oos-002",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": null,
+  "expected_refusal": {
+    "terminal_verdict": "REFUSED_OUT_OF_SCOPE",
+    "reason_code": "RP_UNSUPPORTED_PLATFORM_ISOLATION",
+    "explanation": "V1 can observe the read-only SDK preflight but has no qualified native macOS backend for the requested isolated experiment."
+  },
+  "source_evidence_ids": ["SRC-RUNPARITY-V1-SCOPE", "SRC-RUNPARITY-VALIDATION-DESIGN"],
+  "scenario": {
+    "failure_mode": "The read-only preflight records native SDK availability, but an isolated SDK-dependent proof request is unsupported on macOS V1.",
+    "planned_setup": [
+      "Create a read-only macOS SDK discovery fixture.",
+      "Record the SDK directories xcrun would resolve without invoking child processes or changing host state.",
+      "Request no compiler execution, repair, or network access.",
+      "Report the unsupported SDK-dependent proof request with the fixed fixture signature."
+    ],
+    "planned_target_argv": ["node", "fixture/macos-sdk-preflight.mjs"],
+    "expected_a_failure_signature": "RP_FIXTURE_MACOS_SDK_PROOF_UNSUPPORTED"
+  },
+  "safety_expectations": {
+    "network": "not_used",
+    "host_writes": "none",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-OOS-002",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-OOS-002.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

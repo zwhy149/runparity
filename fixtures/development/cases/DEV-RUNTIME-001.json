@@ -1,0 +1,74 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-RUNTIME-001",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Node falls outside the declared engines range",
+  "summary": "The active pre-installed Node runtime violates package.json engines.node while the target assertion requires the declared range.",
+  "fixture_status": "implemented",
+  "gold_category": "RUNTIME_MANAGER_DRIFT",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-RUNTIME-001 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-runtime-001",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "runtime.select",
+    "target": "node",
+    "parameters": {
+      "selector_ref": "package.json#/engines/node",
+      "preinstalled_only": true
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-GH-SUPABASE-36530", "SRC-NPM-PACKAGE-JSON"],
+  "scenario": {
+    "failure_mode": "The fixture command rejects the active Node version against the frozen engines.node constraint.",
+    "planned_setup": [
+      "Pre-install content-addressed Node 24 for the failing A1 and A2 arms.",
+      "Pre-install content-addressed Node 22 for the intervention B arm.",
+      "Keep package.json engines.node and the target assertion frozen across all arms."
+    ],
+    "planned_target_argv": ["node", "fixture/assert-engines-range.mjs"],
+    "expected_a_failure_signature": "RP_FIXTURE_NODE_OUTSIDE_ENGINES"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-RUNTIME-001",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-RUNTIME-001.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

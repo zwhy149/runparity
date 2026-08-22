@@ -1,0 +1,7 @@
+{
+  "name": "runparity-node-engine-drift-demo",
+  "private": true,
+  "engines": {
+    "node": ">=99"
+  }
+}

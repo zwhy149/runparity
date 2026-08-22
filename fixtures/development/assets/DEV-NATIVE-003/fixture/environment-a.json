@@ -1,0 +1,26 @@
+{
+  "schema": "runparity.fixture-native-libc-layer/v1",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc"
+  },
+  "matching_node_version": "22.22.1",
+  "matching_napi_version": 1,
+  "selected": {
+    "path": "layers/mismatched-musl.node",
+    "sha256": "b7176de57d21abcb647c6f224fe0925562d3dd2f31b1820a8b406fb7984a9986",
+    "napi_version": 1,
+    "target_libc": "musl",
+    "needed_shared_object": "libc.so",
+    "c_standard": "c11"
+  },
+  "matching": {
+    "path": "layers/matching-glibc.node",
+    "sha256": "6b23588d55848f987e88e69c097a65e994513268ce8a55ee01efe8aad37be0bc",
+    "napi_version": 1,
+    "target_libc": "glibc",
+    "needed_shared_object": "libc.so.6",
+    "c_standard": "c11"
+  }
+}

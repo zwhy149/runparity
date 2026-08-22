@@ -1,0 +1,73 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-PATH-003",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Symlinked toolchain precedes repository bin",
+  "summary": "A two-hop symlink chain resolves Node to an unintended pre-existing fixture toolchain before the repository-local fixture bin.",
+  "fixture_status": "implemented",
+  "gold_category": "PATH_SHADOWING",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-PATH-003 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-path-003",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "path.prepend",
+    "target": "PATH",
+    "parameters": {
+      "directory_role": "repository_fixture_bin"
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-GH-PNPM-10608", "SRC-PNPM-INSTALL-PATH"],
+  "scenario": {
+    "failure_mode": "Node resolution follows the first two-hop symlink chain to a fixture-marked incompatible launcher and exposes its canonical target path.",
+    "planned_setup": [
+      "Pre-create incompatible and compatible launchers that forward to the same absolute Node executable and differ only in a fixed fixture marker.",
+      "Materialize the inventoried two-hop symlink recipe to the incompatible launcher inside a fresh writable fixture workspace.",
+      "Place the symlink directory before the repository fixture bin in A-like Host observation; prepend the repository fixture bin only in the planned B arm."
+    ],
+    "planned_target_argv": ["node", "fixture/assert-toolchain-marker.mjs", "--assert-compatible"],
+    "expected_a_failure_signature": "RP_FIXTURE_SYMLINK_TOOLCHAIN"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-PATH-003",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-PATH-003.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

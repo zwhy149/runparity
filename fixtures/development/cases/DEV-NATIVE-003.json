@@ -1,0 +1,75 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-NATIVE-003",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Native artifact targets the wrong libc",
+  "summary": "A pre-existing musl-linked x64 N-API v1 addon declares libc.so while the fixed Linux x64/glibc runtime expects libc.so.6; the same-source glibc layer remains content-addressed for the intervention arm.",
+  "fixture_status": "implemented",
+  "gold_category": "NATIVE_ABI_ARCH_MISMATCH",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-NATIVE-003 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-native-003",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "nativeArtifact.select",
+    "target": "fixture_native_addon",
+    "parameters": {
+      "artifact_role": "matching_libc",
+      "content_addressed_only": true
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-NODE-PROCESS-ABI", "SRC-RUNPARITY-V1-SCOPE"],
+  "scenario": {
+    "failure_mode": "The loader hash-validates the selected addon, parses its ELF64 little-endian dynamic section, and rejects the checked musl libc.so dependency before require because the fixed runtime is glibc. A separate Host smoke records Node's real glibc-loader failure without treating that text as the libc classification evidence.",
+    "planned_setup": [
+      "Provide glibc and musl content-addressed Linux x64 addons compiled from the same C N-API v1 source and Node 22 headers.",
+      "Keep CPU architecture, N-API module ABI version, source revision, C language level, loader assertion, and dependencies fixed.",
+      "Select the musl libc.so layer in A1 and A2; select the glibc libc.so.6 layer only in B.",
+      "Treat the checked ELF DT_NEEDED entry as the libc evidence and the direct Node loading failure only as a separate execution smoke."
+    ],
+    "planned_target_argv": ["node", "fixture/load-native-addon.mjs"],
+    "expected_a_failure_signature": "RP_FIXTURE_NATIVE_LIBC_MISMATCH"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-NATIVE-003",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-NATIVE-003.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

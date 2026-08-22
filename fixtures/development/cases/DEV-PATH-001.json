@@ -1,0 +1,73 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-PATH-001",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Wrong Node binary wins PATH order",
+  "summary": "Two pre-existing Node launchers are available; the first PATH entry runs a fixture-marked wrong binary and the intended bin directory is lower in PATH.",
+  "fixture_status": "verified",
+  "gold_category": "PATH_SHADOWING",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-PATH-001 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-path-001",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "path.prepend",
+    "target": "PATH",
+    "parameters": {
+      "directory_role": "intended_node_bin"
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-GH-PNPM-10608", "SRC-PNPM-INSTALL-PATH"],
+  "scenario": {
+    "failure_mode": "The command resolves Node from the wrong fixture bin and emits a stable wrong-runtime marker.",
+    "planned_setup": [
+      "Pre-create wrong-node and intended-node launchers that forward to the same absolute Node executable.",
+      "Give both launchers the same executable mode, argv, environment policy, and working directory.",
+      "Place wrong-node first in A arms and prepend intended-node only in the planned B arm."
+    ],
+    "planned_target_argv": ["node", "fixture/assert-node-marker.mjs"],
+    "expected_a_failure_signature": "RP_FIXTURE_WRONG_NODE_PATH"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-PATH-001",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-PATH-001.json",
+      "backend_qualification": "receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json",
+      "verification_ledger": "receipts/ledger/DEV-PATH-001.json"
+    },
+    "verified_at": "2026-08-22T09:28:41Z"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "../../schema/case-manifest.schema.json",
+  "schema_version": "runparity.fixture-case/v1",
+  "case_id": "DEV-CONFIG-002",
+  "suite": "open-development-v1",
+  "kind": "supported_positive",
+  "title": "Project npmrc overrides user npmrc",
+  "summary": "A project .npmrc value wins over a contradictory isolated user .npmrc value for one known boolean key.",
+  "fixture_status": "implemented",
+  "gold_category": "CONFIG_PRECEDENCE",
+  "expected_terminal_verdict": "VERIFIED_INTERVENTION",
+  "platform": {
+    "os": "linux",
+    "arch": "x64",
+    "libc": "glibc",
+    "execution_context": "linux_isolated_experiment"
+  },
+  "proof_eligibility": {
+    "eligible": true,
+    "backend": "linux_rootless_oci",
+    "reason": "The planned case changes one typed dimension inside the supported Linux isolation backend."
+  },
+  "oracle": {
+    "type": "exit_code_and_stdout",
+    "description": "The unchanged fixture assertion exits zero and emits the DEV-CONFIG-002 success marker.",
+    "frozen_across_arms": true,
+    "success": {
+      "exit_code": 0,
+      "stdout_contains": "RUNPARITY_OK:dev-config-002",
+      "stderr_contains": null,
+      "artifact_path": null
+    }
+  },
+  "allowed_typed_intervention": {
+    "type": "config.set",
+    "target": "npm.strict-peer-deps",
+    "parameters": {
+      "source": "project_npmrc",
+      "key": "strict-peer-deps",
+      "value_role": "expected_fixture_value"
+    }
+  },
+  "expected_refusal": null,
+  "source_evidence_ids": ["SRC-NPM-CONFIG-PRECEDENCE", "SRC-NPM-NPMRC"],
+  "scenario": {
+    "failure_mode": "npm resolves strict-peer-deps from the project source while the fixture expects the isolated user value.",
+    "planned_setup": [
+      "Create an isolated user npmrc template and a project .npmrc file.",
+      "Give strict-peer-deps contradictory values.",
+      "Run an npm lifecycle assertion on the effective value; perform no install."
+    ],
+    "planned_target_argv": ["npm", "run", "fixture:assert-config"],
+    "expected_a_failure_signature": "RP_FIXTURE_PROJECT_OVERRIDES_USER_NPMRC"
+  },
+  "safety_expectations": {
+    "network": "disabled",
+    "host_writes": "fixture_workspace_only",
+    "sensitive_flag_probe": false,
+    "unicode_control_probe": false,
+    "timeout_cleanup_probe": false,
+    "hmac_digest_probe": true,
+    "recognized_shim_probe": false
+  },
+  "implementation": {
+    "runnable": true,
+    "asset_root": "development/assets/DEV-CONFIG-002",
+    "missing_assets": [],
+    "receipts": {
+      "build": "receipts/build/DEV-CONFIG-002.json",
+      "backend_qualification": null,
+      "verification_ledger": null
+    },
+    "verified_at": null
+  }
+}

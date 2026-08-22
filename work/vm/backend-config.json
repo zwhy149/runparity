@@ -1,0 +1,27 @@
+{
+  "ssh": {
+    "executablePath": "C:\\Windows\\System32\\OpenSSH\\ssh.exe",
+    "host": "127.0.0.1",
+    "port": 2222,
+    "user": "rp",
+    "identityFile": "C:/Users/wmy/.ssh/rp_backend_vm_key",
+    "knownHostsFile": "C:/Users/wmy/.ssh/rp_backend_vm_known_hosts",
+    "connectTimeoutSeconds": 15,
+    "workingDirectory": "C:/Users/wmy/Documents/Codex/2026-08-15/0-2"
+  },
+  "backend": {
+    "imageDigestRef": "docker.1ms.run/library/node@sha256:a17d50af28002a160548bd4225b3cfcb12c5efcb171f79e68758f2885fb1b066",
+    "imageAcquisitionMirror": "docker.1ms.run mirror of docker.io (content-addressed digests identical; direct docker.io egress unavailable at this site)",
+    "vmUserUid": 1000,
+    "vmUserGid": 1000,
+    "probeHostDir": "/home/rp/probe",
+    "assetsHostRoot": "/home/rp/assets",
+    "armsHostRoot": "/home/rp/arms"
+  },
+  "declaredHost": {
+    "class": "qemu-kvm-dedicated-vm",
+    "boot_image": "ubuntu-noble-server-cloudimg-amd64 (24.04.4 LTS)",
+    "hypervisor_chain": "Windows host -> WSL2 KVM (/dev/kvm) -> QEMU 10.2.1 full VM with its own Ubuntu kernel and systemd",
+    "note": "Declaration only: the hypervisor chain is recorded, not proven; every isolation control is demonstrated inside the VM by the probe battery."
+  }
+}
