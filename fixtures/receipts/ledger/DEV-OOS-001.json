@@ -1,0 +1,101 @@
+{
+  "schema_version": "runparity.fixture-verification-ledger/v1",
+  "ledger_kind": "host_observation",
+  "case_id": "DEV-OOS-001",
+  "repetitions": 3,
+  "manifest_sha256": "3de67e3fbd5c13150e24ddd699df6946911f79bf72080702f7d524de8331c8c1",
+  "build_receipt_sha256": "4183318855200c250af19f291e9d683119ae57f7004b211eda453e3a5a79279f",
+  "backend_qualification_sha256": null,
+  "expected_terminal_verdict": "REFUSED_OUT_OF_SCOPE",
+  "observations": [
+    {
+      "index": 1,
+      "doctor_exit_code": 78,
+      "target_exit_code": 23,
+      "verdict": "REFUSED_OUT_OF_SCOPE",
+      "reason_codes": [
+        "RP_PROOF_NOT_REQUESTED",
+        "RP_UNSUPPORTED_PLATFORM_ISOLATION"
+      ],
+      "stdout_lines": [
+        ""
+      ],
+      "stderr_lines": [
+        "RP_FIXTURE_WINDOWS_PRIVILEGED_REGISTRY",
+        ""
+      ],
+      "signature": {
+        "schema_version": "runparity.failure-signature/path-shadowing/v1",
+        "family": "PATH_SHADOWING",
+        "exit_code": 23,
+        "stdout_sentinels": [],
+        "stderr_sentinels": [
+          "RP_FIXTURE_WINDOWS_PRIVILEGED_REGISTRY"
+        ]
+      },
+      "signature_sha256": "0c85219417a25468cf86bed04b9a6439d22476413d3b2cafa73df99756c0c601"
+    },
+    {
+      "index": 2,
+      "doctor_exit_code": 78,
+      "target_exit_code": 23,
+      "verdict": "REFUSED_OUT_OF_SCOPE",
+      "reason_codes": [
+        "RP_PROOF_NOT_REQUESTED",
+        "RP_UNSUPPORTED_PLATFORM_ISOLATION"
+      ],
+      "stdout_lines": [
+        ""
+      ],
+      "stderr_lines": [
+        "RP_FIXTURE_WINDOWS_PRIVILEGED_REGISTRY",
+        ""
+      ],
+      "signature": {
+        "schema_version": "runparity.failure-signature/path-shadowing/v1",
+        "family": "PATH_SHADOWING",
+        "exit_code": 23,
+        "stdout_sentinels": [],
+        "stderr_sentinels": [
+          "RP_FIXTURE_WINDOWS_PRIVILEGED_REGISTRY"
+        ]
+      },
+      "signature_sha256": "0c85219417a25468cf86bed04b9a6439d22476413d3b2cafa73df99756c0c601"
+    },
+    {
+      "index": 3,
+      "doctor_exit_code": 78,
+      "target_exit_code": 23,
+      "verdict": "REFUSED_OUT_OF_SCOPE",
+      "reason_codes": [
+        "RP_PROOF_NOT_REQUESTED",
+        "RP_UNSUPPORTED_PLATFORM_ISOLATION"
+      ],
+      "stdout_lines": [
+        ""
+      ],
+      "stderr_lines": [
+        "RP_FIXTURE_WINDOWS_PRIVILEGED_REGISTRY",
+        ""
+      ],
+      "signature": {
+        "schema_version": "runparity.failure-signature/path-shadowing/v1",
+        "family": "PATH_SHADOWING",
+        "exit_code": 23,
+        "stdout_sentinels": [],
+        "stderr_sentinels": [
+          "RP_FIXTURE_WINDOWS_PRIVILEGED_REGISTRY"
+        ]
+      },
+      "signature_sha256": "0c85219417a25468cf86bed04b9a6439d22476413d3b2cafa73df99756c0c601"
+    }
+  ],
+  "stability": {
+    "all_signatures_present": true,
+    "distinct_signature_count": 1,
+    "verdict_matches_expected": true
+  },
+  "runner_version": "runparity-fixtures/0.1.0",
+  "verified_at": "2026-08-22T15:04:59Z",
+  "status": "passed"
+}

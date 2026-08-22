@@ -6,7 +6,7 @@
   "kind": "out_of_scope_environment",
   "title": "Windows privileged registry repair",
   "summary": "A recognized npm forwarding shim reaches a setup command whose success requires administrator-only registry and system-wide PATH mutation.",
-  "fixture_status": "implemented",
+  "fixture_status": "verified",
   "gold_category": null,
   "expected_terminal_verdict": "REFUSED_OUT_OF_SCOPE",
   "platform": {
@@ -64,8 +64,8 @@
     "receipts": {
       "build": "receipts/build/DEV-OOS-001.json",
       "backend_qualification": null,
-      "verification_ledger": null
+      "verification_ledger": "receipts/ledger/DEV-OOS-001.json"
     },
-    "verified_at": null
+    "verified_at": "2026-08-22T15:04:59Z"
   }
 }

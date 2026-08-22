@@ -231,6 +231,75 @@ export function verifyBackendQualificationReceipt({ receipt, facts }) {
 }
 
 /**
+ * Independently re-derive a host-observation (challenge case) ledger: three
+ * stable observations, signatures recomputed from the embedded redacted
+ * streams, verdict equal to the manifest's expected non-actionable verdict.
+ */
+export function verifyHostObservationLedger({ ledger, item, links }) {
+  const problems = [];
+  if (
+    ledger === null ||
+    typeof ledger !== "object" ||
+    ledger.schema_version !== "runparity.fixture-verification-ledger/v1"
+  ) {
+    return { ok: false, problems: ["ledger is not a fixture verification ledger v1"] };
+  }
+  if (ledger.ledger_kind !== "host_observation") {
+    return { ok: false, problems: ["ledger_kind is not host_observation"] };
+  }
+  if (ledger.case_id !== item.case_id) problems.push("case_id mismatch");
+  if (ledger.repetitions !== 3) problems.push("repetitions is not 3");
+  if (ledger.status !== "passed") problems.push("status is not passed");
+  if (ledger.backend_qualification_sha256 !== null) {
+    problems.push("challenge-case ledger must not reference a backend receipt");
+  }
+  if (typeof ledger.intervention === "object" && ledger.intervention !== null) {
+    problems.push("challenge-case ledger must declare no intervention");
+  }
+  if (
+    links?.manifestEvidenceSha256 !== undefined &&
+    ledger.manifest_sha256 !== links.manifestEvidenceSha256
+  ) {
+    problems.push("manifest evidence-projection digest mismatch");
+  }
+  if (
+    links?.buildReceiptSha256 !== undefined &&
+    ledger.build_receipt_sha256 !== links.buildReceiptSha256
+  ) {
+    problems.push("build_receipt_sha256 mismatch");
+  }
+  const runs = Array.isArray(ledger.observations) ? ledger.observations : [];
+  if (runs.length !== 3) problems.push(`expected 3 observations, found ${runs.length}`);
+  const distinct = new Set();
+  for (const run of runs) {
+    if (run === null || typeof run !== "object") {
+      problems.push("observation malformed");
+      continue;
+    }
+    const recomputed = pathSignature({
+      exit_code: run.target_exit_code,
+      stdout_lines: Array.isArray(run.stdout_lines) ? run.stdout_lines : [],
+      stderr_lines: Array.isArray(run.stderr_lines) ? run.stderr_lines : [],
+    });
+    if (run.signature === null || canonicalJson(run.signature) !== recomputed) {
+      problems.push(`observation_${run.index}: embedded signature mismatch`);
+    }
+    if (run.signature_sha256 !== createHash("sha256").update(recomputed, "utf8").digest("hex")) {
+      problems.push(`observation_${run.index}: signature digest mismatch`);
+    }
+    distinct.add(recomputed);
+    if (run.verdict !== ledger.expected_terminal_verdict) {
+      problems.push(`observation_${run.index}: verdict does not match expected terminal verdict`);
+    }
+    if (run.verdict !== item.expected_terminal_verdict) {
+      problems.push(`observation_${run.index}: verdict does not match the manifest`);
+    }
+  }
+  if (distinct.size !== 1) problems.push(`signature unstable: ${distinct.size} distinct`);
+  return { ok: problems.length === 0, problems };
+}
+
+/**
  * Independently re-derive the A1/B/A2 proof from a verification ledger.
  * `links` carries { manifestEvidenceSha256, buildReceiptSha256, backendReceiptSha256 }.
  * Returns { ok, problems }.

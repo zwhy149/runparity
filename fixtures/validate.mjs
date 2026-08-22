@@ -8,6 +8,7 @@ import { inspectAssetTree } from "./lib/asset-inventory.mjs";
 import {
   manifestEvidenceSha256,
   verifyBackendQualificationReceipt,
+  verifyHostObservationLedger as verifyHostObservationEvidence,
   verifyVerificationLedger as verifyLedgerEvidence,
 } from "./lib/evidence-verifier.mjs";
 
@@ -508,15 +509,28 @@ function validateVerificationLedger(
   );
   // Independent evidence verification: signatures, oracle, and the single
   // intervention diff are recomputed from the embedded observations.
-  const verdict = verifyLedgerEvidence({
-    ledger: receipt,
-    links: {
-      manifestEvidenceSha256: evidenceSha,
-      buildReceiptSha256,
-      backendReceiptSha256,
-    },
-    item,
-  });
+  // Route by ledger kind: challenge cases carry host-observation ledgers
+  // (three stable native-platform runs, no intervention); proof-eligible
+  // cases carry A1/B/A2 ledgers verified by the full independent re-derivation.
+  const verdict =
+    receipt.ledger_kind === "host_observation"
+      ? verifyHostObservationEvidence({
+          ledger: receipt,
+          item,
+          links: {
+            manifestEvidenceSha256: evidenceSha,
+            buildReceiptSha256,
+          },
+        })
+      : verifyLedgerEvidence({
+          ledger: receipt,
+          links: {
+            manifestEvidenceSha256: evidenceSha,
+            buildReceiptSha256,
+            backendReceiptSha256,
+          },
+          item,
+        });
   for (const problem of verdict.problems) {
     check(false, `${item.case_id}: verification ledger evidence: ${problem}`);
   }
