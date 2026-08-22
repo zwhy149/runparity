@@ -18,6 +18,7 @@ import { renderHtmlReport } from "./html-report.js";
 import type { NpmConfigSourceConflict } from "./npm-config.js";
 import { pathsDifferForDisplay } from "./path-display.js";
 import type { CapturedStream, ProcessCleanup } from "./process-observer.js";
+import { applyProofRefusal, decideProofRefusal } from "./proof-refusal.js";
 import { createRedactionContext, type RedactionContext, redactText } from "./redaction.js";
 import {
   classifyHostOutcome,
@@ -616,6 +617,10 @@ const doctorCommand = program
   .description("observe a command and report only what the available evidence supports")
   .option("--timeout <duration>", "stop observation after this duration", "5m")
   .option("--report-only", "return zero when RunParity produced a valid report")
+  .option(
+    "--attempt-proof",
+    "request an isolated proof attempt; hosts without a qualified native backend refuse with REFUSED_OUT_OF_SCOPE",
+  )
   .argument("<argv...>", "target executable and arguments; place them after --")
   .action(async (argv: string[]) => {
     const redaction = createRedactionContext(argv);
@@ -636,18 +641,29 @@ const doctorCommand = program
       if (outputOptions.json && outputOptions.html) {
         throw new CliUsageError("Choose only one report output mode: --json or --html.");
       }
-      const options = doctorCommand.opts<{ reportOnly?: boolean; timeout: string }>();
+      const options = doctorCommand.opts<{
+        reportOnly?: boolean;
+        timeout: string;
+        attemptProof?: boolean;
+      }>();
       const timeoutMs = parseDuration(options.timeout);
       const exitPolicy = options.reportOnly ? "report_only" : "preserve_target";
-      const envelope = await observe(argv, timeoutMs, exitPolicy, redaction);
+      let envelope = await observe(argv, timeoutMs, exitPolicy, redaction);
+      let proofRefused = false;
+      if (options.attemptProof === true) {
+        const decision = decideProofRefusal(process.platform, envelope.data.report.verdict);
+        envelope = applyProofRefusal(envelope, decision);
+        proofRefused = decision.refused;
+      }
       const output = outputOptions.json
         ? JSON.stringify(envelope)
         : outputOptions.html
           ? renderHtmlReport(envelope)
           : renderHuman(envelope);
       process.stdout.write(`${output}\n`);
-      process.exitCode =
-        envelope.data.report.verdict === "ABORTED_SAFETY"
+      process.exitCode = proofRefused
+        ? 78
+        : envelope.data.report.verdict === "ABORTED_SAFETY"
           ? 74
           : envelope.data.report.observation.result.timed_out
             ? 124
