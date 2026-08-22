@@ -1,8 +1,8 @@
 # RunParity handoff
 
-> Snapshot date: 2026-08-22 (Asia/Shanghai), second update  
+> Snapshot date: 2026-08-22 (Asia/Shanghai), third update  
 > Workspace: `C:\Users\wmy\Documents\Codex\2026-08-15\0-2`  
-> Current version: `0.0.0`, private source prototype, **pre-S0, first verified case**  
+> Current version: `0.0.0`, private source prototype, **S0 verified-count thresholds met (12/12), first full-corpus verification**  
 > This document is the single source of truth for a new conversation with no
 > prior context. Read it fully, then `AGENTS.md`, `CONTEXT.md`, and
 > `docs/adr/0001-*.md` through `0005-*.md` before changing behavior.
@@ -11,18 +11,15 @@
 
 ## 0. One-paragraph answer to "where are we" (做到哪里了)
 
-RunParity 在 2026-08-22 第二轮完成了**从 0 到 1 的证据管线闭环**：在 WSL2 的
-KVM 上构建了一台**独立 QEMU 全虚拟机**（Ubuntu 24.04.4、自己的内核与
-systemd、非 root 账号 uid 1000、rootless Podman 4.9.3），对其跑通了
-**十一项控制的后端资格探针电池**（全部 demonstrated，含用宿主内核
-/proc 真相绑定嵌套用户命名空间的父视图），然后在该合格后端上真实执行了
-`DEV-PATH-001` 的 **(A1→B→A2)×3 隔离实验**：6 个 A 臂复现同一失败签名
-（exit 23 + `RP_FIXTURE_WRONG_NODE_PATH`），3 个 B 臂在恰好一个
-`path.prepend` 干预下通过冻结 oracle（`RUNPARITY_OK:dev-path-001`），账本经
-仓库验证器**独立重算**（签名、oracle、单增量 diff、安全标志）后接受
-`fixture_status: verified`。语料现为 **0 scaffold / 15 implemented / 1
-verified**。剩余工作是把其余 11 个 supported positives 逐一通过同一管线、
-S0/S1 门、以及 npm 公开化——不再有任何"缺真实后端"类阻断。
+RunParity 在 2026-08-22 第三轮完成了**全部 12 个 supported positives 的真实隔离验证**：在统一
+"单 token 类型化干预"协议（四种增量：path.prepend / env.value /
+mount.source / argv.token，双验证器重算）下，12 案全部持有三序列 A1/B/A2 账本并在
+合格 QEMU-KVM rootless-Podman 后端上 VERIFIED_INTERVENTION。语料现为 **0
+scaffold / 4 implemented / 12 verified**（4 个 implemented 是按设计只做 Host
+Observe 的 OOS×2 + NEG×2）。S0 的 verified 计数门槛（≥9/12、每类 ≥2/3）以
+12/12、每类 3/3 达成；剩余 S0 条目（Windows/macOS 实机挑战案例重复、聚合
+refusal/safety 率）与 S1 密封语料、S2 npm 发布见 docs/VALIDATION.md。git 提交
+至 018b67f。
 
 ## 1. What changed this round (本轮完成什么)
 
@@ -168,6 +165,25 @@ node fixtures/validate.mjs
   文件字节；`case run --verified-at` 必须与 manifest 一致。
 - **并行重载会抖时长敏感测试**（DEV-CONFIG-001 npm lifecycle、
   process-tree 窗口）：全量 verify 时停掉并行 apt/qemu 重活。
+
+### 第三轮新坑（12 案全验证，务必避开）
+
+- **tar | ssh 的 --strip-components 与 -C 组合**：-C 指向解压根时成员路径
+  不含顶层目录；拷单文件用成员 `bin/node` + 目标端 `--strip-components=1`，
+  否则出现 bin/bin/node 嵌套。
+- **apt 版 node 是动态链接 libnode.so.127**：单独拷二进制进容器跑不起来；
+  外部运行时一律用 nodejs.org 官方自包含 tarball（nodejs.org 直连可用）。
+- **fixture loader 可能钉死编译期 Node 版本**（NATIVE-003 断言
+  process.versions.node === 22.22.1）：外部运行时槽（-v 挂载 + PATH 前置）
+  同时给 A/B 两臂，保持单 token 增量不变。
+- **晋升后测试形状断言要批量更新**：tests/fixture-assets.test.ts 每案的
+  manifest 形状断言（fixture_status/receipts/verified_at）按测试块边界定位
+  替换为 verified 形状；NATIVE 三案只在 Linux 执行，Windows 门不报——
+  两侧都要跑。
+- **Git Bash 的 /tmp 与 node 的 C:\tmp 不同**：跨进程传文件用绝对路径或
+  %TEMP%。
+- **wsl.exe 内嵌 $SSH 变量在 cd 后相对密钥路径失效**：SSH 一律绝对路径
+  /root/rp-backend-vm/rp_vm_key。
 
 ### 老坑（依旧有效，节选）
 
