@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-2563eb.svg)](LICENSE)
 [![Node.js 18+](https://img.shields.io/badge/Node.js-18%2B-339933?logo=nodedotjs&logoColor=white)](#runtime-support)
 [![Status: pre-release](https://img.shields.io/badge/status-pre--release-f59e0b)](#current-vs-planned)
-[![Fixtures: 13/16 verified](https://img.shields.io/badge/fixtures-13%2F16%20verified-2ea043)](#the-evidence-pipeline)
+[![Fixtures: 14/16 verified](https://img.shields.io/badge/fixtures-14%2F16%20verified-2ea043)](#the-evidence-pipeline)
 
 [Quick start](#quick-start) · [What it catches](#new-here-when-to-reach-for-runparity) · [Evidence grades](#two-words-that-keep-us-honest) · [Verified corpus](#the-evidence-pipeline) · [Why not just](#why-not-just-which-node) · [Deep dive](#deep-dive)
 
@@ -108,8 +108,8 @@ flowchart LR
 | Corpus state | Count | Evidence |
 | --- | --- | --- |
 | ✅ verified (isolated A1/B/A2 proof) | **12 supported positives** | 3-sequence ledgers × 12 cases, single-token typed interventions across 4 delta kinds |
-| ✅ verified (native-host challenge) | **1 of 2** | `DEV-OOS-001`: 3× stable `REFUSED_OUT_OF_SCOPE` on real Windows; macOS case automated via CI workflow |
-| 🔶 implemented (Host-Observe-only by design) | 3 | hard negatives + remaining platform challenge |
+| ✅ verified (native-host challenge) | **2 of 2** | 3× stable `REFUSED_OUT_OF_SCOPE` each on real Windows and real macOS (GitHub Actions) |
+| 🔶 implemented (Host-Observe-only by design) | 2 | hard negatives — refusal, not proof, is their correct answer |
 | 🧪 sealed S1 benchmark (frozen seed) | 24 cases | procedural fault-injection corpus, first-tranche results committed |
 
 </div>

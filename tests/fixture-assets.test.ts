@@ -1104,7 +1104,7 @@ describe("implemented development fixture assets", () => {
     );
 
     expect(manifest).toMatchObject({
-      fixture_status: "implemented",
+      fixture_status: "verified",
       scenario: {
         planned_target_argv: ["node", "fixture/macos-sdk-preflight.mjs"],
       },
@@ -1115,9 +1115,9 @@ describe("implemented development fixture assets", () => {
         receipts: {
           build: "receipts/build/DEV-OOS-002.json",
           backend_qualification: null,
-          verification_ledger: null,
+          verification_ledger: "receipts/ledger/DEV-OOS-002.json",
         },
-        verified_at: null,
+        verified_at: expect.any(String),
       },
     });
 

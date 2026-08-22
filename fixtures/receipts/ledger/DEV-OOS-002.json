@@ -1,0 +1,104 @@
+{
+  "schema_version": "runparity.fixture-verification-ledger/v1",
+  "ledger_kind": "host_observation",
+  "case_id": "DEV-OOS-002",
+  "repetitions": 3,
+  "manifest_sha256": "efc5cff97d3674b4518ac733d57cc675e755ac1c5d4a65a2acfb6b5a4d870774",
+  "build_receipt_sha256": "26a974e4f1a34fd6e76c9ff098ee4ff66eca608aa5d3af1cac0a3bf97480ee26",
+  "backend_qualification_sha256": null,
+  "expected_terminal_verdict": "REFUSED_OUT_OF_SCOPE",
+  "observations": [
+    {
+      "index": 1,
+      "doctor_exit_code": 78,
+      "target_exit_code": 23,
+      "verdict": "REFUSED_OUT_OF_SCOPE",
+      "reason_codes": [
+        "RP_PROOF_NOT_REQUESTED",
+        "RP_UNSUPPORTED_PLATFORM_ISOLATION"
+      ],
+      "stdout_lines": [
+        "SDK_OBSERVED:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        ""
+      ],
+      "stderr_lines": [
+        "RP_FIXTURE_MACOS_SDK_PROOF_UNSUPPORTED",
+        ""
+      ],
+      "signature": {
+        "schema_version": "runparity.failure-signature/path-shadowing/v1",
+        "family": "PATH_SHADOWING",
+        "exit_code": 23,
+        "stdout_sentinels": [],
+        "stderr_sentinels": [
+          "RP_FIXTURE_MACOS_SDK_PROOF_UNSUPPORTED"
+        ]
+      },
+      "signature_sha256": "fe5740211b15012e4cec6c4d2fa563bd7b4bb1366b833df6046ea1b8898b5199"
+    },
+    {
+      "index": 2,
+      "doctor_exit_code": 78,
+      "target_exit_code": 23,
+      "verdict": "REFUSED_OUT_OF_SCOPE",
+      "reason_codes": [
+        "RP_PROOF_NOT_REQUESTED",
+        "RP_UNSUPPORTED_PLATFORM_ISOLATION"
+      ],
+      "stdout_lines": [
+        "SDK_OBSERVED:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        ""
+      ],
+      "stderr_lines": [
+        "RP_FIXTURE_MACOS_SDK_PROOF_UNSUPPORTED",
+        ""
+      ],
+      "signature": {
+        "schema_version": "runparity.failure-signature/path-shadowing/v1",
+        "family": "PATH_SHADOWING",
+        "exit_code": 23,
+        "stdout_sentinels": [],
+        "stderr_sentinels": [
+          "RP_FIXTURE_MACOS_SDK_PROOF_UNSUPPORTED"
+        ]
+      },
+      "signature_sha256": "fe5740211b15012e4cec6c4d2fa563bd7b4bb1366b833df6046ea1b8898b5199"
+    },
+    {
+      "index": 3,
+      "doctor_exit_code": 78,
+      "target_exit_code": 23,
+      "verdict": "REFUSED_OUT_OF_SCOPE",
+      "reason_codes": [
+        "RP_PROOF_NOT_REQUESTED",
+        "RP_UNSUPPORTED_PLATFORM_ISOLATION"
+      ],
+      "stdout_lines": [
+        "SDK_OBSERVED:/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        ""
+      ],
+      "stderr_lines": [
+        "RP_FIXTURE_MACOS_SDK_PROOF_UNSUPPORTED",
+        ""
+      ],
+      "signature": {
+        "schema_version": "runparity.failure-signature/path-shadowing/v1",
+        "family": "PATH_SHADOWING",
+        "exit_code": 23,
+        "stdout_sentinels": [],
+        "stderr_sentinels": [
+          "RP_FIXTURE_MACOS_SDK_PROOF_UNSUPPORTED"
+        ]
+      },
+      "signature_sha256": "fe5740211b15012e4cec6c4d2fa563bd7b4bb1366b833df6046ea1b8898b5199"
+    }
+  ],
+  "stability": {
+    "all_signatures_present": true,
+    "distinct_signature_count": 1,
+    "verdict_matches_expected": true
+  },
+  "runner_version": "runparity-fixtures/0.1.0",
+  "verified_at": "2026-08-22T17:23:25Z",
+  "status": "passed"
+}
