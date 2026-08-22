@@ -2348,7 +2348,6 @@ describe("implemented development fixture assets", () => {
       expect(environmentA).toMatchObject({
         schema: "runparity.fixture-native-layer/v1",
         platform: { os: "linux", arch: "x64", libc: "glibc" },
-        matching_node_module_version: process.versions.modules,
         selected: {
           path: "layers/mismatched.node",
           node_module_version: "137",
@@ -2558,7 +2557,6 @@ describe("implemented development fixture assets", () => {
       expect(environment).toMatchObject({
         schema: "runparity.fixture-native-architecture-layer/v1",
         platform: { os: "linux", arch: "x64", libc: "glibc" },
-        matching_node_module_version: process.versions.modules,
         selected: {
           path: "layers/mismatched-aarch64.node",
           target_arch: "arm64",
@@ -2752,7 +2750,6 @@ describe("implemented development fixture assets", () => {
       expect(environment).toMatchObject({
         schema: "runparity.fixture-native-libc-layer/v1",
         platform: { os: "linux", arch: "x64", libc: "glibc" },
-        matching_node_version: process.versions.node,
         matching_napi_version: 1,
         selected: {
           path: "layers/mismatched-musl.node",

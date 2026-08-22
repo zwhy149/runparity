@@ -1,5 +1,13 @@
 import { spawnSync } from "node:child_process";
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { delimiter, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -124,9 +132,11 @@ describe.runIf(process.platform === "win32")("Windows Node command shims", () =>
     copyFileSync(process.execPath, executable);
     const isolatedEnvironment = { PATH: "", PATHEXT: ".EXE" };
 
-    expect(resolveLaunch(["rp-cwd-probe"], isolatedEnvironment, { cwd: project })).toMatchObject({
-      resolvedPath: executable,
-    });
+    expect(
+      realpathSync.native(
+        resolveLaunch(["rp-cwd-probe"], isolatedEnvironment, { cwd: project }).resolvedPath ?? "",
+      ),
+    ).toBe(realpathSync.native(executable));
     const environmentWithCmdOptOut = {
       ...isolatedEnvironment,
       NoDefaultCurrentDirectoryInExePath: "1",
@@ -168,10 +178,14 @@ describe.runIf(process.platform === "win32")("Windows Node command shims", () =>
     );
 
     expect(native.status).toBe(0);
-    expect(native.stdout).toBe(expectedExecutable);
-    expect(resolveLaunch(["rp-env-order-probe"], environment, { cwd: project }).resolvedPath).toBe(
-      expectedExecutable,
-    );
+    // CI temp dirs surface as 8.3 short names to child processes; compare
+    // canonical realpaths instead of raw spellings.
+    expect(realpathSync.native(native.stdout.trim())).toBe(realpathSync.native(expectedExecutable));
+    expect(
+      realpathSync.native(
+        resolveLaunch(["rp-env-order-probe"], environment, { cwd: project }).resolvedPath ?? "",
+      ),
+    ).toBe(realpathSync.native(expectedExecutable));
   });
 
   test("executes the first recognized forwarding shim without shell parsing", () => {
@@ -210,11 +224,15 @@ describe.runIf(process.platform === "win32")("Windows Node command shims", () =>
     expect(result.stderr).toBe("");
 
     const output = JSON.parse(result.stdout);
+    // CI temp dirs surface as 8.3 short names in resolved paths; compare
+    // canonical realpaths outside the shape matcher.
+    expect(realpathSync.native(output.data.report.observation.launch?.resolved_path ?? "")).toBe(
+      realpathSync.native(firstShim),
+    );
     expect(output.data.report.observation).toMatchObject({
       requested_argv: ["rp-probe", "--label", "two words"],
       launch: {
         requested_program: "rp-probe",
-        resolved_path: firstShim,
         kind: "recognized_node_shim",
         executable_path: process.execPath,
         script_path: firstScript,

@@ -44,10 +44,11 @@ describe("POSIX command resolution semantics", () => {
     writeFileSync(executable, "#!/bin/sh\nexit 0\n");
     chmodSync(executable, 0o755);
 
-    expect(resolveLaunch(["cwd-probe"], { PATH: "" }, { platform: "linux", cwd })).toMatchObject({
-      resolvedPath: executable,
-      executablePath: executable,
-    });
+    const launch = resolveLaunch(["cwd-probe"], { PATH: "" }, { platform: "linux", cwd });
+    // CI runners expose temp dirs in 8.3 short-name form; compare canonical
+    // realpaths instead of raw spellings.
+    expect(realpathSync.native(launch.resolvedPath ?? "")).toBe(realpathSync.native(executable));
+    expect(realpathSync.native(launch.executablePath ?? "")).toBe(realpathSync.native(executable));
   });
 
   describe.runIf(process.platform !== "win32")("default PATH", () => {

@@ -1,4 +1,11 @@
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -151,7 +158,9 @@ describe("supervised control-plane process", () => {
         cwd: string;
       };
       expect(observed.argv).toEqual(["context", "inspect"]);
-      expect(observed.cwd).toBe(project);
+      // CI runners expose the temp directory in 8.3 short-name form to child
+      // processes; compare canonical realpaths instead of raw spellings.
+      expect(realpathSync.native(observed.cwd)).toBe(realpathSync.native(project));
       expect(JSON.stringify(observed.environment)).not.toContain("must-not-reach-child");
       expect(JSON.stringify(observed.environment)).not.toContain("RP_AMBIENT_PROFILE_CANARY");
       expect(JSON.stringify(observed.environment)).not.toContain("RP_AMBIENT_PATH_CANARY");
