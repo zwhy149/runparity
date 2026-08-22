@@ -6,7 +6,7 @@
   "kind": "out_of_scope_environment",
   "title": "macOS SDK proof needs unsupported native isolation",
   "summary": "A read-only native SDK preflight can be observed on macOS, but V1 has no qualified native macOS backend for an isolated intervention experiment.",
-  "fixture_status": "implemented",
+  "fixture_status": "verified",
   "gold_category": null,
   "expected_terminal_verdict": "REFUSED_OUT_OF_SCOPE",
   "platform": {
@@ -65,8 +65,8 @@
     "receipts": {
       "build": "receipts/build/DEV-OOS-002.json",
       "backend_qualification": null,
-      "verification_ledger": null
+      "verification_ledger": "receipts/ledger/DEV-OOS-002.json"
     },
-    "verified_at": null
+    "verified_at": "2026-08-22T17:23:25Z"
   }
 }

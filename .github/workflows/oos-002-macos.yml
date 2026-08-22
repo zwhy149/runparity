@@ -8,6 +8,11 @@ name: OOS-002 native macOS evidence
 
 on:
   workflow_dispatch:
+    inputs:
+      verified-at:
+        description: "Pin verified_at (UTC, seconds precision) to the manifest promotion timestamp"
+        required: false
+        default: ""
   push:
     branches: [main]
   pull_request:
@@ -38,9 +43,14 @@ jobs:
 
       - name: Run three native macOS observations with proof refusal
         run: |
+          PINNED_ARGS=""
+          if [ -n "${{ inputs.verified-at }}" ]; then
+            PINNED_ARGS="--verified-at ${{ inputs.verified-at }}"
+          fi
           node ./node_modules/tsx/dist/cli.mjs src/fixtures-cli.ts case run-host \
             --case DEV-OOS-002 \
-            --out "$RUNNER_TEMP/DEV-OOS-002.json"
+            --out "$RUNNER_TEMP/DEV-OOS-002.json" \
+            $PINNED_ARGS
 
       - name: Upload the evidence ledger
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
