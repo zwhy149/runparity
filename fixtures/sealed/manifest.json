@@ -1,0 +1,277 @@
+{
+  "schema_version": "runparity.sealed-corpus/v1",
+  "seed": 20260822,
+  "generated_for_platforms": [
+    "win32",
+    "linux"
+  ],
+  "case_count": 24,
+  "in_scope_count": 16,
+  "challenge_count": 8,
+  "cases": [
+    {
+      "id": "SEALED-001",
+      "family": "PATH_SHADOWING",
+      "challenge_kind": null,
+      "platform": "linux",
+      "command": [
+        "node",
+        "assert-1.mjs"
+      ],
+      "params_sha256": "1c8ce5f1d1a4d732ca5564f47390eefab47816c6fd00ffc380ff275e20183af3"
+    },
+    {
+      "id": "SEALED-002",
+      "family": "PATH_SHADOWING",
+      "challenge_kind": null,
+      "platform": "linux",
+      "command": [
+        "node",
+        "assert-2.mjs"
+      ],
+      "params_sha256": "27473169f4be7f267923986a729d278935b39d1ada2115bd8592b4b1577e219b"
+    },
+    {
+      "id": "SEALED-003",
+      "family": "PATH_SHADOWING",
+      "challenge_kind": null,
+      "platform": "linux",
+      "command": [
+        "node",
+        "assert-3.mjs"
+      ],
+      "params_sha256": "019a1db5b6d2d50366f4f891ce729ec95bcc4b2e5fe101dcf1699b561e1b004f"
+    },
+    {
+      "id": "SEALED-004",
+      "family": "PATH_SHADOWING",
+      "challenge_kind": null,
+      "platform": "linux",
+      "command": [
+        "node",
+        "assert-4.mjs"
+      ],
+      "params_sha256": "cead901909483321cbce6b508864c1de999b801ec784e635e647ae9218afec88"
+    },
+    {
+      "id": "SEALED-005",
+      "family": "RUNTIME_MANAGER_DRIFT",
+      "challenge_kind": null,
+      "platform": "any",
+      "command": [
+        "node",
+        "engines-5.mjs"
+      ],
+      "params_sha256": "72daa667a057c3b9686192781e958087f1754fa007da21b8fe91bed6de5d653d"
+    },
+    {
+      "id": "SEALED-006",
+      "family": "RUNTIME_MANAGER_DRIFT",
+      "challenge_kind": null,
+      "platform": "any",
+      "command": [
+        "node",
+        "engines-6.mjs"
+      ],
+      "params_sha256": "a0ba802addf1cf56b12571752cb8a70e970c8b17a15e95b9b4001db636c10a3a"
+    },
+    {
+      "id": "SEALED-007",
+      "family": "RUNTIME_MANAGER_DRIFT",
+      "challenge_kind": null,
+      "platform": "any",
+      "command": [
+        "node",
+        "engines-7.mjs"
+      ],
+      "params_sha256": "ca722f14311d87237a50572a04e48775645bb570866cecacd5c59f4604f54534"
+    },
+    {
+      "id": "SEALED-008",
+      "family": "RUNTIME_MANAGER_DRIFT",
+      "challenge_kind": null,
+      "platform": "any",
+      "command": [
+        "node",
+        "engines-8.mjs"
+      ],
+      "params_sha256": "b4892782551e984f26fd50184941f1642f0ee7e4c8c5d79828a902add8d856aa"
+    },
+    {
+      "id": "SEALED-009",
+      "family": "CONFIG_PRECEDENCE",
+      "challenge_kind": null,
+      "platform": "any",
+      "command": [
+        "node",
+        "config-9.mjs"
+      ],
+      "params_sha256": "5e7c69476a1651ae1d3c2af8c66b7825505f12ebb50ddf05fa60de8242d866e3"
+    },
+    {
+      "id": "SEALED-010",
+      "family": "CONFIG_PRECEDENCE",
+      "challenge_kind": null,
+      "platform": "any",
+      "command": [
+        "node",
+        "config-10.mjs"
+      ],
+      "params_sha256": "2a8fd17bbe3d59004e32e89ccdb177ffb8a7fdef7c3d1510e85c0696a99a87b2"
+    },
+    {
+      "id": "SEALED-011",
+      "family": "CONFIG_PRECEDENCE",
+      "challenge_kind": null,
+      "platform": "any",
+      "command": [
+        "node",
+        "config-11.mjs"
+      ],
+      "params_sha256": "a6339aee386396feb96ed7a9fa78adcbd66b859c3a9d76b8cf8c1b03fb61ec3d"
+    },
+    {
+      "id": "SEALED-012",
+      "family": "CONFIG_PRECEDENCE",
+      "challenge_kind": null,
+      "platform": "any",
+      "command": [
+        "node",
+        "config-12.mjs"
+      ],
+      "params_sha256": "66ffed20a2b7813a5c1a401a9739a234120f08b42393cc51e4583bc06294eed6"
+    },
+    {
+      "id": "SEALED-013",
+      "family": "NATIVE_ABI_ARCH_MISMATCH",
+      "challenge_kind": null,
+      "platform": "linux",
+      "command": [
+        "node",
+        "native-13.mjs"
+      ],
+      "params_sha256": "726ed2b8c969a6f081e675d17db91424ae1f9aa43fb123b533070c96fccd0b54"
+    },
+    {
+      "id": "SEALED-014",
+      "family": "NATIVE_ABI_ARCH_MISMATCH",
+      "challenge_kind": null,
+      "platform": "linux",
+      "command": [
+        "node",
+        "native-14.mjs"
+      ],
+      "params_sha256": "95f8fe35ab10801fc5a33b491d1cb0a7f8688d9328483a76a9c374be1cd84fed"
+    },
+    {
+      "id": "SEALED-015",
+      "family": "NATIVE_ABI_ARCH_MISMATCH",
+      "challenge_kind": null,
+      "platform": "linux",
+      "command": [
+        "node",
+        "native-15.mjs"
+      ],
+      "params_sha256": "0fda3b0bc29d0dcafd171c0ede2828a931915d2d250544c30fa83b700a5e95eb"
+    },
+    {
+      "id": "SEALED-016",
+      "family": "NATIVE_ABI_ARCH_MISMATCH",
+      "challenge_kind": null,
+      "platform": "linux",
+      "command": [
+        "node",
+        "native-16.mjs"
+      ],
+      "params_sha256": "ae89c461d942bcf057212791841574fb873cbc991c7a04d45ea3742b4ad9677d"
+    },
+    {
+      "id": "SEALED-017",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "off_by_one",
+      "platform": "any",
+      "command": [
+        "node",
+        "case-17.mjs"
+      ],
+      "params_sha256": "6b26abddeb2aedc299812bd9a1b1c1fc18c485eed69606a440821846dff69371"
+    },
+    {
+      "id": "SEALED-018",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "undefined_property",
+      "platform": "any",
+      "command": [
+        "node",
+        "case-18.mjs"
+      ],
+      "params_sha256": "e2b3f812ae8ff2e7eff6a965c98b1eddfa7e6566aa363d87d118e0e1bb02041f"
+    },
+    {
+      "id": "SEALED-019",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "json_parse",
+      "platform": "any",
+      "command": [
+        "node",
+        "case-19.mjs"
+      ],
+      "params_sha256": "e2b8b1c93d644bf79163cef02a35c515f4e69da3eef2253e3cf78a86e78a0c5c"
+    },
+    {
+      "id": "SEALED-020",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "undefined_property",
+      "platform": "any",
+      "command": [
+        "node",
+        "case-20.mjs"
+      ],
+      "params_sha256": "c2f17cbed3675a4efeb36568e6358635f2e2e35a288268edd95646cb6a23bfca"
+    },
+    {
+      "id": "SEALED-021",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "network_refused",
+      "platform": "any",
+      "command": [
+        "node",
+        "case-21.mjs"
+      ],
+      "params_sha256": "cafbbc4f24b10eb51d123d548b6ed176edb8cfbaabf92fc627579846fa56aa86"
+    },
+    {
+      "id": "SEALED-022",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "off_by_one",
+      "platform": "any",
+      "command": [
+        "node",
+        "case-22.mjs"
+      ],
+      "params_sha256": "bc72e67f82949d605dd0ea1c5d29e380df8dfe15fde28d9949d036f83b977d18"
+    },
+    {
+      "id": "SEALED-023",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "network_refused",
+      "platform": "any",
+      "command": [
+        "node",
+        "case-23.mjs"
+      ],
+      "params_sha256": "092b3af4fc6040bfa9d9b375a688cd577061140969bf1359343885c3b4534200"
+    },
+    {
+      "id": "SEALED-024",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "undefined_property",
+      "platform": "any",
+      "command": [
+        "node",
+        "case-24.mjs"
+      ],
+      "params_sha256": "42d9bb493904ebe4394d2b6fbcbb7df61516d6854f35aa0f0af3a92f4292df81"
+    }
+  ]
+}
