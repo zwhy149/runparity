@@ -83,6 +83,7 @@ function pathShadowingCase(random, index) {
       ].join("\n"),
     },
     pathOrder: "wrong_first",
+    binDirs: { wrong: wrongDir, intended: intendedDir },
     env: { REAL_NODE: process.execPath },
   };
 }
