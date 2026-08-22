@@ -150,8 +150,11 @@ describe.runIf(process.platform === "win32")("Windows Node command shims", () =>
       }).status,
     ).toBe(0);
     expect(
-      resolveLaunch(["rp-cwd-probe"], environmentWithCmdOptOut, { cwd: project }),
-    ).toMatchObject({ resolvedPath: executable });
+      realpathSync.native(
+        resolveLaunch(["rp-cwd-probe"], environmentWithCmdOptOut, { cwd: project }).resolvedPath ??
+          "",
+      ),
+    ).toBe(realpathSync.native(executable));
   });
 
   test("uses Node's code-unit ordering for duplicate-case Windows environment keys", () => {
