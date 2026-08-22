@@ -1,128 +1,88 @@
 <div align="center">
 
-# RunParity
+<img src="docs/assets/banner.svg" alt="RunParity — see what actually ran" width="880"/>
 
-**See what actually ran. Separate environment clues from causal proof.**
+**Works in CI, fails on your laptop? Stop guessing which Node, which PATH entry, which npmrc won.**
 
-[![Status: source prototype](https://img.shields.io/badge/status-source%20prototype-f59e0b)](#current-vs-planned)
+[![CI](https://img.shields.io/github/actions/workflow/status/zwhy149/runparity/ci.yml?branch=main&label=CI)](.github/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-2563eb.svg)](LICENSE)
 [![Node.js 18+](https://img.shields.io/badge/Node.js-18%2B-339933?logo=nodedotjs&logoColor=white)](#runtime-support)
-[![License: MIT](https://img.shields.io/badge/license-MIT-2563eb)](./LICENSE)
+[![Status: pre-release](https://img.shields.io/badge/status-pre--release-f59e0b)](#current-vs-planned)
+[![Fixtures: 13/16 verified](https://img.shields.io/badge/fixtures-13%2F16%20verified-2ea043)](#the-evidence-pipeline)
+
+[Quick start](#quick-start) · [What it catches](#new-here-when-to-reach-for-runparity) · [Evidence grades](#two-words-that-keep-us-honest) · [Verified corpus](#the-evidence-pipeline) · [Why not just](#why-not-just-which-node) · [Deep dive](#deep-dive)
 
 </div>
 
-When a command works in CI but fails locally—or works in one terminal and not
-another—an environment diff gives you suspects. RunParity records the command,
-runtime, executable path, declared constraints, and bounded output that were
-actually involved. It then says exactly how strong the evidence is.
+---
 
-RunParity does **not** call a correlation a root cause, silently repair the host,
-or pretend that running a command on your machine is sandboxed.
+RunParity is an **evidence-first diagnosis CLI for JavaScript/TypeScript environment failures**. When a command "works on my machine" but dies somewhere else, RunParity records the command that actually ran — which executable the shell really picked (lookup path vs canonical target), which runtime identity is active versus what `engines` declares, which npm config source won, which native ABI the loader actually rejected — and then states **exactly how strong the evidence is**. It never guesses a root cause, never "repairs" your host, and never calls a correlation a proof.
 
-> **Project status:** `0.0.0` is a private, pre-S0 source prototype. Host
-> observation works today, and all twelve supported-positive fixtures hold
-> real isolated A1/B/A2 proof chains (verified against a dedicated QEMU-KVM
-> rootless-Podman backend whose eleven isolation controls were demonstrably
-> qualified); public npm install instructions do not exist yet. See
-> [Current vs planned](#current-vs-planned) and
-> [ADR-0005](./docs/adr/0005-qualified-linux-rootless-backend-and-proof-ledger.md).
+---
 
-## Try the deterministic demo
+## The one command
 
-You need Node.js and pnpm. From a checkout of this repository:
+<img src="docs/assets/demo-terminal.svg" alt="Real abridged doctor output on Windows" width="880"/>
 
 ```console
+runparity doctor -- npm run build        # observe, diagnose, grade the evidence
+runparity doctor --json -- npm run build # one stable JSON document
+runparity doctor --html -- npm test      # self-contained shareable HTML report
+runparity doctor --attempt-proof -- npm run build   # request causal proof (see grades)
+```
+
+## Quick start
+
+> RunParity is **not yet on npm** (see [status](#current-vs-planned)). From a checkout:
+
+```console
+git clone https://github.com/zwhy149/runparity.git
+cd runparity
 pnpm install --frozen-lockfile
 pnpm build
+node dist/cli.js doctor --report-only -- node -e "process.exit(23)"
+```
+
+Deterministic offline demo included:
+
+```console
 cd examples/node-engine-drift
 node ../../dist/cli.js doctor --report-only -- node fail.mjs
 ```
 
-The fixture declares `engines.node: ">=99"` and exits with code 23, so it is
-offline and deterministic. An abridged current Windows run looks like this:
-
-```text
-RunParity
-=========
-FAIL  Command failed (exit 23)
-
-Command    node fail.mjs
-Resolved   C:\Program Files\nodejs\node.exe
-Context    HOST_OBSERVATION
-Verdict    PARTIAL_EVIDENCE
-
-What we found
-  Candidate  Node 24.15.0 is outside the declared range >=99
-             This drift is observed; it has not been verified as the cause.
-```
-
-That last sentence is the point: the mismatch is real evidence, but no isolated
-experiment has shown that changing Node alone controls the outcome.
-
-The target exits 23; `--report-only` deliberately makes RunParity exit 0 after a
-valid non-timeout report. Omit that option when you want to preserve the target
-exit code.
-
-For stable machine output, put the global `--json` option before `doctor`:
-
-```console
-node ../../dist/cli.js --json doctor --report-only -- node fail.mjs
-```
-
-For a self-contained report you can inspect or print offline, select HTML instead:
-
-```console
-node ../../dist/cli.js --html doctor --report-only -- node fail.mjs > runparity-report.html
-```
-
-`--json` and `--html` are mutually exclusive. The HTML document contains no
-scripts or external assets and renders the same already-redacted report envelope;
-it is still not guaranteed secret-free, so review it before sharing.
-
-Target arguments must follow `--`. RunParity preserves them as separate argv
-tokens and never sends the target through a shell by default.
-
 ## New here? When to reach for RunParity
-
-You do not need to read any architecture document to get value. If one of these
-sounds like your day, run the one command:
 
 | Symptom | What doctor records |
 | --- | --- |
-| "Works in CI, fails on my laptop" | Which executable actually ran (lookup path vs canonical target), runtime identity vs `engines.node` |
-| "Broke after I switched nvm/pnpm/volta" | Runtime and package-manager drift plus PATH-order candidates |
-| "My teammate's install works, mine doesn't" | npm config source conflicts (`fund`, `strict-peer-deps`) with bounded excerpts |
+| “Works in CI, fails on my laptop” | Which executable actually ran (lookup path vs canonical target), runtime identity vs `engines.node` |
+| “Broke after I switched nvm/pnpm/volta” | Runtime and package-manager drift plus PATH-order candidates |
+| “My teammate's install works, mine doesn't” | npm config source conflicts (`fund`, `strict-peer-deps`) with bounded excerpts |
 | `npm rebuild` did not fix a `.node` error | Genuine `NODE_MODULE_VERSION` / loader signals without rebuilding anything |
-
-Two words matter in every report:
-
-- **PARTIAL_EVIDENCE** — "we observed this correlation." Most reports stop
-  here, honestly.
-- **VERIFIED_INTERVENTION** — "an isolated A1/B/A2 experiment on a qualified
-  rootless backend reproduced the failure, flipped exactly one typed change,
-  and the failure returned when the change was removed." The fixture corpus
-  below holds twelve such proofs; the public CLI never prints this word from
-  host observation alone.
-
-RunParity never edits your PATH, lockfile, or global tools, and never calls a
-correlation a root cause. Use `npx runparity doctor -- <your-command>` after
-publication, or run the demo below from a checkout.
+| “Just tell me if it's even fixable here” | A typed refusal instead of a wrong answer — out-of-scope failures get `REFUSED_OUT_OF_SCOPE`, not noise |
 
 ## What the prototype can inspect
 
-- **PATH shadowing:** the requested command, the absolute path that matched, its
-  canonical target, and other canonical candidates instead of trusting a single
-  `which` or `where` result. Alias provenance is bounded and does not make an
-  alias count look like multiple executables.
-- **Runtime and package-manager drift:** active Node identity versus
-  `engines.node`, plus narrowly qualified local package-manager claims.
-- **Configuration conflicts:** contradictory, non-secret npm boolean sources for
-  `fund` and `strict-peer-deps`. The prototype deliberately does not guess the
-  effective winner.
-- **Native ABI signals:** explicit `NODE_MODULE_VERSION` mismatch output, without
-  downloading or rebuilding native artifacts.
+| Diagnosis family | Today's evidence surface |
+| --- | --- |
+| **PATH_SHADOWING** | Requested command, absolute matched path, canonical `realpath` target, bounded alias→target trace (≤64), extra canonical candidates |
+| **RUNTIME_MANAGER_DRIFT** | Active Node identity vs `engines.node`; recognized generic npm/pnpm Node forwarder manifests (labeled `local_manifest_claim`) |
+| **CONFIG_PRECEDENCE** | Contradictory allowlisted boolean sources (`fund`, `strict-peer-deps`) across CLI / env / project `.npmrc` |
+| **NATIVE_ABI_ARCH_MISMATCH** | Explicit `NODE_MODULE_VERSION` mismatch output; no downloads, no rebuilds |
 
-Every report contains no more than three ranked findings. Findings are bounded
-hypotheses, not proof.
+Every report carries at most three ranked, bounded findings. Findings are hypotheses with stated uncertainty — never proof.
+
+## Two words that keep us honest
+
+<div align="center">
+
+| Grade | Meaning | How it's earned |
+| --- | --- | --- |
+| 🟡 `PARTIAL_EVIDENCE` | “we observed this correlation” | Host observation alone |
+| 🔵 `VERIFIED_INTERVENTION` | “an isolated experiment proved flipping exactly one typed change fixes it, and removing it breaks it again” | Three fresh A1→B→A2 sequences on a **qualified rootless backend**, re-derived by an independent verifier |
+
+</div>
+
+The public CLI can never print `VERIFIED_INTERVENTION` from host observation. With `--attempt-proof`, hosts without a qualified native backend answer `REFUSED_OUT_OF_SCOPE` honestly.
 
 ## The evidence pipeline
 
@@ -135,161 +95,107 @@ flowchart LR
     D --> E
     E --> F["Runtime-validated outcome state"]
     F --> G["Deterministic verdict + human / JSON / HTML report"]
-    E -. "planned: one typed intervention" .-> H["Rootless Linux A1 / B / A2"]
-    H -. "qualified ledger only" .-> I["VERIFIED_INTERVENTION"]
+    E -. "one typed intervention" .-> H["Qualified rootless Linux backend<br/>(11 demonstrated isolation controls)"]
+    H --> I["A1 → B → A2 ×3 ledger"]
+    I --> J["Independent re-derivation<br/>(second verifier implementation)"]
+    J --> K["VERIFIED_INTERVENTION"]
 ```
 
-The verdict seam fails closed on impossible states. For example, a result cannot
-claim both “not started” and “exit 0,” and uncontained Host cleanup cannot be
-upgraded to `verified`.
+**This is not a mockup — the pipeline runs for real.** The repository ships the receipts:
 
-## Human-friendly and automation-friendly
+<div align="center">
 
-The default report leads with the outcome, the evidence behind it, and what is
-still unknown. `--json` emits one schema-versioned document to stdout so CI and
-issue tooling can consume the same observation without scraping prose. `--html`
-emits one responsive, printable, self-contained offline document to stdout after
-a completed observation.
+| Corpus state | Count | Evidence |
+| --- | --- | --- |
+| ✅ verified (isolated A1/B/A2 proof) | **12 supported positives** | 3-sequence ledgers × 12 cases, single-token typed interventions across 4 delta kinds |
+| ✅ verified (native-host challenge) | **1 of 2** | `DEV-OOS-001`: 3× stable `REFUSED_OUT_OF_SCOPE` on real Windows; macOS case automated via CI workflow |
+| 🔶 implemented (Host-Observe-only by design) | 3 | hard negatives + remaining platform challenge |
+| 🧪 sealed S1 benchmark (frozen seed) | 24 cases | procedural fault-injection corpus, first-tranche results committed |
 
-```json
-{
-  "schema": "runparity.cli/v1",
-  "ok": true,
-  "command": "doctor",
-  "data": {
-    "report": {
-      "verdict": "PARTIAL_EVIDENCE",
-      "execution_context": "HOST_OBSERVATION",
-      "experiment_progress": "OBSERVED"
-    }
-  },
-  "error": null
-}
-```
+</div>
 
-`ok` means RunParity completed the observation operation. It does not mean the
-target command passed. Target exit data and captured stdout/stderr live under
-`data.report.observation.result`.
+<details>
+<summary><b>How a verdict actually gets earned (the receipt chain)</b></summary>
 
-## Why this project exists
+1. A dedicated QEMU-KVM Ubuntu 24.04 VM (own kernel, non-root user, rootless Podman 4.9.3) must pass an **eleven-control probe battery** — uid≠0, caps zero, `NoNewPrivs`, read-only root, write containment, network denial, credential absence, cgroup limits, detached-descendant destruction, cross-arm freshness, plus binding the nested user-namespace parent claim with host-kernel `/proc` truth. All controls must be *demonstrated*, never configured.
+2. Only then may arms run under a frozen isolation policy (digest-bound): network off, caps dropped, read-only rootfs, `keep-id` non-root user, pids/memory/cpu limits, per-arm fresh writable HOME.
+3. The A1/B/A2 ledger embeds bounded observations; the failure signature, frozen oracle, and the **exactly-one-token** intervention diff are recomputed by a second implementation (`fixtures/lib/evidence-verifier.mjs`) that shares no code with the runner.
+4. The fixture validator re-derives every claim on every run. Self-authored receipts fail with named problems.
 
-The design is grounded in a targeted audit of 72 direct GitHub issue or
-discussion pages from 72 distinct repositories: 18 cases in each of four
-failure families. Examples include a child process observing a different pnpm
-than the top-level shell ([pnpm/pnpm#7124](https://github.com/pnpm/pnpm/issues/7124)),
-a cache restoring an older requested runtime
-([oven-sh/setup-bun#146](https://github.com/oven-sh/setup-bun/issues/146)),
-environment and `.env` precedence changing across versions
-([docker/compose#9737](https://github.com/docker/compose/issues/9737)), and an
-ARM64-labelled path containing an x86-64 ELF artifact
-([microsoft/node-pty#860](https://github.com/microsoft/node-pty/issues/860)).
+</details>
 
-This was a quota-based engineering audit, not a random prevalence or search
-volume study. It supports the problem taxonomy and safety boundaries; it does
-not forecast stars or downloads. The full methodology, links, dispositions, and
-bias analysis are in [Demand evidence](./docs/DEMAND-EVIDENCE.md).
+## Why not just `which node`?
 
-## Current vs planned
+| Manual step | What goes wrong | RunParity |
+| --- | --- | --- |
+| `which node` | Shows first PATH hit — aliases, shims, and symlinks hide the real binary | Lookup path **and** canonical `realpath` target, ≤64-entry alias trace, extra candidates |
+| `node -v` vs `package.json` | You eyeball semver, and the running binary may not be the one you think | Observed runtime identity vs declared `engines` with a graded finding |
+| `npm config list` | Wall of text; who wins and why is on you | Typed conflicts for allowlisted keys with bounded excerpts |
+| Rebuild native modules | Slow, may fix nothing, hides the real ABI signal | The genuine loader error is the evidence; nothing is rebuilt |
+| Post the whole log | Leaks secrets, buries the signal | Redacted-before-write captures, invocation-scoped HMAC digests, shareable HTML/JSON |
+
+## Deep dive
+
+<details open>
+<summary><b>Safety & privacy boundary</b></summary>
+
+`doctor` runs the command you supplied on the host with your normal permissions. It is **not a sandbox** — the target can read files, use credentials, touch the network, exactly as without RunParity. RunParity itself never edits PATH, lockfiles, global tools, or shell profiles. Captured excerpts are bounded and defense-in-depth redacted **before their first disk write**; stream digests use invocation-scoped HMAC keys that are never persisted. These controls do not guarantee a report is secret-free — review before sharing. Timeouts kill the process tree best-effort and the report says `uncontained_host` honestly; a detached survivor forces `ABORTED_SAFETY` rather than a false "contained" claim. Full model: [`docs/SECURITY-MODEL.md`](docs/SECURITY-MODEL.md).
+</details>
+
+<details>
+<summary><b>Current vs planned capability table</b></summary>
 
 | Capability | `0.0.0` source prototype | Target V1 |
 | --- | --- | --- |
-| Host command observation | Available | Hardened and release-qualified |
-| Human, stable JSON, and self-contained HTML reports | Available | Add Markdown, SARIF, saved-report import/export, and release qualification |
-| Node/manager/PATH/native bounded findings | Narrow current rules | Four families, each with 3/3 fixtures verified in isolation |
-| Automatic host repair | Intentionally absent | Intentionally absent |
-| Host outcome policy | Internal runtime classifier → discriminated state → pure deterministic decision; contradictory states and `verified` Host cleanup fail closed | Public contract and release qualification remain required |
-| Experiment planning | Internal opaque, pure plan-only compiler for an exact A1/B/A2 `path.prepend` spec; it requires complete fixed-input/base/qualification/oracle digests, unique arm freshness, and an absolute directory matching the base PATH style | Preview one typed intervention |
-| Backend qualification | Available (maintainer side): a supervised SSH transport and an eleven-control probe battery demonstrably qualify a dedicated QEMU-KVM Ubuntu VM running rootless Podman under a non-root account | Same battery against additional native Linux backends |
-| Isolated A1/B/A2 proof | All 12 supported positives verified: each holds a three-sequence ledger (single-token typed intervention across four delta kinds) whose signatures, oracle, and intervention diffs are re-derived independently by the validator before `verified` is accepted | Sealed S1 benchmark |
-| Windows/macOS | Host Observe only | Host Observe only for V1 |
-| Public `npx runparity` | Not published | Planned after release gates pass |
+| Host command observation | Available, hardened | Release-qualified |
+| Human / stable JSON / self-contained HTML reports | Available | + Markdown, SARIF, import/export |
+| Four diagnosis families | Bounded current rules | All 12 proof-eligible fixtures verified in isolation |
+| Backend qualification | Maintainer-side probe battery over a real QEMU-KVM rootless VM | Additional native Linux backends |
+| Isolated A1/B/A2 proof | 12/12 supported positives verified | Sealed S1 benchmark passing |
+| Automatic host repair | **Intentionally absent** | **Intentionally absent** |
+| Public `npx runparity` | Not published | After release gates pass |
 
-The [product requirements](./docs/PRD.md) define the target. The
-[CLI contract](./docs/CLI.md) is the precise source of truth for behavior that is
-already executable.
+</details>
 
-The internal compiler is deliberately not a public preview: its opaque token and
-safe inspection summary do not expose command, PATH, or intervention-directory
-values, and it neither runs arms nor produces a proof ledger.
+<details>
+<summary><b>Sealed S1 benchmark — first-tranche numbers (honest)</b></summary>
 
-## Safety and privacy boundary
+Procedural fault-injection corpus from frozen public seed `20260822` (single-maintainer human double-blind is impossible to do honestly; the protocol amendment is documented in [`docs/VALIDATION.md`](docs/VALIDATION.md)):
 
-`doctor` runs the command you supplied on the host with your normal permissions.
-It is **not a sandbox**. The command may read files, use credentials, access the
-network, spawn children, or make changes just as it would without RunParity.
+- Runtime-drift identification: **4/4** on both platforms
+- Out-of-family challenges (incl. a code defect that *mimics* a tooling failure): **16/16 zero false claims**
+- PATH / NATIVE category findings: 0/4 each — measured coverage gaps, ranked as next engineering targets
+- CONFIG findings: 0/4 — matches the documented current boundary
 
-The prototype bounds captured excerpts, applies defense-in-depth redaction and
-display-control hardening, and uses invocation-scoped HMACs for stream digests.
-These controls do not guarantee a report is secret-free. Review reports before
-sharing them.
+No S1 gate is claimed. Raw per-case records: `fixtures/sealed/evaluation-*.json`.
+</details>
 
-On timeout, RunParity attempts best-effort POSIX process-group or Windows
-process-tree cleanup. The attempt is recorded as `best_effort` or `failed`, but
-either result remains an `uncontained_host`. A detached descendant can survive,
-so an execution timeout returns `ABORTED_SAFETY` rather than claiming successful
-containment. Read the complete [security model](./docs/SECURITY-MODEL.md) before
-running untrusted commands.
-
-## Development
+<details>
+<summary><b>Development</b></summary>
 
 ```console
-pnpm install --frozen-lockfile
-pnpm verify
+pnpm install
+pnpm verify        # biome + tsc + vitest + fixture validator + artifact tests
+node fixtures/validate.mjs
+node fixtures/sealed/evaluate.mjs   # sealed-benchmark evaluation (drift-checked)
 ```
 
-`pnpm verify` runs formatting/lint checks, TypeScript, product tests, fixture
-manifest validation and its adversarial tests, then builds the distributable
-CLI.
+Dual-platform gate: Windows + Ubuntu (WSL2) both run the full `pnpm verify`. Architecture decisions in [`docs/adr/`](docs/adr/). The maintainer-side experiment driver (`src/fixtures-cli.ts`) is intentionally outside the published `bin` map.
 
-The open fixture corpus contains 16 versioned **implemented** manifests: 12
-proof-eligible target assets (three for each V1 diagnosis family), two hard
-negatives, and two out-of-scope environment cases. For every implemented case,
-the validator recomputes a bounded non-empty asset inventory, checks a contained
-Node entrypoint without executing it, binds that entrypoint to the manifest's
-planned argv, and binds asset and manifest digests to the build receipt.
-The runtime and native fixtures also have bounded platform-gated Host smoke
-tests. For native artifacts, these separately inspect the relevant ELF
-ABI/architecture/dynamic-library facts, observe real loading behavior, and test
-the content-addressed matching selection; they are not isolated A/B/A2 arms.
-`runnable=true` means only that the static target invocation is complete; null
-backend and ledger receipts record the missing proof infrastructure. All live
-source trees remain explicitly unqualified. Hash-linked “verification” ledgers
-are still rejected: arm, oracle, safety, cleanup, and isolation evidence must be
-independently recomputed before `verified`. See the
-[validation protocol](./docs/VALIDATION.md) for the exact current boundaries.
+</details>
 
-`DEV-PATH-001` contains two fixed POSIX launchers that forward to the same
-externally supplied absolute Node executable and differ only in their fixture
-marker. Its Linux-only smoke test applies the same executable mode to temporary
-copies and exercises both PATH orders. Build receipt v1 binds file paths and
-bytes, not POSIX mode, and this Host smoke is not an isolated experiment.
-`DEV-PATH-003` adds an inventoried two-hop link recipe and two regular launchers.
-Its Linux-only Host smoke materializes the links in a temporary workspace and
-checks the matched link path and final canonical target path before and after
-execution. That is provenance smoke evidence, not file/content identity,
-backend containment, or an isolated Intervention.
-See the [validation protocol](./docs/VALIDATION.md).
+<details>
+<summary><b>Why this project exists</b></summary>
 
-### Runtime support
+Environment failures eat afternoons and produce confident wrong answers in code review. RunParity's thesis: record what actually ran, separate observation from causation, make the evidence gradable and shareable — and make "verified" a word that means something. The [product requirements](docs/PRD.md) and [demand evidence](docs/DEMAND-EVIDENCE.md) define the target; the [CLI contract](docs/CLI.md) is the precise truth for executable behavior.
+</details>
 
-The built controller has smoke evidence on Node 18.20.8, 20.19.5, 22.22.0, and
-24.15.0. Node 18 and 20 are EOL compatibility lines. Development and future
-release qualification target maintained Node 22 and 24.
+## Contributing & license
 
-## Contributing
+Issues and discussions are welcome — especially field reports of real "works there, not here" failures (they feed the sealed corpus). See [`docs/agents/`](docs/agents/) for contributor workflow. MIT — see [LICENSE](LICENSE).
 
-High-value contributions are reproducible environment failures, redaction and
-process-safety adversarial tests, platform resolver parity cases, fixture assets,
-and report usability feedback. Before opening a change, read:
+<div align="center">
 
-- [Domain language and invariants](./CONTEXT.md)
-- [Product requirements](./docs/PRD.md)
-- [Security model](./docs/SECURITY-MODEL.md)
-- [Validation protocol](./docs/VALIDATION.md)
+**RunParity never calls a correlation a root cause.**
 
-Please do not weaken a gold fixture label to make an implementation pass. A label
-change needs evidence and an explicit protocol amendment.
-
-## License
-
-[MIT](./LICENSE)
+</div>

@@ -1,0 +1,31 @@
+<svg width="880" height="260" viewBox="0 0 880 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RunParity — see what actually ran">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#101a33"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4cc38a"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="880" height="260" rx="18" fill="url(#bg)"/>
+  <!-- magnifier over a branching path -->
+  <g transform="translate(96,52)">
+    <path d="M10 120 C 40 120, 40 60, 80 60 S 130 10, 150 10" fill="none" stroke="#24314f" stroke-width="6" stroke-linecap="round"/>
+    <path d="M10 120 C 40 120, 40 60, 80 60" fill="none" stroke="url(#accent)" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="150" cy="42" r="38" fill="none" stroke="url(#accent)" stroke-width="8"/>
+    <line x1="176" y1="70" x2="204" y2="98" stroke="url(#accent)" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="80" cy="60" r="6" fill="#f59e0b"/>
+    <circle cx="10" cy="120" r="6" fill="#4cc38a"/>
+  </g>
+  <text x="330" y="105" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700" fill="#f4f7fb">RunParity</text>
+  <text x="330" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="23" fill="#9fb0cc">See what actually ran.</text>
+  <text x="330" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#9fb0cc">Separate environment clues from causal proof.</text>
+  <g font-family="Consolas, Menlo, monospace" font-size="15">
+    <rect x="330" y="202" rx="7" width="180" height="30" fill="#12251c" stroke="#1f5c42"/>
+    <text x="344" y="222" fill="#4cc38a">PARTIAL_EVIDENCE</text>
+    <rect x="522" y="202" rx="7" width="216" height="30" fill="#12251c" stroke="#1f5c42"/>
+    <text x="536" y="222" fill="#3b82f6">VERIFIED_INTERVENTION</text>
+  </g>
+</svg>
