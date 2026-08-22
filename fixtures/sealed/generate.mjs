@@ -84,7 +84,7 @@ function pathShadowingCase(random, index) {
     },
     pathOrder: "wrong_first",
     binDirs: { wrong: wrongDir, intended: intendedDir },
-    env: { REAL_NODE: process.execPath },
+    env: { REAL_NODE: "<controller-node>" },
   };
 }
 

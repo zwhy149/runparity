@@ -75,6 +75,7 @@ for (const caseDefinition of cases) {
       // one at the front of PATH.
       const wrongBin = join(workDir, caseDefinition.binDirs.wrong, "bin");
       env["PATH"] = `${wrongBin}:${env["PATH"] ?? ""}`;
+      env["REAL_NODE"] = process.execPath;
     }
     const doctor = spawnSync(
       process.execPath,

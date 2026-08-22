@@ -1,0 +1,292 @@
+{
+  "schema_version": "runparity.sealed-evaluation/v1",
+  "frozen_manifest_digest": "5ab4042af64d648fefde3cb3ee65151bf6355b49d95a99493be564f349262d86",
+  "platform": "win32",
+  "doctor_invocation": "node tsx src/cli.ts --json doctor --timeout 90s -- <case command>",
+  "evaluated": 16,
+  "skipped_platform": 8,
+  "in_scope": {
+    "total": 8,
+    "top_category_correct": 4,
+    "by_family": {
+      "PATH_SHADOWING": {
+        "total": 0,
+        "correct": 0
+      },
+      "RUNTIME_MANAGER_DRIFT": {
+        "total": 4,
+        "correct": 4
+      },
+      "CONFIG_PRECEDENCE": {
+        "total": 4,
+        "correct": 0
+      },
+      "NATIVE_ABI_ARCH_MISMATCH": {
+        "total": 0,
+        "correct": 0
+      }
+    }
+  },
+  "challenge": {
+    "total": 8,
+    "correctly_non_actionable": 8
+  },
+  "cases": [
+    {
+      "id": "SEALED-001",
+      "family": "PATH_SHADOWING",
+      "status": "skipped_platform",
+      "platform": "win32"
+    },
+    {
+      "id": "SEALED-002",
+      "family": "PATH_SHADOWING",
+      "status": "skipped_platform",
+      "platform": "win32"
+    },
+    {
+      "id": "SEALED-003",
+      "family": "PATH_SHADOWING",
+      "status": "skipped_platform",
+      "platform": "win32"
+    },
+    {
+      "id": "SEALED-004",
+      "family": "PATH_SHADOWING",
+      "status": "skipped_platform",
+      "platform": "win32"
+    },
+    {
+      "id": "SEALED-005",
+      "family": "RUNTIME_MANAGER_DRIFT",
+      "challenge_kind": null,
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": "RUNTIME_MANAGER_DRIFT",
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 1,
+      "gold_family": "RUNTIME_MANAGER_DRIFT",
+      "correct": true
+    },
+    {
+      "id": "SEALED-006",
+      "family": "RUNTIME_MANAGER_DRIFT",
+      "challenge_kind": null,
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": "RUNTIME_MANAGER_DRIFT",
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 1,
+      "gold_family": "RUNTIME_MANAGER_DRIFT",
+      "correct": true
+    },
+    {
+      "id": "SEALED-007",
+      "family": "RUNTIME_MANAGER_DRIFT",
+      "challenge_kind": null,
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": "RUNTIME_MANAGER_DRIFT",
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 1,
+      "gold_family": "RUNTIME_MANAGER_DRIFT",
+      "correct": true
+    },
+    {
+      "id": "SEALED-008",
+      "family": "RUNTIME_MANAGER_DRIFT",
+      "challenge_kind": null,
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": "RUNTIME_MANAGER_DRIFT",
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 1,
+      "gold_family": "RUNTIME_MANAGER_DRIFT",
+      "correct": true
+    },
+    {
+      "id": "SEALED-009",
+      "family": "CONFIG_PRECEDENCE",
+      "challenge_kind": null,
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "CONFIG_PRECEDENCE",
+      "correct": false
+    },
+    {
+      "id": "SEALED-010",
+      "family": "CONFIG_PRECEDENCE",
+      "challenge_kind": null,
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "CONFIG_PRECEDENCE",
+      "correct": false
+    },
+    {
+      "id": "SEALED-011",
+      "family": "CONFIG_PRECEDENCE",
+      "challenge_kind": null,
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "CONFIG_PRECEDENCE",
+      "correct": false
+    },
+    {
+      "id": "SEALED-012",
+      "family": "CONFIG_PRECEDENCE",
+      "challenge_kind": null,
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "CONFIG_PRECEDENCE",
+      "correct": false
+    },
+    {
+      "id": "SEALED-013",
+      "family": "NATIVE_ABI_ARCH_MISMATCH",
+      "status": "skipped_platform",
+      "platform": "win32"
+    },
+    {
+      "id": "SEALED-014",
+      "family": "NATIVE_ABI_ARCH_MISMATCH",
+      "status": "skipped_platform",
+      "platform": "win32"
+    },
+    {
+      "id": "SEALED-015",
+      "family": "NATIVE_ABI_ARCH_MISMATCH",
+      "status": "skipped_platform",
+      "platform": "win32"
+    },
+    {
+      "id": "SEALED-016",
+      "family": "NATIVE_ABI_ARCH_MISMATCH",
+      "status": "skipped_platform",
+      "platform": "win32"
+    },
+    {
+      "id": "SEALED-017",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "off_by_one",
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 0,
+      "observed_top_category": null,
+      "observed_verdict": "INCONCLUSIVE",
+      "finding_count": 0,
+      "gold_family": "OUT_OF_FAMILY",
+      "correct": true
+    },
+    {
+      "id": "SEALED-018",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "undefined_property",
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 1,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "OUT_OF_FAMILY",
+      "correct": true
+    },
+    {
+      "id": "SEALED-019",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "json_parse",
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 1,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "OUT_OF_FAMILY",
+      "correct": true
+    },
+    {
+      "id": "SEALED-020",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "undefined_property",
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 1,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "OUT_OF_FAMILY",
+      "correct": true
+    },
+    {
+      "id": "SEALED-021",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "network_refused",
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "OUT_OF_FAMILY",
+      "correct": true
+    },
+    {
+      "id": "SEALED-022",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "off_by_one",
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 0,
+      "observed_top_category": null,
+      "observed_verdict": "INCONCLUSIVE",
+      "finding_count": 0,
+      "gold_family": "OUT_OF_FAMILY",
+      "correct": true
+    },
+    {
+      "id": "SEALED-023",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "network_refused",
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 23,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "OUT_OF_FAMILY",
+      "correct": true
+    },
+    {
+      "id": "SEALED-024",
+      "family": "OUT_OF_FAMILY",
+      "challenge_kind": "undefined_property",
+      "status": "evaluated",
+      "platform": "win32",
+      "target_exit_code": 1,
+      "observed_top_category": null,
+      "observed_verdict": "PARTIAL_EVIDENCE",
+      "finding_count": 0,
+      "gold_family": "OUT_OF_FAMILY",
+      "correct": true
+    }
+  ]
+}
