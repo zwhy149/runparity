@@ -96,7 +96,7 @@ describe("runparity doctor", () => {
         },
       ],
       meta: {
-        cli_version: "0.0.0",
+        cli_version: "0.1.0",
       },
     });
   });

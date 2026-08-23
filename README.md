@@ -7,7 +7,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/zwhy149/runparity/ci.yml?branch=main&label=CI)](.github/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2563eb.svg)](LICENSE)
 [![Node.js 18+](https://img.shields.io/badge/Node.js-18%2B-339933?logo=nodedotjs&logoColor=white)](#runtime-support)
-[![Status: pre-release](https://img.shields.io/badge/status-pre--release-f59e0b)](#current-vs-planned)
+[![npm version](https://img.shields.io/npm/v/runparity.svg)](https://www.npmjs.com/package/runparity)
 [![Fixtures: 14/16 verified](https://img.shields.io/badge/fixtures-14%2F16%20verified-2ea043)](#the-evidence-pipeline)
 
 [Quick start](#quick-start) · [What it catches](#new-here-when-to-reach-for-runparity) · [Evidence grades](#two-words-that-keep-us-honest) · [Verified corpus](#the-evidence-pipeline) · [Why not just](#why-not-just-which-node) · [Deep dive](#deep-dive)
@@ -33,7 +33,20 @@ runparity doctor --attempt-proof -- npm run build   # request causal proof (see 
 
 ## Quick start
 
-> RunParity is **not yet on npm** (see [status](#current-vs-planned)). From a checkout:
+No installation or project changes required:
+
+```console
+npx --yes runparity doctor -- npm run build
+```
+
+Or install the CLI globally:
+
+```console
+npm install --global runparity
+runparity doctor -- npm run build
+```
+
+To run from a source checkout instead:
 
 ```console
 git clone https://github.com/zwhy149/runparity.git
@@ -50,6 +63,13 @@ cd examples/node-engine-drift
 node ../../dist/cli.js doctor --report-only -- node fail.mjs
 ```
 
+## Runtime support
+
+The published CLI supports **Node.js 18 and newer**. The release gate executes the packed CLI on
+the oldest supported runtime and runs the full verification suite on Node.js 22 and 24 across
+Windows, macOS, and Linux. Contributors building from source need Node.js 22.13 or newer because
+the repository pins pnpm 11.19.0.
+
 ## New here? When to reach for RunParity
 
 | Symptom | What doctor records |
@@ -60,7 +80,7 @@ node ../../dist/cli.js doctor --report-only -- node fail.mjs
 | `npm rebuild` did not fix a `.node` error | Genuine `NODE_MODULE_VERSION` / loader signals without rebuilding anything |
 | “Just tell me if it's even fixable here” | A typed refusal instead of a wrong answer — out-of-scope failures get `REFUSED_OUT_OF_SCOPE`, not noise |
 
-## What the prototype can inspect
+## What RunParity can inspect
 
 | Diagnosis family | Today's evidence surface |
 | --- | --- |
@@ -145,7 +165,7 @@ flowchart LR
 <details>
 <summary><b>Current vs planned capability table</b></summary>
 
-| Capability | `0.0.0` source prototype | Target V1 |
+| Capability | `0.1.0` | Target 1.0 |
 | --- | --- | --- |
 | Host command observation | Available, hardened | Release-qualified |
 | Human / stable JSON / self-contained HTML reports | Available | + Markdown, SARIF, import/export |
@@ -153,7 +173,7 @@ flowchart LR
 | Backend qualification | Maintainer-side probe battery over a real QEMU-KVM rootless VM | Additional native Linux backends |
 | Isolated A1/B/A2 proof | 12/12 supported positives verified | Sealed S1 benchmark passing |
 | Automatic host repair | **Intentionally absent** | **Intentionally absent** |
-| Public `npx runparity` | Not published | After release gates pass |
+| Public `npx runparity` | Available from npm | Sustained compatibility and release automation |
 
 </details>
 

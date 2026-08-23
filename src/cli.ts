@@ -28,8 +28,7 @@ import {
   type HostVerdict,
   type HostWarningCode,
 } from "./verdict.js";
-
-const CLI_VERSION = "0.0.0";
+import { CLI_VERSION } from "./version.js";
 
 type CliEnvelope = {
   schema: "runparity.cli/v1";

@@ -79,3 +79,14 @@ jobs:
         run: |
           npx --yes --package "${{ steps.pack.outputs.tarball }}" runparity --version
           npx --yes --package "${{ steps.pack.outputs.tarball }}" runparity --help
+
+      - name: Set up oldest supported Node.js runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 18
+          package-manager-cache: false
+
+      - name: Execute the packed binary on Node.js 18
+        run: |
+          npx --yes --package "${{ steps.pack.outputs.tarball }}" runparity --version
+          npx --yes --package "${{ steps.pack.outputs.tarball }}" runparity --help

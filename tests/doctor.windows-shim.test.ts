@@ -285,7 +285,7 @@ describe.runIf(process.platform === "win32")("Windows Node command shims", () =>
       },
       warnings: [],
       meta: {
-        cli_version: "0.0.0",
+        cli_version: "0.1.0",
       },
     });
   });
