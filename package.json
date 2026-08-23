@@ -41,7 +41,7 @@
     "semver": "7.8.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.8",
+    "@biomejs/biome": "2.5.9",
     "@types/node": "24.13.3",
     "@types/semver": "7.8.0",
     "ajv": "8.20.0",
