@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { linkSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+  linkSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -224,14 +232,15 @@ test("rejects Windows junction reparse points", (t) => {
 });
 
 test("rejects case-folded relative-path conflicts on case-sensitive filesystems", (t) => {
-  if (process.platform === "win32") {
-    t.skip("the Windows test filesystem is case-insensitive");
-    return;
-  }
   const root = temporaryAssetRoot(t);
   writeFileSync(join(root, "Alpha.txt"), "A", "utf8");
   writeFileSync(join(root, "Bravo.txt"), "B", "utf8");
   writeFileSync(join(root, "alpha.txt"), "a", "utf8");
+  const names = new Set(readdirSync(root));
+  if (!names.has("Alpha.txt") || !names.has("alpha.txt")) {
+    t.skip("the test filesystem is case-insensitive");
+    return;
+  }
 
   expectInvalid(() => inspectAssetTree(root), "case-folded path conflict");
 });
