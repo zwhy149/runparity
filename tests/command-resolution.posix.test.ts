@@ -150,7 +150,7 @@ describe("POSIX command resolution semantics", () => {
           { PATH: [first, second].join(delimiter) },
           { platform: process.platform, cwd },
         ).resolvedPath,
-      ).toBe(resolve(second, "probe"));
+      ).toBe(realpathSync.native(resolve(second, "probe")));
     });
 
     test("returns a typed error when every candidate is non-executable", () => {

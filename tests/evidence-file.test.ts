@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
@@ -42,7 +42,7 @@ describe("bounded evidence-file Module", () => {
 
     expect(result).toMatchObject({
       ok: true,
-      path: resolve(root, "package.json"),
+      path: realpathSync.native(resolve(root, "package.json")),
       identity: {
         size: Buffer.byteLength(contents),
       },

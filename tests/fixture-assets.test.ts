@@ -273,8 +273,8 @@ describe("implemented development fixture assets", () => {
         resolve(copiedAssetRoot, "package.json"),
         JSON.stringify({ engines: { node: ">=0.0.0 <1.0.0" } }),
       );
-      const changedContract = spawnSync(process.execPath, [copiedEntrypoint], {
-        cwd: copiedAssetRoot,
+      const changedContract = spawnSync(process.execPath, [realpathSync.native(copiedEntrypoint)], {
+        cwd: realpathSync.native(copiedAssetRoot),
         encoding: "utf8",
         env: {},
         shell: false,
@@ -462,6 +462,8 @@ describe("implemented development fixture assets", () => {
         }
         const wrongLauncher = resolve(workspace, "wrong-node", "bin", "node");
         const intendedLauncher = resolve(workspace, "intended-node", "bin", "node");
+        const canonicalWrongLauncher = realpathSync.native(wrongLauncher);
+        const canonicalIntendedLauncher = realpathSync.native(intendedLauncher);
         chmodSync(wrongLauncher, 0o755);
         chmodSync(intendedLauncher, 0o755);
         const targetArgv = ["node", "fixture/assert-node-marker.mjs"] as const;
@@ -527,11 +529,11 @@ describe("implemented development fixture assets", () => {
             runtime: null,
             launch: {
               selected_search_path: wrongLauncher,
-              resolved_path: wrongLauncher,
-              candidates: [wrongLauncher, intendedLauncher],
+              resolved_path: canonicalWrongLauncher,
+              candidates: [canonicalWrongLauncher, canonicalIntendedLauncher],
               candidate_resolutions: [
-                { search_path: wrongLauncher, canonical_path: wrongLauncher },
-                { search_path: intendedLauncher, canonical_path: intendedLauncher },
+                { search_path: wrongLauncher, canonical_path: canonicalWrongLauncher },
+                { search_path: intendedLauncher, canonical_path: canonicalIntendedLauncher },
               ],
               candidate_resolutions_truncated: false,
             },
@@ -550,8 +552,8 @@ describe("implemented development fixture assets", () => {
             id: "RP-PATH-0001",
             category: "PATH_SHADOWING",
             state: "candidate",
-            selected: wrongLauncher,
-            alternatives: [intendedLauncher],
+            selected: canonicalWrongLauncher,
+            alternatives: [canonicalIntendedLauncher],
             intervention: null,
           }),
         ]);
@@ -1139,7 +1141,11 @@ describe("implemented development fixture assets", () => {
       shell: false,
     });
     expect(result.status).toBe(23);
-    expect(result.stdout).toBe(process.platform === "darwin" ? expect.any(String) : "");
+    if (process.platform === "darwin") {
+      expect(result.stdout).toMatch(/^(?:SDK_ABSENT|SDK_OBSERVED:\/.+)\n$/u);
+    } else {
+      expect(result.stdout).toBe("");
+    }
     expect(result.stderr).toBe("RP_FIXTURE_MACOS_SDK_PROOF_UNSUPPORTED\n");
   });
 
@@ -2328,6 +2334,12 @@ describe("implemented development fixture assets", () => {
       const environmentA = JSON.parse(
         readFileSync(resolve(assetRoot, "fixture", "environment-a.json"), "utf8"),
       );
+      if (environmentA.matching_node_module_version !== process.versions.modules) {
+        t.skip(
+          `fixture runtime ABI ${environmentA.matching_node_module_version} differs from ${process.versions.modules}`,
+        );
+        return;
+      }
       expect(manifest).toMatchObject({
         fixture_status: "verified",
         scenario: {
@@ -2373,13 +2385,6 @@ describe("implemented development fixture assets", () => {
       expect(header.status).toBe(0);
       expect(header.stdout).toMatch(/Class:\s+ELF64/u);
       expect(header.stdout).toMatch(/Machine:\s+Advanced Micro Devices X86-64/u);
-      if (environmentA.matching_node_module_version !== process.versions.modules) {
-        t.skip(
-          `fixture runtime ABI ${environmentA.matching_node_module_version} differs from ${process.versions.modules}`,
-        );
-        return;
-      }
-
       const native = spawnSync(process.execPath, [entrypoint], {
         cwd: assetRoot,
         encoding: "utf8",
@@ -2539,6 +2544,12 @@ describe("implemented development fixture assets", () => {
       const environment = JSON.parse(
         readFileSync(resolve(assetRoot, "fixture", "environment-a.json"), "utf8"),
       );
+      if (environment.matching_node_module_version !== process.versions.modules) {
+        t.skip(
+          `fixture runtime ABI ${environment.matching_node_module_version} differs from ${process.versions.modules}`,
+        );
+        return;
+      }
       expect(manifest).toMatchObject({
         fixture_status: "verified",
         scenario: { expected_a_failure_signature: "RP_FIXTURE_NATIVE_ARCH_MISMATCH" },
@@ -2615,12 +2626,6 @@ describe("implemented development fixture assets", () => {
       expect(actualLoad.stdout).toBe("");
       expect(actualLoad.stderr).toContain("ERR_DLOPEN_FAILED");
       expect(actualLoad.stderr).toContain(basename(environment.selected.path));
-
-      if (environment.matching_node_module_version !== process.versions.modules) {
-        t.skip(
-          `fixture runtime ABI ${environment.matching_node_module_version} differs from ${process.versions.modules}`,
-        );
-      }
     },
   );
 

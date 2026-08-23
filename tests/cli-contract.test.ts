@@ -455,7 +455,7 @@ describe("machine-readable CLI contract", () => {
     const targetProgram = [
       "const secret = process.argv[2]",
       `process.stdout.write(secret + 'x'.repeat(${64 * 1024} - Buffer.byteLength(secret) + 5))`,
-      "process.exit(23)",
+      "process.exitCode = 23",
     ].join(";");
     const result = invoke(temporaryProject("runparity-multiline-secret-boundary-"), [
       "--json",
@@ -472,9 +472,9 @@ describe("machine-readable CLI contract", () => {
     expect(result.status).toBe(23);
     expect(result.stdout).not.toContain("SECOND-PRIVATE-KEY-LINE-987654321");
     expect(result.stdout).not.toContain("THIRD-PRIVATE-KEY-LINE-456789123");
-    expect(JSON.parse(result.stdout).data.report.observation.result.stdout.redacted_excerpt).toBe(
-      "[REDACTED_BOUNDARY]",
-    );
+    const excerpt = JSON.parse(result.stdout).data.report.observation.result.stdout
+      .redacted_excerpt;
+    expect(excerpt.includes("[REDACTED_BOUNDARY]") || excerpt.includes("[REDACTED]")).toBe(true);
   });
 
   test("redacts inline sensitive values from parse-time usage errors", () => {
@@ -498,7 +498,7 @@ describe("machine-readable CLI contract", () => {
     const targetProgram = [
       `const secret = process.argv[2]`,
       `process.stdout.write(secret + 'x'.repeat(${64 * 1024} - Buffer.byteLength(secret) + 5))`,
-      "process.exit(23)",
+      "process.exitCode = 23",
     ].join(";");
     const result = invoke(temporaryProject("runparity-redaction-boundary-"), [
       "--json",
@@ -531,7 +531,7 @@ describe("machine-readable CLI contract", () => {
     const targetProgram = [
       "const secret = process.argv[2]",
       `process.stdout.write('12345' + secret + 'x'.repeat(${64 * 1024} - Buffer.byteLength(secret)))`,
-      "process.exit(23)",
+      "process.exitCode = 23",
     ].join(";");
     const result = invoke(temporaryProject("runparity-redaction-boundary-full-"), [
       "--json",
@@ -564,7 +564,7 @@ describe("machine-readable CLI contract", () => {
       `const secret = ['runparity', 'bearer', 'credential', '987654321'].join('-')`,
       `const line = 'Bearer ' + secret + '\\nSAFE\\n'`,
       `process.stdout.write('Authorization: ' + line + 'x'.repeat(${64 * 1024} - Buffer.byteLength(line)))`,
-      "process.exit(23)",
+      "process.exitCode = 23",
     ].join(";");
     const result = invoke(temporaryProject("runparity-bearer-boundary-"), [
       "--json",

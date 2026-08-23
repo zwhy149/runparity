@@ -247,10 +247,15 @@ describe.runIf(process.platform === "win32")("Windows Node command shims", () =>
         },
       },
     });
-    expect(output.data.report.observation.launch.candidates).toEqual([
-      firstShim,
-      resolve(secondBin, "rp-probe.cmd"),
-    ]);
+    expect(
+      output.data.report.observation.launch.candidates.map((candidate: string) =>
+        realpathSync.native(candidate),
+      ),
+    ).toEqual(
+      [firstShim, resolve(secondBin, "rp-probe.cmd")].map((candidate) =>
+        realpathSync.native(candidate),
+      ),
+    );
     expect(existsSync(secondMarker)).toBe(false);
   });
 

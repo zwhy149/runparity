@@ -1,4 +1,12 @@
-import { copyFileSync, existsSync, linkSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  linkSync,
+  mkdtempSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { inspect } from "node:util";
@@ -229,8 +237,12 @@ describe("Host Observe", () => {
 
       const observed = await observeHost(spec);
 
-      expect(observed.launch.resolvedPath).toBe(executable);
-      expect(observed.process.stdout.redacted_excerpt).toBe(project);
+      expect(realpathSync.native(observed.launch.resolvedPath)).toBe(
+        realpathSync.native(executable),
+      );
+      expect(realpathSync.native(observed.process.stdout.redacted_excerpt)).toBe(
+        realpathSync.native(project),
+      );
       expect(observed.configSourceConflicts).toMatchObject([
         {
           key: "fund",
