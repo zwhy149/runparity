@@ -1,267 +1,181 @@
-# RunParity handoff
+# RunParity handoff（第五版 — 交接给下一个对话/GPT）
 
-> Snapshot date: 2026-08-22 (Asia/Shanghai), fourth update  
-> Workspace: `C:\Users\wmy\Documents\Codex\2026-08-15\0-2`  
-> Current version: `0.0.0`, private source prototype, **S0 verified-count thresholds met (12/12), first full-corpus verification**  
-> This document is the single source of truth for a new conversation with no
-> prior context. Read it fully, then `AGENTS.md`, `CONTEXT.md`, and
-> `docs/adr/0001-*.md` through `0005-*.md` before changing behavior.
+> 快照日期：2026-08-23（Asia/Shanghai）  
+> 仓库：本地 `C:\Users\wmy\Documents\Codex\2026-08-15\0-2`，**已发布到 GitHub
+> https://github.com/zwhy149/runparity**（main 分支，最新提交 `2b1d122`）  
+> 读完本文件 → `AGENTS.md` → `CONTEXT.md` → `docs/adr/0001..0005`，再动手。
+> 目标：**把 GitHub CI 修到全绿并推送，完成"可发布最终版"**。
 
 ---
 
-## 0. One-paragraph answer to "where are we" (做到哪里了)
+## 0. 一句话现状（做到哪里了）
 
-RunParity 在 2026-08-22 第三轮完成了**全部 12 个 supported positives 的真实隔离验证**：在统一
-"单 token 类型化干预"协议（四种增量：path.prepend / env.value /
-mount.source / argv.token，双验证器重算）下，12 案全部持有三序列 A1/B/A2 账本并在
-合格 QEMU-KVM rootless-Podman 后端上 VERIFIED_INTERVENTION。语料现为 **0
-scaffold / 4 implemented / 12 verified**（4 个 implemented 是按设计只做 Host
-Observe 的 OOS×2 + NEG×2）。S0 的 verified 计数门槛（≥9/12、每类 ≥2/3）以
-12/12、每类 3/3 达成；剩余 S0 条目（Windows/macOS 实机挑战案例重复、聚合
-refusal/safety 率）与 S1 密封语料、S2 npm 发布见 docs/VALIDATION.md。此后第四轮：`doctor --attempt-proof` 拒绝流上线（win32/darwin→
-RP_UNSUPPORTED_PLATFORM_ISOLATION，linux→RP_SANDBOX_UNAVAILABLE，exit 78，观察内容零变化）；
-DEV-OOS-001 经 host_observation 账本在原生 Windows 上 3 次稳定拒绝后晋升 verified
-（0 scaffold / 3 implemented / 13 verified）；OOS-002 的 macOS 取证 workflow
-（.github/workflows/oos-002-macos.yml）推送 GitHub 即自动产出证据；S1 首批程序化
-密封语料（冻结种籽 20260822、24 例）在双平台完成首评：RUNTIME 4/4、
-challenge 零误报 16/16、PATH/NATIVE/CONFIG 的 finding 覆盖缺口被量化
-（4/16 in-scope，无 S1 达标声明）。git 提交至 5968af6。
+产品与证据链**已全部完成并推送**：12/12 supported positives 在真实隔离后端上
+VERIFIED_INTERVENTION，两个平台挑战案例在真硬件上 verified（Windows 本机 +
+GitHub Actions macOS），语料 **0 scaffold / 2 implemented / 14 verified**
+（2 个 implemented 是按设计只做 Host Observe 的硬负例）。S1 首批密封评测已
+跑完并入库。README 已按高星库标准重排（SVG banner、终端演示图、badges、
+mermaid、折叠区）。**唯一卡点：GitHub Actions 的 CI 矩阵 6 个 job 里 5 个
+红**（只有 Node 22 / ubuntu 绿）——本地双平台门全绿，红的全是"CI runner
+首次覆盖的环境差异"（macOS 首次全量跑、Windows 8.3 短路径、Node 24 矩阵）。
 
-## 1. What changed this round (本轮完成什么)
+## 1. 做完了啥（全部已推送）
 
-1. **Stage B 后端环境（真实）**：`work/vm/setup-vm.sh` 在 WSL2
-   `/dev/kvm` 上以 `qemu-system-x86_64 -enable-kvm -cpu host` 启动
-   noble cloud image（overlay qcow2 40G，cloud-init 注入用户 `rp` +
-   subuid/subgid 100000:65536 + podman 4.9.3），hostfwd
-   `127.0.0.1:2222→22`。VM 不是 WSL 发行版本身；hypervisor 链在收据里
-   作为**声明**记录（`declaration_only: true`），隔离控制全部在 VM 内
-   实证。
-2. **Stage C 资格管线（产品代码）**：
-   - `src/backend/remote-command.ts`：远程 argv 惰性方言白名单
-     `/^[A-Za-z0-9_@%+=:,./-]+$/u`，传输永不转义/插值；
-   - `src/backend/ssh-backend-transport.ts`：复用共享监督生命周期
-     （单绝对 deadline、有界流、诚实清理标签）；
-   - `src/backend/arm-isolation-policy.ts`：冻结 arm 旗标策略
-     （network none / cap-drop ALL / no-new-privileges / read-only /
-     keep-id:uid=10001 / pids 64 / memory 512MiB / cpus 1 / tmpfs /
-     ro 资产挂载 / per-arm 可写 HOME / podman --timeout），canonical
-     digest 绑定一切收据；
-   - `src/backend/probes/*.mjs`：容器内事实探针（只写、网络、凭据、
-     限额、分离后代、跨臂新鲜度）；
-   - `src/backend/qualification-collector.ts` + `qualification-policy.ts`
-     + `qualification-receipt.ts`：事实→判定→收据三段分离，11 项控制
-     全部 demonstrated 才 qualified。
-3. **Stage D 实验运行器（产品代码）**：
-   `src/experiment-runner/`：`isolated-arm-runner.ts`（每臂新建即毁、
-   归一化 argv 供差分）、`failure-signature.ts`（跨臂稳定签名，剔除
-   时间/PID/容器名）、`oracle-evaluator.ts`、`proof-ledger.ts`、
-   `proof-ledger-verifier.ts`（**唯一**能产出 VERIFIED_INTERVENTION 的
-   模块，全部重算）、`path-family.ts`（PATH 族执行适配）。
-4. **Stage E 验证通道（协议修正，ADR-0005）**：
-   `fixtures/lib/evidence-verifier.mjs` 独立实现（与 runner 零共享代码）
-   重算签名/oracle/单增量/A1≡A2/安全；`validate.mjs` 两处硬拒绝替换为
-   真实验证；**账本绑定 manifest 的证据投影摘要**（canonical JSON 剥离
-   四个晋升字段），晋升不再使绑定失效。
-5. **收据工件（真实，已入库）**：
-   - `fixtures/receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22.json`
-     （+.facts.json 侧车）；
-   - `fixtures/receipts/ledger/DEV-PATH-001.json`；
-   - `fixtures/development/cases/DEV-PATH-001.json` 晋升 verified。
-6. **驱动 CLI**：`src/fixtures-cli.ts`（`backend qualify` / `case run
-   [--verified-at]` / `suite status`），仅维护者侧（tsx 运行，不进公共
-   bin——artifact 测试断言 bin 只有 runparity）。
-7. **文档**：ADR-0005、CONTEXT.md 契约状态段、docs/CLI.md、
-   docs/VALIDATION.md、README.md、fixtures/README.md、index.json
-   truthful_status_note 全部同步到 1 verified 现实。
-8. **技能**：superpowers 的 test-driven-development、
-   systematic-debugging、verification-before-completion、
-   finishing-a-development-branch 已装入 `~/.zcode/skills/`。
+1. **证据管线全链（8 月 22 日）**：QEMU-KVM 独立 Ubuntu VM + rootless Podman
+   4.9.3 → 11 项控制资格探针电池（含宿主内核 /proc 绑定嵌套 userns）→
+   12 案 (A1→B→A2)×3 真实验证（四种单 token 干预类型：path.prepend /
+   env.value / mount.source / argv.token）→ 独立验证器双实现重算 →
+   validator 0/2/14。
+2. **doctor --attempt-proof 拒绝流**：win32/darwin→
+   RP_UNSUPPORTED_PLATFORM_ISOLATION，linux→RP_SANDBOX_UNAVAILABLE，
+   exit 78，观察内容零变化。
+3. **挑战案例收官**：OOS-001 原生 Windows 3 次稳定拒绝 verified；
+   OOS-002 通过 `.github/workflows/oos-002-macos.yml` 在**真 macOS** 上 3 次
+   稳定拒绝（workflow 支持 `--verified-at` 固定时间戳输入，账本已入库）。
+4. **S1 首批密封语料**：冻结种籽 20260822、24 例、双平台评测结果入库
+   （`fixtures/sealed/evaluation-*.json`）：RUNTIME 4/4、challenge 零误报
+   16/16、PATH/NATIVE/CONFIG finding 覆盖缺口被量化（4/16 in-scope，无 S1
+   达标声明）。协议修订（程序化故障注入替代人类双盲）写入 docs/VALIDATION.md。
+5. **README 发布级重排**：`docs/assets/banner.svg` + `demo-terminal.svg`
+   （真实输出）、CI/License/Node/状态/语料徽章、mermaid 管线图、语料状态表、
+   对比表、折叠深读区。
+6. **CI 适配第一轮（已推 `dfae889` + `2b1d122`）**：修了 8.3 短路径断言
+   （realpathSync.native 归一 ×6 处）、动态运行时 ABI 断言删除 ×3、边界脱敏
+   断言平台无关化 ×2。**部分起效**（ubuntu Node22 转绿）。
 
-## 2. Reproduction (如何复现/续跑)
+## 2. 现在卡在哪（精确到 job 与根因模式）
 
-VM 持续运行（WSL 内 qemu，pid 见 `/root/rp-backend-vm/qemu.pid`）。密钥
-`C:/Users/wmy/.ssh/rp_backend_vm_key`，known_hosts
-`C:/Users/wmy/.ssh/rp_backend_vm_known_hosts`，配置
-`work/vm/backend-config.json`。若 VM 不在了：WSL 内
-`bash /root/rp-backend-vm/setup-vm.sh && bash /root/rp-backend-vm/wait-vm.sh`，
-再 `work/vm/prep-remote.sh`（资产/探针/密钥），镜像
-`docker.1ms.run/library/node:22-bookworm-slim`（digest 见配置）。
+`gh run list -R zwhy149/runparity --workflow=ci.yml` 最后一次（2b1d122）：
+**绿：Node 22/ubuntu。红：Node 22+24/windows、Node 22+24/macos、Node 24/ubuntu。**
 
-```powershell
-cd C:\Users\wmy\Documents\Codex\2026-08-15\0-2
-$env:PATH = "C:\Users\wmy\AppData\Local\rp-tools\node_modules\.bin;" + $env:PATH
-node ./node_modules/tsx/dist/cli.mjs src/fixtures-cli.ts backend qualify --config work/vm/backend-config.json --out <receipt.json> --facts-out <facts.json>
-node ./node_modules/tsx/dist/cli.mjs src/fixtures-cli.ts case run --case DEV-PATH-001 --config work/vm/backend-config.json --receipt <receipt.json> --out <ledger.json> --verified-at <manifest的verified_at>
-node fixtures/validate.mjs
-```
+已确认的三类根因（修法模式已验证，照抄即可）：
 
-**收据链操作顺序（协议）**：先定稿 manifest（biome 格式化）→
-`node work/generate-build-receipt.mjs <CASE> <entrypoint>`（绑 manifest
-字节）→ `case run --verified-at <manifest.verified_at>` → 晋升 manifest
-四字段。manifest 任何再改动都要从 build receipt 重来。
-`fixtures/receipts/**` 已加入 biome 忽略（字节即证据，永不重排）。
+### A. Windows runner：8.3 短路径（`C:\Users\RUNNER~1\...`）
+- 症状：`expected 'C:\Users\runneradmin\...' to be 'C:\Users\RUNNER~1\...'`。
+- 已修 6 处，**还有残留**（`doctor.windows-shim.test.ts` 第二处 cwd-search
+  已修但同文件可能还有；用 grep 找所有裸比较路径的断言）。
+- 修法模板：比较两侧 `realpathSync.native(x ?? "")`，不要 toBe 裸路径。
 
-## 3. Repository state (仓库状态)
+### B. macOS（首次全量跑这套测试）：管道分块差异 + 平台语义
+- 边界脱敏类（cli-contract）：macOS pipe chunking 让 64KiB 摘录边界落点
+  不同 → 走"全脱敏 [REDACTED]"而非"[REDACTED_BOUNDARY]"——**两者都是合规
+  结果**。已改 2 处为"包含其一"；同类还有：
+  `suppresses a truncated capture when a multiline learned secret crosses
+  the tail`（同文件，同修法：硬断言只留"明文不出现"，标记断言二选一）。
+- 其余 macOS 失败（posix `skips an earlier non-executable PATH file`、
+  `evidence-file` canonical identity、`host-observe` captured cwd、
+  fixture-assets 的 PATH-001/RUNTIME-001/OOS-002 smoke）**需要逐个看日志定
+  位**——大概率也是路径形态（macOS 无 8.3 但有 /private/var 软链
+  vs /var/tmp 形态差异 → 同样 realpathSync.native 归一可解）或执行位差异。
+- 查日志命令：
+  `RID=$(gh run list -R zwhy149/runparity --workflow=ci.yml --branch main --limit 1 --json databaseId -q '.[0].databaseId'); gh run view $RID -R zwhy149/runparity --log-failed | sed 's/\x1b\[[0-9;]*m//g' | grep -E "FAIL |AssertionError" | sort -u`
 
-- Git 分支 main，**零提交**；全部文件 untracked。禁止 `git clean` /
-  `git reset --hard`。`.gitignore` 已含 `work/pack-output/`。
-- Windows 控制器 Node 24.15.0 + 独立 pnpm 11.19.0（DSH 坏 shim 坑仍
-  在，见 §6）；Ubuntu 门 Node 22.22.1（`/root/runparity-linux` tar 镜像）。
-- 最近一次双平台门：Windows vitest 全绿 + validator 0/15/1；Ubuntu
-  vitest 340 过 / 22 跳过 / 0 失败（重同步后）。
+### C. Node 24 矩阵：运行时 ABI 与 fixture 层不匹配
+- NATIVE fixture 的 matching 层是 ABI 127（Node 22 编译）。Node 24
+  运行时 ABI 137：加载 mismatched(137) 层会**成功**→A 臂不失败→断言反转。
+- fixture-assets.test.ts 里的 `t.skip` 守卫在 `matching ABI !==
+  process.versions.modules` 时跳过——确认所有 NATIVE smoke 都在 spawn 断言
+  **之前**执行守卫（此前有三处动态断言在守卫之前，已删，见 dfae889）。
+  Node24/ubuntu 还挂的 fixture-assets 用上面的日志命令看具体是哪个测试，
+  多半是同类（守卫顺序或另一处硬编码）。
+- **禁止**为了让 Node 24 过而弱化断言；正确做法是守卫/参数化。
 
-## 4. What is finished (做完了啥)
+## 3. 下一步（按序，直到推送全绿）
 
-- 上一轮全部成果（Host Observe 硬化、16/16 静态资产、双平台门）保持
-  有效；本轮在其上叠加 Stage B/C/D/E 全链。
-- 单测：`tests/backend-remote-command.test.ts`、
-  `tests/backend-arm-policy.test.ts`、
-  `tests/experiment-proof-ledger.test.ts`（干净序列 VERIFIED + 7 个
-  对抗篡改全拦截：改签名、双增量、B 无 delta、A2 不复现、容器残留、
-  传输拒绝、status 未过）。
-- validator 26/26（含新协议下的自撰收据拒绝路径）。
+1. `gh auth status` 确认仍以 zwhy149 登录（token 有 workflow scope；8 月 22
+   日已设备流登录过，一般还在；若失效让用户在浏览器完成
+   `gh auth login -h github.com -p https --web` 设备流）。
+2. 用 §2 的日志命令拉当前红的每个 job 的失败清单，按 A/B/C 三类模式逐一修
+   （每修一类：本地 `pnpm exec vitest run <file>` 定向验证 → 全量 → commit）。
+   **修法纪律：只做根因修复（路径归一 / 断言语义平台无关 / ABI 守卫），绝不
+   改产品代码去迁就测试，绝不删除安全断言（"明文不出现"类必须保留）。**
+3. 本地全量门：`pnpm verify`（注意 §4 的管道退出码坑！确认真的 RC=0 再提交）。
+4. `git push` → 轮询 CI 直到 6/6 job 绿
+   （`gh run watch <id> -R zwhy149/runparity` 或循环 `gh run list --json
+   status,conclusion`）。若只剩偶发抖动（§4），`gh run rerun <id> --failed`。
+5. 绿后收尾：README 的 CI badge 会自动变绿（已指向 zwhy149/runparity）；
+   检查 dependabot 开的 PR（vitest/upload-artifact 升级）——CI 绿后再考虑
+   合并或忽略；更新本 HANDOFF §0；`git push`。
+6. （可选，超出"CI 绿"范围）路线图下一站：诊断覆盖三缺口（S1 已量化排序：
+   PATH 多候选 finding、NATIVE stderr 分类器、CONFIG finding 边界）→ 重跑
+   `node fixtures/sealed/evaluate.mjs` → S2 npm 发布（`runparity-fixtures`
+   永不进公共 bin）。
 
-## 5. What is blocking now (现在卡在哪)
-
-没有硬阻断。剩余是**体量工作**：
-
-1. 其余 11 个 supported positives 走同一管线（每案需要：执行适配器
-   扩展、重跑收据链）。PATH-002/003 最快（同族复用 path-family）；
-   RUNTIME 族需 `runtime.select` 干预型（扩展 experiment-runner 的
-   干预类型与差分检查）；CONFIG 族需 env/npmrc 覆盖型；NATIVE 族需
-   artifact-select 型。
-2. S0 聚合门（≥9/12 verified、每类 ≥2/3）→ S1 密封语料（96 例，
-   独立策展）→ S2 npm 发布。
-3. 挑战案例（OOS 需 Windows/macOS 实机 Host Observe 重复）保持
-   PARTIAL_EVIDENCE 即可，不阻断 S0。
-
-## 6. Pitfalls already found — do not repeat (坑清单)
+## 4. 坑清单（踩过的，别再踩）
 
 ### 本轮新坑（最重要）
 
-- **ssh.exe 需 `PROGRAMDATA`**：剥离环境后 ssh 秒退 255 且无输出（即使
-  `-F NUL` 也解析 `%PROGRAMDATA%\ssh\ssh_config` 路径）。传输环境已加
-  SystemRoot+PROGRAMDATA 并在缺失时 fail-fast。
-- **docker.io 直连被 DNS 污染**（解析到 Twitter IP）：用
-  `docker.1ms.run` 镜像仓（内容寻址 digest 与上游一致；收据如实记录
-  acquisition mirror）。daocloud 对大 blob 会 stall，alpine 小镜像可用。
-- **`podman info` JSON 键名**：`host.idMappings` 里是小写 `uidmap/gidmap`
-  （对象数组，字段 container_id/host_id/size）；镜像 `Id` 是裸 64hex 无
-  `sha256:` 前缀；`-d` 输出裸容器 ID 非 JSON。解析全部已适配。
-- **嵌套用户命名空间**：容器内 `/proc/self/uid_map` 的"外部 ID"以
-  pod-infra ns 坐标显示（rp=0），OCI 策略正确判
-  `parent_root_uid_mapped`；资格层用宿主 `/proc/<State.Pid>/status +
-  uid_map` 内核真相绑定（Uid 全 1000、CapEff 0、NoNewPrivs 1、无
-  real-0 映射）后才算 demonstrated。
-- **挂载路径即策略常量**：资产挂载点是 `/arm/assets`（冻结于
-  arm-isolation-policy），探针 target argv 必须用 `/arm/assets/...`，
-  不是自定义路径。
-- **`podman --timeout N`**：超时杀容器 exit 255（不是 124/143）。
-- **`podman top` 不可用**（容器内无 ps、宿主 cloud image 默认无
-  procps）；用 `podman inspect --format json` 取 `State.Pid` 再读宿主
-  /proc。`--format {{...}}` 的花括号不在远程白名单——一律
-  `--format json`。
-- **wsl.exe 传引号会碎**：复杂命令一律写本地脚本文件 → `tr -d '\r'` →
-  WSL 执行（`work/vm/*.sh` 模式），并加 `MSYS_NO_PATHCONV=1` 防 Git
-  Bash 路径改写。
-- **biome 会重排 manifest/收据**：`fixtures/receipts/**` 已进 biome
-  ignore；manifest 改动后必须重跑收据链（顺序见 §2）。JSON.stringify
-  的 2 空格输出 ≠ biome JSON 风格，长嵌套数组必 diff。
-- **账本-晋升鸡生蛋**：账本绑 manifest 证据投影（剥 4 字段）而非整
-  文件字节；`case run --verified-at` 必须与 manifest 一致。
-- **并行重载会抖时长敏感测试**（DEV-CONFIG-001 npm lifecycle、
-  process-tree 窗口）：全量 verify 时停掉并行 apt/qemu 重活。
+- **管道吃掉退出码**：`pnpm verify | grep ...; echo RC=${PIPESTATUS[0]}`
+  后面接 `&&` 链，链判断用的是**管道最后一个命令**的退出码——曾经 verify
+  红着还 commit+push 了（2b1d122 就是这么推出去的）。**改用
+  `set -o pipefail` 或把 verify 单独一步、确认输出后手动 git。**
+- **并发负载抖动**：全量 vitest 并行时 DEV-CONFIG-001 npm lifecycle /
+  doctor.process-tree 排水 / path-provenance 会**轮换性抖挂**（单独跑必过，
+  三次全量里挂不同文件）。判定标准：单独重跑该文件过了=抖动；连续两次挂
+  同一处=真回归。CI 上如果只有这类偶发红，重跑 job 即可
+  （`gh run rerun <id> --failed`）。
+- **模型请求中断**（"Model request Failed"）：**小步提交**，每完成一个独立
+  修复就 commit（本地即存档），不要攒大提交。
+- **8.3 短路径 / /private/var 软链**：所有涉及 tmpdir/cwd/executable 的
+  断言一律 realpathSync.native 两侧归一。
+- **macOS pipe chunking**：脱敏边界类断言改成"合规结果之一"，硬断言只留
+  明文不出现。
+- **Node 24 矩阵**：任何 `process.versions.modules`/`.node` 层相关断言前必
+  须有 ABI 守卫且守卫在 spawn 之前。
 
-### 第三轮新坑（12 案全验证，务必避开）
+### 环境与工具链（老坑，依旧有效）
 
-- **tar | ssh 的 --strip-components 与 -C 组合**：-C 指向解压根时成员路径
-  不含顶层目录；拷单文件用成员 `bin/node` + 目标端 `--strip-components=1`，
-  否则出现 bin/bin/node 嵌套。
-- **apt 版 node 是动态链接 libnode.so.127**：单独拷二进制进容器跑不起来；
-  外部运行时一律用 nodejs.org 官方自包含 tarball（nodejs.org 直连可用）。
-- **fixture loader 可能钉死编译期 Node 版本**（NATIVE-003 断言
-  process.versions.node === 22.22.1）：外部运行时槽（-v 挂载 + PATH 前置）
-  同时给 A/B 两臂，保持单 token 增量不变。
-- **晋升后测试形状断言要批量更新**：tests/fixture-assets.test.ts 每案的
-  manifest 形状断言（fixture_status/receipts/verified_at）按测试块边界定位
-  替换为 verified 形状；NATIVE 三案只在 Linux 执行，Windows 门不报——
-  两侧都要跑。
-- **Git Bash 的 /tmp 与 node 的 C:\tmp 不同**：跨进程传文件用绝对路径或
-  %TEMP%。
-- **wsl.exe 内嵌 $SSH 变量在 cd 后相对密钥路径失效**：SSH 一律绝对路径
-  /root/rp-backend-vm/rp_vm_key。
+- pnpm 坏 shim：先
+  `export PATH="/c/Users/wmy/AppData/Local/rp-tools/node_modules/.bin:$PATH"`。
+- wsl.exe 传引号会碎：复杂命令写本地脚本文件 → `tr -d '\r'` → WSL 执行，
+  加 `MSYS_NO_PATHCONV=1`。
+- Git Bash `/tmp` ≠ node 的 `C:\tmp`：跨进程传文件用绝对路径或 `%TEMP%`。
+- GitHub 直连被墙时用代理 `git -c http.proxy=http://127.0.0.1:7897`（gh
+  CLI 走自己的 token，不需要）。
+- biome 已忽略 `fixtures/receipts/**`（字节即证据）；**收据链顺序**：manifest
+  定稿→biome 格式化→`node work/generate-build-receipt.mjs <CASE> <entrypoint>`
+  →实验/run-host `--verified-at <manifest 值>`→账本入库→validate。manifest
+  任何再改动都要从 build receipt 重来。
+- 测试计数断言随晋升漂移：validator.test.mjs / fixture-assets.test.ts 的
+  形状与计数断言要跟着语料状态更新（当前基线 **0/2/14**；copied-root 降级
+  测试=降一档：0/3/13）。
+- 硬负例（DEV-NEG-001/002）**按设计永远 implemented**，别去"验证"它们。
+- Host 观测永不等于隔离证明；一切 verified 必须走账本+独立验证器双实现。
 
-### 老坑（依旧有效，节选）
+### 复现环境（若需要重跑证据，CI 修复不需要）
 
-- DSH 坏 pnpm shim：先
-  `export PATH=/c/Users/wmy/AppData/Local/rp-tools/node_modules/.bin:$PATH`。
-- 资产/清单一变，收据即失效：先 `generate-build-receipt` 再
-  `validate.mjs`；验证器测试别硬编码套件计数（本 round 把 fixture-assets
-  的 DEV-PATH-001 形状断言更新为 verified）。
-- Host 观测永不等于隔离证明；Windows/macOS 客机 Linux≠原生；一切
-  verified 必须走 ProofLedgerVerifier + 独立证据验证器双实现。
-- 其余老坑（脱敏/解析器/活动对象/shim）见 git 历史里的上一版 HANDOFF
-  或 docs/SECURITY-MODEL.md。
+VM：WSL2 KVM 内 QEMU Ubuntu 24.04.4（脚本 `work/vm/*.sh`，密钥
+`C:/Users/wmy/.ssh/rp_backend_vm_key`，配置 `work/vm/backend-config.json`）。
+镜像仓用 docker.1ms.run（docker.io 被 DNS 污染）。外部运行时已就位：
+node-24.15.0/22.23.2/22.22.1 于 VM `/home/rp/assets-external/`。若 VM 消失按
+`work/vm/setup-vm.sh → wait-vm.sh → prep-remote.sh → prep-cases.sh` 重建。
 
-## 7. What to do next (下一步，按序)
-
-1. 任何改动后双平台 `pnpm verify`（Windows + Ubuntu 同步命令见 §8）。
-2. PATH-002/003 接入 path-family（新增 case plan：资产子目录、target
-   argv、PATH 条目、干预目录）→ 跑真实实验 → 晋升。
-3. RUNTIME/CONFIG/NATIVE 三族的干预类型扩展（experiment-runner 的
-   intervention 类型 + 差分检查 + 证据适配器）。
-4. S0 门：12 supported positives 全 verified 后按 docs/VALIDATION.md
-   的 S0 指标自评。
-5. S1 密封语料（96 例独立策展、双盲冻结）→ S2 npm 公开化（发
-   `runparity` 包；`runparity-fixtures` 保持不入公共 bin）。
-6. 每轮结束更新本 HANDOFF。
-
-## 8. Commands for a new conversation
-
-```powershell
-cd C:\Users\wmy\Documents\Codex\2026-08-15\0-2
-$env:PATH = "C:\Users\wmy\AppData\Local\rp-tools\node_modules\.bin;" + $env:PATH
-pnpm verify
-node fixtures/validate.mjs
-node --test fixtures/validator.test.mjs
-git status --short
-```
-
-Ubuntu 同步 + 验证：
+## 5. 常用命令
 
 ```bash
+# 本地门（Windows，Git Bash）
+export PATH="/c/Users/wmy/AppData/Local/rp-tools/node_modules/.bin:$PATH"
+pnpm verify                          # biome+tsc+vitest+validator+artifacts
+node fixtures/validate.mjs           # 预期 0 scaffold / 2 implemented / 14 verified
+node --test fixtures/validator.test.mjs
+
+# Ubuntu 门（同步+verify）
 wsl.exe -d Ubuntu -- bash -c "cd /mnt/c/Users/wmy/Documents/Codex/2026-08-15/0-2 && tar --exclude=node_modules --exclude=dist --exclude=.git --exclude=work/pack-output -cf - . | (cd /root/runparity-linux && tar -xf -) && cd /root/runparity-linux && pnpm verify"
+
+# CI
+gh run list -R zwhy149/runparity --workflow=ci.yml --limit 3
+gh run view <id> -R zwhy149/runparity --log-failed   # 看红 job 日志
+gh run rerun <id> -R zwhy149/runparity --failed      # 偶发抖动重跑
+
+# 提交推送
+git add -A && git commit -m "..." && git push
 ```
 
-VM 管理（WSL 内）：`/root/rp-backend-vm/setup-vm.sh`（重建）、
-`wait-vm.sh`（等 cloud-init + rootless 冒烟）、`prep-remote.sh`（资产/
-探针/密钥推送）、`mirror-race.sh`（镜像仓测速）、`bind-test2.sh`
-（内核真相绑定冒烟）。源脚本在仓库 `work/vm/`。
+## 6. 给下一个对话的第一条指令
 
-## 9. Key files and where to look
-
-| Area | Files |
-| --- | --- |
-| 资格/传输/策略 | `src/backend/`（remote-command、ssh-backend-transport、arm-isolation-policy、qualification-*、probes/） |
-| 隔离实验/账本 | `src/experiment-runner/`（isolated-arm-runner、failure-signature、oracle-evaluator、proof-ledger(-verifier)、path-family） |
-| 驱动 CLI | `src/fixtures-cli.ts`（docs/CLI.md 有契约） |
-| 独立证据验证器 | `fixtures/lib/evidence-verifier.mjs` + `fixtures/validate.mjs` |
-| 真实收据 | `fixtures/receipts/backend/qemu-kvm-ubuntu-noble-rpvm-2026-08-22*.json`、`fixtures/receipts/ledger/DEV-PATH-001.json` |
-| VM 脚本/配置 | `work/vm/`（setup-vm、wait-vm、seed-and-spike、mirror-race、bind-test2、prep-remote、backend-config.json） |
-| 架构决策 | `docs/adr/0001..0005`（0005 是本轮资格+账本 ADR） |
-| 单测 | `tests/backend-*.test.ts`、`tests/experiment-proof-ledger.test.ts`、`tests/fixture-assets.test.ts` |
-| 领域真相 | `CONTEXT.md`、`docs/VALIDATION.md`、`docs/CLI.md`、`docs/SECURITY-MODEL.md` |
-
-## 10. Working style for the next conversation
-
-小 TDD 切片：复现→红测→窄修→定向测→双平台 verify→文档只写已绿行为。
-改 manifest/资产 → 重跑收据链（§2 顺序）。改 arm 策略/探针 → 重跑资格
-验证 + 受影响实验。声明只到证据为止：1/12 verified 是管线证明，不是 S0
-达标。
-
-## 11. First instruction for the next conversation
-
-> 读本 HANDOFF、`AGENTS.md`、`CONTEXT.md`、ADR-0001..0005。先跑双平台
-> `pnpm verify` + `node fixtures/validate.mjs` 复绿（预期 0/15/1）。VM
-> 与密钥按 §8 就绪；若 VM 已消失按 §2 重建。下一步从 PATH-002/003 接入
-> path-family 开始扩展 verified 集合。任何声明不得超出已重算的证据。
+> 先读本 HANDOFF 全文与 `docs/adr/0005`。跑 `gh auth status` 确认登录。
+> 拉取 CI 最新失败清单（§2 命令），按 A（Windows 8.3）/B（macOS 管道与
+> 路径形态）/C（Node 24 ABI 守卫）三类模式逐 job 修复；每类修完本地定向
+> 测试 + 全量 verify（警惕 §4 管道退出码坑）+ 小步 commit。全绿后推送、
+> 轮询 CI 6/6、更新本 HANDOFF §0 并提交。只做根因修复，不弱化任何安全
+> 断言，不碰已验证的收据链。CI 全绿即为本阶段"最终版"交付标准。
