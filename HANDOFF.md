@@ -1,23 +1,24 @@
-# RunParity handoff（第五版 — 交接给下一个对话/GPT）
+# RunParity handoff（第六版 — CI 全绿发布候选）
 
-> 快照日期：2026-08-23（Asia/Shanghai）  
+> 快照日期：2026-08-24（Asia/Shanghai）
 > 仓库：本地 `C:\Users\wmy\Documents\Codex\2026-08-15\0-2`，**已发布到 GitHub
-> https://github.com/zwhy149/runparity**（main 分支，最新提交 `2b1d122`）  
+> https://github.com/zwhy149/runparity**（main 分支，功能基线 `a9af490`；本文件提交在其后）
 > 读完本文件 → `AGENTS.md` → `CONTEXT.md` → `docs/adr/0001..0005`，再动手。
-> 目标：**把 GitHub CI 修到全绿并推送，完成"可发布最终版"**。
+> 本阶段目标：**已达成——本地全门通过，GitHub CI 6/6 矩阵 + packed smoke 全绿**。
 
 ---
 
 ## 0. 一句话现状（做到哪里了）
 
-产品与证据链**已全部完成并推送**：12/12 supported positives 在真实隔离后端上
-VERIFIED_INTERVENTION，两个平台挑战案例在真硬件上 verified（Windows 本机 +
-GitHub Actions macOS），语料 **0 scaffold / 2 implemented / 14 verified**
-（2 个 implemented 是按设计只做 Host Observe 的硬负例）。S1 首批密封评测已
-跑完并入库。README 已按高星库标准重排（SVG banner、终端演示图、badges、
-mermaid、折叠区）。**唯一卡点：GitHub Actions 的 CI 矩阵 6 个 job 里 5 个
-红**（只有 Node 22 / ubuntu 绿）——本地双平台门全绿，红的全是"CI runner
-首次覆盖的环境差异"（macOS 首次全量跑、Windows 8.3 短路径、Node 24 矩阵）。
+产品、证据链、发布文档和跨平台 CI **均已完成并推送**：12/12 supported
+positives 在真实隔离后端上得到 VERIFIED_INTERVENTION，两个平台挑战案例在
+真硬件上 verified（Windows 本机 + GitHub Actions macOS），语料保持
+**0 scaffold / 2 implemented / 14 verified**（2 个 implemented 是按设计只做
+Host Observe 的硬负例）。S1 首批密封评测已入库，README 已按发布级仓库重排。
+本地 `pnpm verify` 退出码 0；GitHub Actions run
+[`32657828459`](https://github.com/zwhy149/runparity/actions/runs/32657828459)
+attempt 2 已 **7/7 全绿**（Node 22/24 × Ubuntu/Windows/macOS 共 6 个矩阵任务，
+另加 Packed CLI smoke）。按既定标准，本阶段已经是可公开展示的最终版。
 
 ## 1. 做完了啥（全部已推送）
 
@@ -39,67 +40,41 @@ mermaid、折叠区）。**唯一卡点：GitHub Actions 的 CI 矩阵 6 个 job
 5. **README 发布级重排**：`docs/assets/banner.svg` + `demo-terminal.svg`
    （真实输出）、CI/License/Node/状态/语料徽章、mermaid 管线图、语料状态表、
    对比表、折叠深读区。
-6. **CI 适配第一轮（已推 `dfae889` + `2b1d122`）**：修了 8.3 短路径断言
-   （realpathSync.native 归一 ×6 处）、动态运行时 ABI 断言删除 ×3、边界脱敏
-   断言平台无关化 ×2。**部分起效**（ubuntu Node22 转绿）。
+6. **CI 适配第一轮（`dfae889` + `2b1d122`）**：初步归一 Windows 8.3 路径、
+   调整动态 ABI 与边界脱敏断言。
+7. **跨平台契约收口（`de93d3e`）**：所有剩余临时目录/可执行文件比较统一走
+   `realpathSync.native`；macOS 大输出子进程改用 `process.exitCode` 等待管道
+   排空；OOS-002 的 macOS SDK 输出改为真实语义断言；Node 24 在任何 native
+   smoke spawn/断言之前按 ABI 127/137 差异明确跳过。只改测试，未碰封存资产、
+   manifest、receipt 或 ledger。
+8. **文件系统能力检测（`a9af490`）**：资产清单的大小写冲突测试不再用操作
+   系统名猜测卷语义，而是确认临时卷能否同时保存 `Alpha.txt`/`alpha.txt`；
+   Linux 继续执行拒绝测试，默认 Windows/macOS 大小写不敏感卷明确跳过。
 
-## 2. 现在卡在哪（精确到 job 与根因模式）
+## 2. 现在卡在哪
 
-`gh run list -R zwhy149/runparity --workflow=ci.yml` 最后一次（2b1d122）：
-**绿：Node 22/ubuntu。红：Node 22+24/windows、Node 22+24/macos、Node 24/ubuntu。**
+**没有本阶段发布阻断。** 最新代码承载 run `32657828459` attempt 2 结论为
+`success`：Ubuntu、Windows、macOS 上的 Node 22/24 六矩阵全部成功，packed
+tarball 的 `--version`/`--help` 烟测也成功。README 的 CI badge 已指向该
+workflow。
 
-已确认的三类根因（修法模式已验证，照抄即可）：
+本轮唯一的非阻断观察：run attempt 1 的 Node 22/Windows 在一个故意创建脱离
+子进程的测试完成所有行为断言后，删除临时目录时遇到一次 `EBUSY`；同测试在
+本地两次全量、上一轮 CI、Node 24/Windows 和 failed-job 重跑均通过，因此按
+既定标准判为瞬态清理抖动，没有用产品改动掩盖它。
 
-### A. Windows runner：8.3 短路径（`C:\Users\RUNNER~1\...`）
-- 症状：`expected 'C:\Users\runneradmin\...' to be 'C:\Users\RUNNER~1\...'`。
-- 已修 6 处，**还有残留**（`doctor.windows-shim.test.ts` 第二处 cwd-search
-  已修但同文件可能还有；用 grep 找所有裸比较路径的断言）。
-- 修法模板：比较两侧 `realpathSync.native(x ?? "")`，不要 toBe 裸路径。
+## 3. 下一步
 
-### B. macOS（首次全量跑这套测试）：管道分块差异 + 平台语义
-- 边界脱敏类（cli-contract）：macOS pipe chunking 让 64KiB 摘录边界落点
-  不同 → 走"全脱敏 [REDACTED]"而非"[REDACTED_BOUNDARY]"——**两者都是合规
-  结果**。已改 2 处为"包含其一"；同类还有：
-  `suppresses a truncated capture when a multiline learned secret crosses
-  the tail`（同文件，同修法：硬断言只留"明文不出现"，标记断言二选一）。
-- 其余 macOS 失败（posix `skips an earlier non-executable PATH file`、
-  `evidence-file` canonical identity、`host-observe` captured cwd、
-  fixture-assets 的 PATH-001/RUNTIME-001/OOS-002 smoke）**需要逐个看日志定
-  位**——大概率也是路径形态（macOS 无 8.3 但有 /private/var 软链
-  vs /var/tmp 形态差异 → 同样 realpathSync.native 归一可解）或执行位差异。
-- 查日志命令：
-  `RID=$(gh run list -R zwhy149/runparity --workflow=ci.yml --branch main --limit 1 --json databaseId -q '.[0].databaseId'); gh run view $RID -R zwhy149/runparity --log-failed | sed 's/\x1b\[[0-9;]*m//g' | grep -E "FAIL |AssertionError" | sort -u`
+本阶段不需要继续改代码。新对话先确认 `main` 与远端同步，并查看最新 CI；不要
+因为旧 handoff 里的红灯描述重复修改。后续工作都应另立范围：
 
-### C. Node 24 矩阵：运行时 ABI 与 fixture 层不匹配
-- NATIVE fixture 的 matching 层是 ABI 127（Node 22 编译）。Node 24
-  运行时 ABI 137：加载 mismatched(137) 层会**成功**→A 臂不失败→断言反转。
-- fixture-assets.test.ts 里的 `t.skip` 守卫在 `matching ABI !==
-  process.versions.modules` 时跳过——确认所有 NATIVE smoke 都在 spawn 断言
-  **之前**执行守卫（此前有三处动态断言在守卫之前，已删，见 dfae889）。
-  Node24/ubuntu 还挂的 fixture-assets 用上面的日志命令看具体是哪个测试，
-  多半是同类（守卫顺序或另一处硬编码）。
-- **禁止**为了让 Node 24 过而弱化断言；正确做法是守卫/参数化。
-
-## 3. 下一步（按序，直到推送全绿）
-
-1. `gh auth status` 确认仍以 zwhy149 登录（token 有 workflow scope；8 月 22
-   日已设备流登录过，一般还在；若失效让用户在浏览器完成
-   `gh auth login -h github.com -p https --web` 设备流）。
-2. 用 §2 的日志命令拉当前红的每个 job 的失败清单，按 A/B/C 三类模式逐一修
-   （每修一类：本地 `pnpm exec vitest run <file>` 定向验证 → 全量 → commit）。
-   **修法纪律：只做根因修复（路径归一 / 断言语义平台无关 / ABI 守卫），绝不
-   改产品代码去迁就测试，绝不删除安全断言（"明文不出现"类必须保留）。**
-3. 本地全量门：`pnpm verify`（注意 §4 的管道退出码坑！确认真的 RC=0 再提交）。
-4. `git push` → 轮询 CI 直到 6/6 job 绿
-   （`gh run watch <id> -R zwhy149/runparity` 或循环 `gh run list --json
-   status,conclusion`）。若只剩偶发抖动（§4），`gh run rerun <id> --failed`。
-5. 绿后收尾：README 的 CI badge 会自动变绿（已指向 zwhy149/runparity）；
-   检查 dependabot 开的 PR（vitest/upload-artifact 升级）——CI 绿后再考虑
-   合并或忽略；更新本 HANDOFF §0；`git push`。
-6. （可选，超出"CI 绿"范围）路线图下一站：诊断覆盖三缺口（S1 已量化排序：
-   PATH 多候选 finding、NATIVE stderr 分类器、CONFIG finding 边界）→ 重跑
-   `node fixtures/sealed/evaluate.mjs` → S2 npm 发布（`runparity-fixtures`
-   永不进公共 bin）。
+1. 若要做 GitHub 维护，可单独审查 Dependabot PR；依赖升级必须完整跑同一
+   7-job 门，不能因当前全绿直接合并。
+2. 若要进入下一产品阶段，优先使用 S1 已量化的诊断覆盖缺口（PATH 多候选
+   finding、NATIVE stderr 分类器、CONFIG finding 边界），修改后重跑密封评测，
+   不得沿用当前 S1 数字宣称新能力。
+3. npm/版本发布属于独立决策；当前 `package.json` 仍是 private、0.0.0，不要在
+   没有用户明确授权、版本策略和发布凭证边界时擅自发布。
 
 ## 4. 坑清单（踩过的，别再踩）
 
@@ -118,10 +93,16 @@ mermaid、折叠区）。**唯一卡点：GitHub Actions 的 CI 矩阵 6 个 job
   修复就 commit（本地即存档），不要攒大提交。
 - **8.3 短路径 / /private/var 软链**：所有涉及 tmpdir/cwd/executable 的
   断言一律 realpathSync.native 两侧归一。
-- **macOS pipe chunking**：脱敏边界类断言改成"合规结果之一"，硬断言只留
-  明文不出现。
+- **大输出后立即 `process.exit()` 会截断管道**：边界脱敏测试用
+  `process.exitCode` 让 stdout 自然排空；`[REDACTED]` 与
+  `[REDACTED_BOUNDARY]` 都可以是合规展示，但"明文不出现"和应截断时的
+  `truncated` 仍是硬断言。
 - **Node 24 矩阵**：任何 `process.versions.modules`/`.node` 层相关断言前必
   须有 ABI 守卫且守卫在 spawn 之前。
+- **macOS 不等于大小写敏感卷**：默认 APFS 与 Windows 常见卷都是大小写不
+  敏感；文件系统测试必须探测当前卷能力，不能按 `process.platform` 猜。
+- **Windows 临时目录偶发 `EBUSY`**：只有在行为断言已通过、同一位置单独/
+  重跑通过且此前矩阵通过时才按 flake 处理；连续两次同点失败则加固清理等待。
 
 ### 环境与工具链（老坑，依旧有效）
 
@@ -173,9 +154,8 @@ git add -A && git commit -m "..." && git push
 
 ## 6. 给下一个对话的第一条指令
 
-> 先读本 HANDOFF 全文与 `docs/adr/0005`。跑 `gh auth status` 确认登录。
-> 拉取 CI 最新失败清单（§2 命令），按 A（Windows 8.3）/B（macOS 管道与
-> 路径形态）/C（Node 24 ABI 守卫）三类模式逐 job 修复；每类修完本地定向
-> 测试 + 全量 verify（警惕 §4 管道退出码坑）+ 小步 commit。全绿后推送、
-> 轮询 CI 6/6、更新本 HANDOFF §0 并提交。只做根因修复，不弱化任何安全
-> 断言，不碰已验证的收据链。CI 全绿即为本阶段"最终版"交付标准。
+> 先读本 HANDOFF 全文与 `docs/adr/0005`，再用 `git status`、`git log -1` 和
+> `gh run list -R zwhy149/runparity --workflow=ci.yml --limit 3` 核对当前事实。
+> CI 修复阶段已经完成，不要重复旧修法。除非出现新的可复现失败，否则保持
+> 已验证的收据链不动；任何新功能、依赖升级或 npm 发布都作为新阶段重新规划、
+> TDD、全量验证。
