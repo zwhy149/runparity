@@ -23,7 +23,7 @@ test("the fixed probe is built as a private, syntax-valid artifact", () => {
   const artifact = readFileSync(artifactPath, "utf8");
   const syntax = spawnSync(process.execPath, ["--check", artifactPath], { encoding: "utf8" });
 
-  assert.equal(packageManifest.bin.runparity, "./dist/cli.js");
+  assert.equal(packageManifest.bin.runparity, "dist/cli.js");
   assert.deepEqual(Object.keys(packageManifest.bin), ["runparity"]);
   assert.match(artifact, /^#!\/usr\/bin\/env node\n/u);
   assert.deepEqual(
