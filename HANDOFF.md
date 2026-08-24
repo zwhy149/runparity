@@ -1,24 +1,29 @@
-# RunParity handoff（第六版 — CI 全绿发布候选）
+# RunParity handoff（第七版 — v0.1.0 已公开发布）
 
 > 快照日期：2026-08-24（Asia/Shanghai）
 > 仓库：本地 `C:\Users\wmy\Documents\Codex\2026-08-15\0-2`，**已发布到 GitHub
-> https://github.com/zwhy149/runparity**（main 分支，功能基线 `a9af490`；本文件提交在其后）
+> https://github.com/zwhy149/runparity**（main 分支；v0.1.0 发布提交 `02e552b`）
 > 读完本文件 → `AGENTS.md` → `CONTEXT.md` → `docs/adr/0001..0005`，再动手。
-> 本阶段目标：**已达成——本地全门通过，GitHub CI 6/6 矩阵 + packed smoke 全绿**。
+> 本阶段目标：**已达成——`runparity@0.1.0` 已发布到 npm latest，GitHub Release
+> 与全平台门禁均已完成**。
 
 ---
 
 ## 0. 一句话现状（做到哪里了）
 
-产品、证据链、发布文档和跨平台 CI **均已完成并推送**：12/12 supported
+产品、证据链、发布文档、跨平台 CI 和首个公开版本 **均已完成**：12/12 supported
 positives 在真实隔离后端上得到 VERIFIED_INTERVENTION，两个平台挑战案例在
 真硬件上 verified（Windows 本机 + GitHub Actions macOS），语料保持
 **0 scaffold / 2 implemented / 14 verified**（2 个 implemented 是按设计只做
 Host Observe 的硬负例）。S1 首批密封评测已入库，README 已按发布级仓库重排。
-本地 `pnpm verify` 退出码 0；GitHub Actions run
-[`32657828459`](https://github.com/zwhy149/runparity/actions/runs/32657828459)
-attempt 2 已 **7/7 全绿**（Node 22/24 × Ubuntu/Windows/macOS 共 6 个矩阵任务，
-另加 Packed CLI smoke）。按既定标准，本阶段已经是可公开展示的最终版。
+本地 `pnpm verify` 退出码 0；发布提交 `02e552b` 的 GitHub Actions run
+[`32684989045`](https://github.com/zwhy149/runparity/actions/runs/32684989045)
+已 **7/7 全绿**（Node 22/24 × Ubuntu/Windows/macOS 共 6 个矩阵任务，另加在
+Node 24 与最低支持 Node 18 上执行 tarball 的 Packed CLI smoke）。npm 包
+[`runparity@0.1.0`](https://www.npmjs.com/package/runparity/v/0.1.0) 已挂到
+`latest`；Git 标签和 [GitHub Release v0.1.0](https://github.com/zwhy149/runparity/releases/tag/v0.1.0)
+都指向 `02e552b`。从仓库树外的全新目录和全新 npm cache 执行公网
+`npx runparity@0.1.0` 的 version/help/doctor 烟测均成功。
 
 ## 1. 做完了啥（全部已推送）
 
@@ -50,36 +55,68 @@ attempt 2 已 **7/7 全绿**（Node 22/24 × Ubuntu/Windows/macOS 共 6 个矩�
 8. **文件系统能力检测（`a9af490`）**：资产清单的大小写冲突测试不再用操作
    系统名猜测卷语义，而是确认临时卷能否同时保存 `Alpha.txt`/`alpha.txt`；
    Linux 继续执行拒绝测试，默认 Windows/macOS 大小写不敏感卷明确跳过。
+9. **v0.1.0 发布元数据（`3b1b01b`）**：去掉 `private`，补齐 repository /
+   homepage / bugs / public publishConfig / CHANGELOG；加入 `prepublishOnly=pnpm verify`
+   和 `prepack=pnpm build`；README 改为公网 npx 快速开始。CLI 版本不再硬编码，
+   而是从随包 `package.json` 读取并 fail-closed 校验 semver。
+10. **最低运行时门禁**：packed smoke 在构建后切到 Node 18 再执行同一 tarball；
+    完整开发门仍使用 Node 22/24，因为固定的 pnpm 11.19.0 要求 Node >=22.13。
+11. **npm bin 契约修复（`02e552b`）**：npm 11 会把 `./dist/cli.js` 规范化为
+    `dist/cli.js`；发布预演先发现命令映射会被自动修正，元数据与 artifact 断言
+    均改为规范值。第一次发布候选 CI 因旧 artifact 断言六平台共同红；确定性
+    红绿复现后只修契约，第二次 CI 7/7 全绿。
+12. **首发完成**：npm 账户启用 `auth-and-writes` 2FA，正式 `npm publish` 内部
+    再跑完整 verify；最终上传 8 个预期文件（约 93.8 kB，shasum
+    `6e754ec26e10b56f06ab179d96eef01a853fd7fb`）。registry、dist-tag、隔离安装、
+    外部目录 npx、Git tag 和 GitHub Latest Release 均独立核验。
 
 ## 2. 现在卡在哪
 
-**没有本阶段发布阻断。** 最新代码承载 run `32657828459` attempt 2 结论为
+**没有发布阻断。v0.1.0 已公开可用。** 发布提交的 run `32684989045` 结论为
 `success`：Ubuntu、Windows、macOS 上的 Node 22/24 六矩阵全部成功，packed
-tarball 的 `--version`/`--help` 烟测也成功。README 的 CI badge 已指向该
-workflow。
+tarball 在 Node 24/18 的 `--version`/`--help` 烟测也成功。npm `latest` 是
+`0.1.0`，GitHub Latest Release 是 `v0.1.0`。
 
-本轮唯一的非阻断观察：run attempt 1 的 Node 22/Windows 在一个故意创建脱离
-子进程的测试完成所有行为断言后，删除临时目录时遇到一次 `EBUSY`；同测试在
-本地两次全量、上一轮 CI、Node 24/Windows 和 failed-job 重跑均通过，因此按
-既定标准判为瞬态清理抖动，没有用产品改动掩盖它。
+本轮唯一的非阻断观察：第一次发布候选 run `32684172023` 的 Node 22/Windows
+在一个故意创建脱离子进程的测试完成所有行为断言后，删除临时目录时遇到一次
+`EBUSY`；该目标用例随后在本机 Node 22 **连续 40 次通过**，第二次 CI 的
+Windows 22/24 也均通过。清理已有 20 次线性退避，因此没有吞掉异常来制造假绿；
+若未来连续复现，必须捕获新的锁持有证据再修。
 
 ## 3. 下一步
 
-本阶段不需要继续改代码。新对话先确认 `main` 与远端同步，并查看最新 CI；不要
-因为旧 handoff 里的红灯描述重复修改。后续工作都应另立范围：
+本阶段不需要继续发布或重发 0.1.0。新对话先确认 `main`、npm、Release 与最新
+CI；不要因为旧 handoff 里的红灯描述重复修改。后续工作都应另立范围：
 
 1. 若要做 GitHub 维护，可单独审查 Dependabot PR；依赖升级必须完整跑同一
    7-job 门，不能因当前全绿直接合并。
 2. 若要进入下一产品阶段，优先使用 S1 已量化的诊断覆盖缺口（PATH 多候选
    finding、NATIVE stderr 分类器、CONFIG finding 边界），修改后重跑密封评测，
    不得沿用当前 S1 数字宣称新能力。
-3. npm/版本发布属于独立决策；当前 `package.json` 仍是 private、0.0.0，不要在
-   没有用户明确授权、版本策略和发布凭证边界时擅自发布。
+3. npm 版本不可覆盖；下一次行为/功能发布按 SemVer 使用 `0.2.0`，纯兼容修复
+   使用 `0.1.1`。先更新 CHANGELOG/版本与契约测试，再走同一完整门、npm 2FA、
+   公网安装、Git tag、GitHub Release 顺序。不要尝试重发 `0.1.0`。
+4. 发布自动化仍未建立 trusted publishing/provenance；如要自动化，应单独设计
+   GitHub OIDC trusted publisher，并保持当前本地 2FA 流程作为清晰的人工边界，
+   不要把长期 npm token 写入仓库、日志或对话。
 
 ## 4. 坑清单（踩过的，别再踩）
 
 ### 本轮新坑（最重要）
 
+- **npm 11 会规范化 bin 路径**：`"./dist/cli.js"` 在 publish dry-run 中会被
+  自动修正；使用 `"dist/cli.js"`，并让 artifact 测试断言规范值。每次正式发布
+  前必须先看 `npm publish --dry-run --ignore-scripts --json` 的 warning。
+- **npm 发布强制 2FA**：`npm login --auth-type=web` 只完成身份登录；账户还必须
+  启用 `auth-and-writes`。正式 publish 会给出 `/auth/cli/` 网页授权链接，用户
+  在浏览器完成 2FA；绝不要在对话里传密码、OTP、恢复码或 token。
+- **公网 npx 烟测必须离开源码树**：在 RunParity 根目录或其 `.pack` 子目录运行
+  `npm exec --package=runparity`，npm 会向上发现同名本地 package，造成“命令未
+  找到”的假失败。使用 `%TEMP%` 下无父级 package.json 的新目录和新 cache。
+- **Git HTTPS 代理可能在握手时 EOF**：本轮 schannel/OpenSSL/HTTP1.1 均曾被
+  代理截断，而 GitHub API 正常。不要关闭 TLS 校验。若必须用 Git Data API，
+  远端父提交、blob、tree、commit SHA 和 `force=false` 必须逐层校验；普通 Git
+  恢复后优先回到标准 push（本轮 tag 已正常 git push）。
 - **管道吃掉退出码**：`pnpm verify | grep ...; echo RC=${PIPESTATUS[0]}`
   后面接 `&&` 链，链判断用的是**管道最后一个命令**的退出码——曾经 verify
   红着还 commit+push 了（2b1d122 就是这么推出去的）。**改用
@@ -148,6 +185,11 @@ gh run list -R zwhy149/runparity --workflow=ci.yml --limit 3
 gh run view <id> -R zwhy149/runparity --log-failed   # 看红 job 日志
 gh run rerun <id> -R zwhy149/runparity --failed      # 偶发抖动重跑
 
+# 已发布版本核验（npx 要在仓库树之外执行）
+npm view runparity@0.1.0 version dist-tags.latest dist.integrity --json
+gh release view v0.1.0 -R zwhy149/runparity
+cd /tmp && npx --yes runparity@0.1.0 --version       # POSIX；Windows 用 %TEMP% 新目录
+
 # 提交推送
 git add -A && git commit -m "..." && git push
 ```
@@ -156,6 +198,7 @@ git add -A && git commit -m "..." && git push
 
 > 先读本 HANDOFF 全文与 `docs/adr/0005`，再用 `git status`、`git log -1` 和
 > `gh run list -R zwhy149/runparity --workflow=ci.yml --limit 3` 核对当前事实。
-> CI 修复阶段已经完成，不要重复旧修法。除非出现新的可复现失败，否则保持
-> 已验证的收据链不动；任何新功能、依赖升级或 npm 发布都作为新阶段重新规划、
-> TDD、全量验证。
+> CI 修复和 v0.1.0 首发已经完成，不要重复发布或修改旧 tag。先独立核验 npm
+> `latest=0.1.0`、GitHub Release `v0.1.0` 和 release commit CI 7/7。除非出现
+> 新的可复现失败，否则保持已验证的收据链不动；任何新功能、依赖升级或下一
+> 版本都作为新阶段重新规划、TDD、全量验证。
