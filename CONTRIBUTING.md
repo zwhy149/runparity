@@ -1,6 +1,6 @@
-# Contributing to RunParity
+# Contributing to RunParity Open
 
-RunParity accepts narrow, evidence-backed improvements. A plausible difference
+RunParity Open accepts narrow, evidence-backed improvements. A plausible difference
 is not a verified cause, and a passing unit test is not fixture qualification.
 
 ## Before you start

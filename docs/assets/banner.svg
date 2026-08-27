@@ -1,4 +1,4 @@
-<svg width="880" height="260" viewBox="0 0 880 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RunParity — see what actually ran">
+<svg width="880" height="260" viewBox="0 0 880 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RunParity Open — see what actually ran">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0b1020"/>
@@ -19,7 +19,7 @@
     <circle cx="80" cy="60" r="6" fill="#f59e0b"/>
     <circle cx="10" cy="120" r="6" fill="#4cc38a"/>
   </g>
-  <text x="330" y="105" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700" fill="#f4f7fb">RunParity</text>
+  <text x="300" y="105" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700" fill="#f4f7fb">RunParity Open</text>
   <text x="330" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="23" fill="#9fb0cc">See what actually ran.</text>
   <text x="330" y="182" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#9fb0cc">Separate environment clues from causal proof.</text>
   <g font-family="Consolas, Menlo, monospace" font-size="15">

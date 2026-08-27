@@ -1,6 +1,8 @@
 <div align="center">
 
-<img src="docs/assets/banner.svg" alt="RunParity — see what actually ran" width="880"/>
+<img src="docs/assets/banner.svg" alt="RunParity Open — see what actually ran" width="880"/>
+
+**RunParity Open** · A free, community-built developer education and environment-diagnostics project.
 
 **Works in CI, fails on your laptop? Stop guessing which Node, which PATH entry, which npmrc won.**
 
@@ -10,15 +12,27 @@
 [![npm version](https://img.shields.io/npm/v/runparity.svg)](https://www.npmjs.com/package/runparity)
 [![Fixtures: 14/16 verified](https://img.shields.io/badge/fixtures-14%2F16%20verified-2ea043)](#the-evidence-pipeline)
 
-[Quick start](#quick-start) · [What it catches](#new-here-when-to-reach-for-runparity) · [Evidence grades](#two-words-that-keep-us-honest) · [Verified corpus](#the-evidence-pipeline) · [Why not just](#why-not-just-which-node) · [Deep dive](#deep-dive)
+[Mission](#open-source-education-mission) · [Quick start](#quick-start) · [What it catches](#new-here-when-to-reach-for-runparity) · [Evidence grades](#two-words-that-keep-us-honest) · [Verified corpus](#the-evidence-pipeline) · [Why not just](#why-not-just-which-node) · [License](#license) · [Deep dive](#deep-dive)
 
 </div>
 
 ---
 
-RunParity is an **evidence-first diagnosis CLI for JavaScript/TypeScript environment failures**. When a command "works on my machine" but dies somewhere else, RunParity records the command that actually ran — which executable the shell really picked (lookup path vs canonical target), which runtime identity is active versus what `engines` declares, which npm config source won, which native ABI the loader actually rejected — and then states **exactly how strong the evidence is**. It never guesses a root cause, never "repairs" your host, and never calls a correlation a proof.
+RunParity Open (published as the `runparity` package and command) is an **evidence-first diagnosis CLI for JavaScript/TypeScript environment failures**. When a command "works on my machine" but dies somewhere else, RunParity records the command that actually ran — which executable the shell really picked (lookup path vs canonical target), which runtime identity is active versus what `engines` declares, which npm config source won, which native ABI the loader actually rejected — and then states **exactly how strong the evidence is**. It never guesses a root cause, never "repairs" your host, and never calls a correlation a proof.
 
 ---
+
+## Open-source education mission
+
+RunParity Open is committed to providing **free, open-source educational tools** that help developers, students, teachers, maintainers, and community groups understand environment-dependent failures. Debugging knowledge should be inspectable, teachable, and available without a paid product or an opaque answer.
+
+Our commitments:
+
+- **Free and open:** source code, documentation, examples, and verification fixtures can be used, studied, modified, and shared under the [MIT License](LICENSE).
+- **Education through evidence:** every finding distinguishes observation, bounded diagnosis, and causal proof so that users learn what the evidence does — and does not — establish.
+- **Beginner-friendly, expert-verifiable:** one command provides a useful report, while stable JSON, documented contracts, and reproducible fixtures support deeper inspection.
+- **Community-built:** real-world failure reports and narrowly tested contributions are welcome through the [contributor guide](CONTRIBUTING.md).
+- **No required AI service or RunParity account:** core diagnosis runs locally and keeps deterministic verdicts in inspectable code.
 
 ## The one command
 
@@ -210,9 +224,13 @@ Dual-platform gate: Windows + Ubuntu (WSL2) both run the full `pnpm verify`. Arc
 Environment failures eat afternoons and produce confident wrong answers in code review. RunParity's thesis: record what actually ran, separate observation from causation, make the evidence gradable and shareable — and make "verified" a word that means something. The [product requirements](docs/PRD.md) and [demand evidence](docs/DEMAND-EVIDENCE.md) define the target; the [CLI contract](docs/CLI.md) is the precise truth for executable behavior.
 </details>
 
-## Contributing & license
+## Contributing
 
-Issues and discussions are welcome — especially field reports of real "works there, not here" failures (they feed the sealed corpus). See [`docs/agents/`](docs/agents/) for contributor workflow. MIT — see [LICENSE](LICENSE).
+Issues and discussions are welcome — especially field reports of real "works there, not here" failures (they feed the sealed corpus). Start with the [contributor guide](CONTRIBUTING.md), then see [`docs/agents/`](docs/agents/) for the issue workflow.
+
+## License
+
+RunParity Open is free and open-source software released under the **MIT License**. You may use, study, modify, and redistribute it under the license terms. See the complete [LICENSE](LICENSE) file.
 
 <div align="center">
 
